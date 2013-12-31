@@ -1,5 +1,8 @@
-Rust's syntax is heavily influenced by C/C++. Scope is determined by `{` and
-`}`. Declaring a function is done with the `fn` keyword, demonstrated below.
+Rust's syntax is heavily influenced by C/C++. For example, scope is determined 
+by `{` and `}`, and statements end with a `;`. Like other C-family languages, 
+whitespace (e.g. tabs and spaces) is ignored by the compiler. 
+
+Unlike C/C++, we create a function using the `fn` keyword.
 
 rcode 01_hello/hello_world.rs 
 
@@ -9,10 +12,10 @@ rcode 01_hello/hello_world2.rs
 
 Several things are going on in this code. First, variables are declared using 
 the `let` keyword. Notice that we didn't have to specify a type, such as `str`.
-The rust compiler can infer types, as long as there isn't any ambiguity. If the
- compilar can't figure out a variable's type, it will give an error.
+The rust compiler can infer types, as long as there isn't any ambiguity. 
 
-Second, we specified a return type using `->`.
+Second, we specified a return type using `->`. This is fairly straightforward. 
+Any valid type can be returned by a function.
 
 Third, there's a `&` in the return type. This is will discussed in the [third 
 section](../03_pointers/pointers.md). The [next section]
