@@ -1,7 +1,7 @@
 *
 !.gitignore
 !LICENSE
-*.rs
-*.md
-*.dm
-*.cpp
+!*.rs
+!*.md
+!*.dm
+!*.cpp
