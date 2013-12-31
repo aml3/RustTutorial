@@ -1,6 +1,3 @@
-*
-!.gitignore
-!*.rs
-!LICENSE
-!*.md
-!*.cpp
+*.out
+*.swp
+*~
