@@ -30,4 +30,6 @@ The rust compiler can infer types, as long as there isn't any ambiguity. If the
 
 Second, we specified a return type using `->`.
 
-Third, there's a `&` in the return type. 
+Third, there's a `&` in the return type. This is will discussed in the (third 
+section)[../03_pointers/pointers.md]. The (next section)
+[../02_variables/variables.md] deals with the basics of Rust variables.
