@@ -12,7 +12,8 @@ int main(int argc, char** argv)
 		return 1;
 
 	string s = argv[1];
-	cout << "Filename: " << s << endl;
+	s = s.substr(0, s.length() - 3);
+	cout << "Base Filename: " << s << endl;
 	ifstream in(s.c_str());
 	string t = s + ".md";
 	ofstream out(t.c_str());

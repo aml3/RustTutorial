@@ -1,3 +1,7 @@
-*.out
-*.swp
-*~
+*
+!.gitignore
+!LICENSE
+*.rs
+*.md
+*.dm
+*.cpp
