@@ -2,11 +2,25 @@ Rust's syntax is heavily influenced by C/C++. Scope is determined by `{` and
 `}`. Declaring a function is done with the `fn` keyword, demonstrated below.
 
 ```rust
+fn main()
+{
+	print("Hello World\n");
+}
 ```
 
 A better example would be something like the following.
 
 ```rust
+fn main()
+{
+	let x = get_hello();
+	print(x);
+}
+
+fn get_hello() -> &str
+{
+	return "Hello World!";
+}
 ```
 
 Several things are going on in this code. First, variables are declared using 
