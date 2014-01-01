@@ -26,16 +26,16 @@ void print_guide(int val, ofstream& out, bool end)
 	if (val > 1)
 	{
 		if (val < 10)
-			snprintf(buffer, 32, "[Previous](0%d).md", val-1);
+			snprintf(buffer, 32, "[Previous](0%d.md)", val-1);
 		else
-			snprintf(buffer, 32, "[Previous](%d).md", val-1);
+			snprintf(buffer, 32, "[Previous](%d.md)", val-1);
 		out << buffer;
 	}
 
 	if (val < 10)
-		snprintf(buffer, 32, "[Next](0%d).md", val-1);
+		snprintf(buffer, 32, "[Next](0%d.md)", val-1);
 	else
-		snprintf(buffer, 32, "[Next](%d).md", val-1);
+		snprintf(buffer, 32, "[Next](%d.md)", val-1);
 	out << buffer;
 
 	if (!end)
