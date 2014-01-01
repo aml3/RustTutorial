@@ -1,4 +1,4 @@
-[Previous](../01/variables.md)   [Next](../03/pointers.md)
+[Previous](01.md)	[Next](03.md)
 
 The `let` keyword is used to
 create variables. 
@@ -90,4 +90,4 @@ match x
 }
 ```
 
-[Previous](../01/variables.md)   [Next](../03/pointers.md)
+[Previous](01.md)	[Next](03.md)

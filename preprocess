@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd files
+for file in *.dm
+do
+	echo "Processing $file"
+	../a.out $file
+	x=${file%.dm}
+	mv $x.md ../processed/
+done

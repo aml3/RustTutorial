@@ -1,4 +1,4 @@
-[Previous](../02/pointers.md)   [Next](../04/vectors.md)
+[Previous](02.md)	[Next](04.md)
 
 Before, we saw that the return type on `get_hello()` was `&str`. 
 
@@ -63,3 +63,5 @@ It prints
 ~5
 5
 ```
+
+[Previous](02.md)	[Next](04.md)
