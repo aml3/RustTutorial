@@ -111,3 +111,7 @@ or Java. The previous loops can easily be rewritten using `while` loops.
 rcode code/loops.rs 19 22
 
 rcode code/loops.rs 24 29
+
+Here's a Rust quine combining loops, variables, and arrays.
+
+rcode code/quine.rs
