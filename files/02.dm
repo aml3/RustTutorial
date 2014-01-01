@@ -97,3 +97,17 @@ Arrays can also be made using `let array = [x, ..N]`. This makes an array of
 size `N` and sets each value to `x`.
 
 rcode code/array.rs 6 6
+
+Rust has several different types of loops. The most basic is the `loop`
+keyword. Its loops until a `break` is encountered.
+
+rcode code/loops.rs 3 7
+
+rcode code/loops.rs 9 16
+
+Rust also has a `while` loop. Its syntax is almost exactly the same as C, C++, 
+or Java. The previous loops can easily be rewritten using `while` loops.
+
+rcode code/loops.rs 18 21
+
+rcode code/loops.rs 23 28
