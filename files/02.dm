@@ -87,3 +87,13 @@ match x
 	_ => {;}
 }
 ```
+
+Rust arrays are made using `[` and `]`. Arrays made this way are put on the
+stack.
+
+rcode code/array.rs 3 4
+
+Arrays can also be made using `let array = [x, ..N]`. This makes an array of
+size `N` and sets each value to `x`.
+
+rcode code/array.rs 6 6
