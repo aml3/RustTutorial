@@ -1,3 +1,5 @@
+[Previous](../01/variables.md)   [Next](../03/pointers.md)
+
 The `let` keyword is used to
 create variables. 
 
@@ -37,6 +39,7 @@ rcode code/collatz.rs
 
 There are one or two new things here. The first is the `format!`. The `!` means
 that it is a macro, and `format!` is used to print data in human readable form.
+It's similar to C's `printf`.
 
 The second new bit is specific to Rust's syntax. `if` statements don't have
 parenthesis around their conditionals. However, each `if` statement must have a
@@ -86,3 +89,5 @@ match x
 	_ => {;}
 }
 ```
+
+[Previous](../01/variables.md)   [Next](../03/pointers.md)
