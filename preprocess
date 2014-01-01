@@ -4,7 +4,9 @@ cd files
 for file in *.dm
 do
 	echo "Processing $file"
-	../a.out $file
+	cd ..
+	./a.out files/$file
 	x=${file%.dm}
-	mv $x.md ../processed/
+	mv files/$x.md markdown/
+	cd -
 done
