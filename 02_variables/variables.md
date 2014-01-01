@@ -20,8 +20,8 @@ let b = 4;
 b = 5; // compile error
 ```
 
-The different types of variables are best found by consulting the (Rust 
-tutorial)[http://static.rust-lang.org/doc/0.8/tutorial.html#syntax-basics]
+The different types of variables are best found by consulting the [Rust 
+tutorial](http://static.rust-lang.org/doc/0.8/tutorial.html#syntax-basics).
 
 A safe way to cast variables is to use the `as` keyword.
 
@@ -34,6 +34,28 @@ Another example will help clarify with and the previous section. This code
 recursively computes the number of steps in a number's Collatz seqeunce.
 
 ```rust
+fn main()
+{
+	let steps = collatz(10, 0);
+	print(format!("{:?}", steps));
+}
+
+fn collatz(x: int, steps: int) -> int
+{
+	if x == 1
+	{
+		return steps;
+	}
+
+	if x%2 == 0
+	{
+		return collatz(x/2, steps+1);
+	}
+	else
+	{
+		return collatz(x*3+1, steps+1);
+	}
+}
 ```
 
 There are one or two new things here. The first is the `format!`. The `!` means
@@ -48,6 +70,25 @@ and is considered "prettier". The last `if-else` group can be replaced with a
 match statement.
 
 ```rust
+fn main()
+{
+	let steps = collatz(10, 0);
+	print(format!("{:?}\n", steps));
+}
+
+fn collatz(x: int, steps: int) -> int
+{
+	if x == 1
+	{
+		return steps;
+	}
+
+	match x%2	
+	{
+		0 => { return collatz(x/2, steps+1); }
+		_ => { return collatz(x*3+1, steps+1); }
+	}
+}
 ```
 
 The `_` is similar to a `match` statement's `default` in Java. If nothing

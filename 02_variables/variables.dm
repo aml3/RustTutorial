@@ -20,8 +20,8 @@ let b = 4;
 b = 5; // compile error
 ```
 
-The different types of variables are best found by consulting the (Rust 
-tutorial)[http://static.rust-lang.org/doc/0.8/tutorial.html#syntax-basics]
+The different types of variables are best found by consulting the [Rust 
+tutorial](http://static.rust-lang.org/doc/0.8/tutorial.html#syntax-basics).
 
 A safe way to cast variables is to use the `as` keyword.
 
@@ -33,7 +33,7 @@ let y = x as i32;
 Another example will help clarify with and the previous section. This code 
 recursively computes the number of steps in a number's Collatz seqeunce.
 
-rcode collatz.rs
+rcode 02_variables/collatz.rs
 
 There are one or two new things here. The first is the `format!`. The `!` means
 that it is a macro, and `format!` is used to print data in human readable form.
@@ -46,7 +46,7 @@ Rust also features a `match` statement. It's an alternative to `if` statements
 and is considered "prettier". The last `if-else` group can be replaced with a 
 match statement.
 
-rcode collatz2.rs
+rcode 02_variables/collatz2.rs
 
 The `_` is similar to a `match` statement's `default` in Java. If nothing
 matches the variable, the statement falls through to the `_` case. The Rust
