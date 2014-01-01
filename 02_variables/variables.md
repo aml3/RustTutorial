@@ -31,7 +31,7 @@ let y = x as i32;
 ```
 
 Another example will help clarify this and the previous section. This code 
-recursively computes the number of steps in a number's Collatz seqeunce.
+recursively computes the number of steps in a number's Collatz sequence.
 
 ```rust
 fn main()
