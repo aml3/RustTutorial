@@ -30,7 +30,7 @@ let x = 4u;
 let y = x as i32;
 ```
 
-Another example will help clarify with and the previous section. This code 
+Another example will help clarify this and the previous section. This code 
 recursively computes the number of steps in a number's Collatz seqeunce.
 
 ```rust
