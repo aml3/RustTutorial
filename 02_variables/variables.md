@@ -1,4 +1,4 @@
-The Rust language is centered around safety. The `let` keyword is used to
+The `let` keyword is used to
 create variables. 
 
 ```rust
@@ -14,8 +14,77 @@ To make variables mutable, use the `mut` keyword.
 
 ```rust
 let mut a = 4;
-a = 5; // compiles okay
+a = 5; // compiles
 
 let b = 4;
 b = 5; // compile error
+```
+
+The different types of variables are best found by consulting the (Rust 
+tutorial)[http://static.rust-lang.org/doc/0.8/tutorial.html#syntax-basics]
+
+A safe way to cast variables is to use the `as` keyword.
+
+```rust
+let x = 4u;
+let y = x as i32;
+```
+
+Another example will help clarify with and the previous section. This code 
+recursively computes the number of steps in a number's Collatz seqeunce.
+
+```rust
+```
+
+There are one or two new things here. The first is the `format!`. The `!` means
+that it is a macro, and `format!` is used to print data in human readable form.
+
+The second new bit is specific to Rust's syntax. `if` statements don't have
+parenthesis around their conditionals. However, each `if` statement must have a
+body, and that body must be surrounded by braces.
+
+Rust also features a `match` statement. It's an alternative to `if` statements 
+and is considered "prettier". The last `if-else` group can be replaced with a 
+match statement.
+
+```rust
+```
+
+The `_` is similar to a `match` statement's `default` in Java. If nothing
+matches the variable, the statement falls through to the `_` case. The Rust
+compiler requires an execution path for each possible outcome, and will not
+complain if the match conditions are exhaustive. It's not an oracle though, and
+will throw an error if the `_` is replaced with `1`. (It's better with
+booleans).
+
+The follow `if-else` statement and `match` statement are equivalent.
+```rust
+if doSomething == true
+{
+	doSomething();
+}
+else
+{
+	doNothing();
+}
+
+match doSomething
+{
+	true => { doSomething(); }
+	false => { doNothing(); }
+	// no _ is needed. The compiler can figure out that this match
+	// statement is exhaustive.
+}
+```
+
+One additional thing to note about `match` statements is that the code for a
+case must be surrounded in braces, even if it's empty.
+
+```rust
+match x
+{
+	4 => { print("It's four"); }
+	// 5 => print("It's five"); // not valid
+	_ => {;}
+}
 ```

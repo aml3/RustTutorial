@@ -29,3 +29,60 @@ A safe way to cast variables is to use the `as` keyword.
 let x = 4u;
 let y = x as i32;
 ```
+
+Another example will help clarify with and the previous section. This code 
+recursively computes the number of steps in a number's Collatz seqeunce.
+
+rcode collatz.rs
+
+There are one or two new things here. The first is the `format!`. The `!` means
+that it is a macro, and `format!` is used to print data in human readable form.
+
+The second new bit is specific to Rust's syntax. `if` statements don't have
+parenthesis around their conditionals. However, each `if` statement must have a
+body, and that body must be surrounded by braces.
+
+Rust also features a `match` statement. It's an alternative to `if` statements 
+and is considered "prettier". The last `if-else` group can be replaced with a 
+match statement.
+
+rcode collatz2.rs
+
+The `_` is similar to a `match` statement's `default` in Java. If nothing
+matches the variable, the statement falls through to the `_` case. The Rust
+compiler requires an execution path for each possible outcome, and will not
+complain if the match conditions are exhaustive. It's not an oracle though, and
+will throw an error if the `_` is replaced with `1`. (It's better with
+booleans).
+
+The follow `if-else` statement and `match` statement are equivalent.
+```rust
+if doSomething == true
+{
+	doSomething();
+}
+else
+{
+	doNothing();
+}
+
+match doSomething
+{
+	true => { doSomething(); }
+	false => { doNothing(); }
+	// no _ is needed. The compiler can figure out that this match
+	// statement is exhaustive.
+}
+```
+
+One additional thing to note about `match` statements is that the code for a
+case must be surrounded in braces, even if it's empty.
+
+```rust
+match x
+{
+	4 => { print("It's four"); }
+	// 5 => print("It's five"); // not valid
+	_ => {;}
+}
+```
