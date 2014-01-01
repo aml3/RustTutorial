@@ -22,22 +22,21 @@ void print_guide(int val, ofstream& out, bool end)
 	if (end)
 		out << "\n* * *\n";
 
+	char buffer[32];
 	if (val > 1)
 	{
-		out << "[Previous](";
 		if (val < 10)
-			out << "0" << val-1;
+			snprintf(buffer, 32, "[Previous](0%d)", val-1);
 		else
-			out << val-1;
-		out << ".md)";
+			snprintf(buffer, 32, "[Previous](%d)", val-1);
+		out << buffer;
 	}
 
-	out << " [Next](";
 	if (val < 10)
-		out << "0" << val+1;
+		snprintf(buffer, 32, "[Next](0%d)", val-1);
 	else
-		out << val+1;
-	out << ".md)";
+		snprintf(buffer, 32, "[Next](%d)", val-1);
+	out << buffer;
 
 	if (!end)
 		out << "\n* * *\n";
