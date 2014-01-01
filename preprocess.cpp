@@ -22,7 +22,7 @@ void print_guide(int val, ofstream& out, bool end)
 	if (end)
 		out << "\n* * *\n";
 
-	if (val > 0)
+	if (val > 1)
 	{
 		out << "[Previous](";
 		if (val < 10)
