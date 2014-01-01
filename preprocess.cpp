@@ -33,9 +33,9 @@ void print_guide(int val, ofstream& out, bool end)
 	}
 
 	if (val < 10)
-		snprintf(buffer, 32, "[Next](0%d.md)", val-1);
+		snprintf(buffer, 32, "[Next](0%d.md)", val+1);
 	else
-		snprintf(buffer, 32, "[Next](%d.md)", val-1);
+		snprintf(buffer, 32, "[Next](%d.md)", val+1);
 	out << buffer;
 
 	if (!end)
