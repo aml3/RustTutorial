@@ -6,6 +6,43 @@
 
 using namespace std;
 
+int file_num(string path)
+{
+	int last = path.rfind('/');
+
+	if (last == -1)
+		return -1;
+
+	string file = path.substr(last+1, path.length());
+	return atoi(file.c_str());
+}
+
+void print_guide(int val, ofstream& out, bool end)
+{
+	if (end)
+		out << "\n* * *\n";
+
+	if (val > 0)
+	{
+		out << "[Previous](";
+		if (val < 10)
+			out << "0" << val-1;
+		else
+			out << val-1;
+		out << ".md)";
+	}
+
+	out << " [Next](";
+	if (val < 10)
+		out << "0" << val+1;
+	else
+		out << val+1;
+	out << ".md)";
+
+	if (!end)
+		out << "\n* * *\n";
+}
+
 int main(int argc, char** argv)
 {
 	if (argc != 2)
@@ -15,8 +52,11 @@ int main(int argc, char** argv)
 	ifstream in(s.c_str());
 	cout << "Base Filename: " << s << endl;
 	s = s.substr(0, s.length() - 3);
+	int val = file_num(s);
 	string t = s + ".md";
 	ofstream out(t.c_str());
+	
+	print_guide(val, out, false);
 
 	string line;
 	string tag("rcode");
@@ -78,6 +118,8 @@ int main(int argc, char** argv)
 			out << line << "\n";
 		}
 	}
+	
+	print_guide(val, out, true);
 
 	return 0;
 }

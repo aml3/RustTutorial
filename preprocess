@@ -1,5 +1,6 @@
 #!/bin/bash
 
+g++ preprocess.cpp
 cd files
 for file in *.dm
 do

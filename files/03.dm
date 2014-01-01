@@ -1,5 +1,3 @@
-[Previous](02.md)	[Next](04.md)
-
 Before, we saw that the return type on `get_hello()` was `&str`. 
 
 rcode code/hello_world2.rs 7 10
@@ -53,15 +51,6 @@ As an aside, the following is valid code.
 ```rust
 let x: ~int = ~5;
 let y: int = *x;
-println(format("{:?}", x));
-println(format("{:?}", y));
+println(format("{:?}", x)); // prints `~5`
+println(format("{:?}", y)); // prints `5`
 ```
-
-It prints
-
-```rust
-~5
-5
-```
-
-[Previous](02.md)	[Next](04.md)
