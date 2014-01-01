@@ -1,6 +1,11 @@
 RustTutorial
 ============
 
+## Table of Contents
+1. [Hello World](01/hello_world.md)
+1. [Variables and Syntax](02/variables.md)
+1. [Pointers](03/pointers.md)
+
 There's a little preprocessor to make including code easier. It strips the last
 3 characters from a file's name and appends `.md`. The original file is left
 untouched. These unprocessed files end with `.dm`.
