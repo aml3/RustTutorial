@@ -12,7 +12,7 @@ rcode 01_hello/hello_world2.rs
 
 Several things are going on in this code. First, variables are declared using 
 the `let` keyword. Notice that we didn't have to specify a type, such as `str`.
-The rust compiler can infer types, as long as there isn't any ambiguity. 
+The Rust compiler can infer types, as long as there isn't any ambiguity. 
 
 Second, we specified a return type using `->`. This is fairly straightforward. 
 Any valid type can be returned by a function.
