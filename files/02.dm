@@ -108,6 +108,6 @@ rcode code/loops.rs 9 16
 Rust also has a `while` loop. Its syntax is almost exactly the same as C, C++, 
 or Java. The previous loops can easily be rewritten using `while` loops.
 
-rcode code/loops.rs 18 21
+rcode code/loops.rs 19 22
 
-rcode code/loops.rs 23 28
+rcode code/loops.rs 24 29
