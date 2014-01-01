@@ -2,9 +2,9 @@ RustTutorial
 ============
 
 ## Table of Contents
-1. [Hello World](01/hello_world.md)
-2. [Variables and Syntax](02/variables.md)
-3. [Pointers](03/pointers.md)
+1. [Hello World](markdown/01.md)
+2. [Variables and Syntax](markdown/02.md)
+3. [Pointers](markdown/03.md)
 
 There's a little preprocessor to make including code easier. It strips the last
 3 characters from a file's name and appends `.md`. The original file is left
