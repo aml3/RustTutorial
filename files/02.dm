@@ -49,12 +49,12 @@ match statement.
 
 rcode code/collatz2.rs
 
-The `_` is similar to a `match` statement's `default` in Java. If nothing
+The `_` is similar to a `switch` statement's `default` in Java. If nothing
 matches the variable, the statement falls through to the `_` case. The Rust
-compiler requires an execution path for each possible outcome, and will not
-complain if the match conditions are exhaustive. It's not an oracle though, and
-will throw an error if the `_` is replaced with `1`. (It's better with
-booleans).
+compiler requires an execution path for each possible outcome, and will 
+complain if the match conditions are not exhaustive. It's not an oracle though,
+ and will throw an error if the `_` is replaced with `1`. (It's better with 
+ booleans.)
 
 The follow `if-else` statement and `match` statement are equivalent.
 ```rust
