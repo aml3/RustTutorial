@@ -25,5 +25,5 @@ Second, we specified a return type using `->`. This is fairly straightforward.
 Any valid type can be returned by a function.
 
 Third, there's a `&` in the return type. This is will discussed in the [third 
-section](03.md). The [next section] (02.md) deals with the basics of Rust 
-variables and syntax.
+section](03.md). The next section deals with the basics of Rust variables and 
+syntax.

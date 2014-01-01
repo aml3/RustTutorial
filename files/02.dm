@@ -1,5 +1,3 @@
-[Previous](01.md)	[Next](03.md)
-
 The `let` keyword is used to
 create variables. 
 
@@ -89,5 +87,3 @@ match x
 	_ => {;}
 }
 ```
-
-[Previous](01.md)	[Next](03.md)
