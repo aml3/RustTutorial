@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cd ~/RustTutorial
+base=~/RustTutorial
+
+cd $base
 g++ preprocess.cpp
 cd files
 for file in *.dm
@@ -12,3 +14,5 @@ do
 	mv files/$x.md markdown/
 	cd -
 done
+cd $base
+rm a.out
