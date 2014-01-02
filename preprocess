@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd ~/RustTutorial
 g++ preprocess.cpp
 cd files
 for file in *.dm
