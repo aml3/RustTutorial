@@ -10,13 +10,11 @@ fn main()
 	"	let l = [",
 	"	",
 	"	];",
-	"	let mut i = 0;",
-	"	while i < 5",
+	"	for i in range(0, 5)",
 	"	{",
 	"		println(l[i]);",
-	"		i+=1;",
 	"	}",
-	"	i = 0;",
+	"	let mut i = 0;",
 	"	while i < l.len()",
 	"	{",
 	"		print(l[5]);",
@@ -34,13 +32,11 @@ fn main()
 	"	}",
 	"}",
 	];
-	let mut i = 0;
-	while i < 5
+	for i in range(0, 5)
 	{
 		println(l[i]);
-		i+=1;
 	}
-	i = 0;
+	let mut i = 0;
 	while i < l.len()
 	{
 		print(l[5]);

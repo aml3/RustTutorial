@@ -130,7 +130,7 @@ set of numbers, `[a,b)`.
 
 rcode code/loops.rs 41 45
 
-Here is a Rust quine combining `while` loops, variables, and arrays. It should 
+Here is a Rust quine combining loops, variables, and arrays. It should 
 provide good examples of Rust syntax.
 
 rcode code/quine.rs
