@@ -69,3 +69,11 @@ let b = ~["x", "y", "z"];
 Passing them to a function counts as moving the value.
 
 rcode code/pointers.rs
+
+Instead, we can use `.clone()` to clone a variable. (There are some
+restrictions on the use of `clone`, but they involve traits and won't be
+covered here.)
+
+```rust
+let sum = sum(nums.clone()); // creates a copy, so no moved value issues
+```

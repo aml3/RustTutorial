@@ -1,4 +1,4 @@
-RustTutorial
+Rust Crash Course
 ============
 
 ## Table of Contents
