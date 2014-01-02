@@ -7,6 +7,6 @@ focused on safety and concurrency.
 We'll be starting with a quick tour of Rust's syntax, before delving into how
 Rust handles pointers and memory, going over some of the more interesting
 language features in a little more depth, and finishing up with information
-on some of the more commonly used modules of Rust's prepackaged library.
+on the most commonly used modules of Rust's prepackaged library.
 
 Ready to get started? Here's the first lesson: [Rust's Syntax](01.html)
