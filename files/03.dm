@@ -46,6 +46,10 @@ the same place as `x`. Since this is with owned pointers, and a variable can
 only have a single owned pointer pointing to it at a time, `x` no longer points
 to anything valid. (Note, Rust doesn't have an actual `NULL`.)
 
+An way to think of it is that Rust actually moves `x`'s value to `y`. (This 
+would be horribly inefficient though. Rust actually just does pointer 
+shenanigans.)
+
 As an aside, the following is valid code.
 
 ```rust
@@ -57,4 +61,11 @@ println(format("{:?}", y)); // prints `5`
 
 Owned pointers can be used to make vectors (or other structures) on the heap.
 
-rcode code/pointers.rs 3 4
+```rust
+let a: ~[int] = ~[1, 2, 3];
+let b = ~["x", "y", "z"];
+```
+
+Passing them to a function counts as moving the value.
+
+rcode code/pointers.rs
