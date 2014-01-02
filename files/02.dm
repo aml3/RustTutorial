@@ -116,16 +116,11 @@ rcode code/loops.rs 21 24
 
 rcode code/loops.rs 27 32
 
-Here's a Rust quine combining `while` loops, variables, and arrays. It should 
-provide good examples of Rust syntax.
-
-rcode code/quine.rs
-
 Rust `for` loops are different from those in C, C++, and Java. They're more
 akin to Java's `for-each` loop. `for` loops work by using an iterator.
 
 We need to use an iterator to loop over elements in a vector. This shows that
-vectors come with some additional functionality that other language's arrays
+vectors come with some additional functionality that other languages' arrays
 lack.
 
 rcode code/loops.rs 34 39
@@ -134,3 +129,8 @@ There's a `range(a, b)` function that can be used to loop over a sequential
 set of numbers, `[a,b)`.
 
 rcode code/loops.rs 41 45
+
+Here is a Rust quine combining `while` loops, variables, and arrays. It should 
+provide good examples of Rust syntax.
+
+rcode code/quine.rs
