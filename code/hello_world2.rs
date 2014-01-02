@@ -1,10 +1,11 @@
 fn main()
 {
 	let x = get_hello();
-	println(x);
+	println(x); // prints `Hello World!`
 
+	// variables can be redeclared with the same name
 	let x = get_hello2();
-	println(x);
+	println(x); // also prints `Hello World, again!`
 }
 
 fn get_hello() -> &str
@@ -13,8 +14,7 @@ fn get_hello() -> &str
 }
 
 // lines without a `;` are the same as using a return statement
-// So `"Hello World!"` is the same as the above
 fn get_hello2() -> &str
 {
-	"Hello World!"
+	"Hello World, again!"
 }
