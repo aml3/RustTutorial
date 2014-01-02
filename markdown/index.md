@@ -1,4 +1,3 @@
-* * *
 ![](http://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png)
 Welcome to Rust!
 
@@ -11,5 +10,3 @@ language features in a little more depth, and finishing up with information
 on some of the more commonly used modules of Rust's prepackaged library.
 
 Ready to get started? Here's the first lesson: [Rust's Syntax](01.html)
-
-* * *

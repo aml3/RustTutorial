@@ -1,3 +1,4 @@
+<title> Rust: A Tutorial </title>
 ![](http://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png)
 Welcome to Rust!
 
