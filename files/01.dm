@@ -1,3 +1,4 @@
+#Syntax - Variables and Functions#
 Rust's syntax is heavily influenced by C/C++. For example, scope is determined 
 by `{` and `}`, and statements end with a `;`. Like other C-family languages, 
 whitespace (e.g. tabs and spaces) is ignored by the compiler. 

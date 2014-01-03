@@ -1,3 +1,4 @@
+#Pointers#
 Before, we saw that the return type on `get_hello()` was `&str`. 
 
 rcode code/hello_world2.rs 7 10

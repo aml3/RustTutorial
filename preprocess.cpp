@@ -19,23 +19,26 @@ int file_num(string path)
 
 void print_guide(int val, ofstream& out, bool end)
 {
+	// Since the HTML processor seemed to think the links were to files on my machine,
+	// because I'm processing the md to html locally.
+	static char path[] = "http://aml3.github.io/RustTutorial/html";
 	if (end)
 		out << "\n* * *\n";
 
-	char buffer[32];
+	char buffer[64];
 	if (val > 1)
 	{
 		if (val < 10)
-			snprintf(buffer, 32, "[Previous](0%d.md)\t", val-1);
+			snprintf(buffer, 64, "[Previous](%s/0%d.html)\t", path, val-1);
 		else
-			snprintf(buffer, 32, "[Previous](%d.md)\t", val-1);
+			snprintf(buffer, 64, "[Previous](%s/%d.html)\t", path, val-1);
 		out << buffer;
 	}
 
 	if (val < 10)
-		snprintf(buffer, 32, "[Next](0%d.md)", val+1);
+		snprintf(buffer, 64, "[Next](%s/0%d.md)", path, val+1);
 	else
-		snprintf(buffer, 32, "[Next](%d.md)", val+1);
+		snprintf(buffer, 64, "[Next](%s/%d.md)", path, val+1);
 	out << buffer;
 
 	if (!end)
@@ -44,8 +47,10 @@ void print_guide(int val, ofstream& out, bool end)
 
 int main(int argc, char** argv)
 {
-	if (argc != 2)
+	if (argc != 2){
+		cout << "Please provide a base filename.\n";
 		return 1;
+	}
 
 	string s = argv[1];
 	ifstream in(s.c_str());
@@ -55,7 +60,7 @@ int main(int argc, char** argv)
 	string t = s + ".md";
 	ofstream out(t.c_str());
 	
-	print_guide(val, out, false);
+	// print_guide(val, out, false);
 
 	string line;
 	string tag("rcode");

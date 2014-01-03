@@ -3,16 +3,15 @@
 base=~/RustTutorial
 
 cd $base
-g++ preprocess.cpp
+make
 cd files
 for file in *.dm
 do
-	echo "Processing $file"
-	cd ..
-	./a.out files/$file
-	x=${file%.dm}
-	mv files/$x.md markdown/
-	cd -
+        echo "Processing $file"
+        cd ..
+        ./preprocessor files/$file
+        x=${file%.dm}
+        mv files/$x.md markdown/
+        cd -
 done
 cd $base
-rm a.out
