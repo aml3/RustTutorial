@@ -1,7 +1,7 @@
 #Syntax - Variables and Functions#
-Rust's syntax is heavily influenced by C/C++. For example, scope is determined 
-by `{` and `}`, and statements end with a `;`. Like other C-family languages, 
-whitespace (e.g. tabs and spaces) is ignored by the compiler. 
+Rust's syntax is heavily influenced by C/C++. For example, the scope of blocks
+is determined by braces (`{` and `}`), and statements end with a `;`. Like other
+C-family languages, whitespace (e.g. tabs and spaces) is ignored by the compiler. 
 
 Unlike C/C++, we create a function using the `fn` keyword.
 
