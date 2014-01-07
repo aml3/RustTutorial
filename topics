@@ -1,0 +1,27 @@
+Collatz
+variables
+functions
+controls
+
+Decryption/Encryption?...idk
+pointers
+boxes
+ownership
+
+structs
+enums (they're new!)
+
+modules
+
+Web scraper
+closures
+lambdas
+concurrency
+
+io
+error handling
+
+ffi
+
+traits
+generics
