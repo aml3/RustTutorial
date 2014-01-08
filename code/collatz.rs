@@ -8,7 +8,7 @@ fn main() {
 
 	// Loop until we find a number with more than 10 steps
 	println("\nUsing `loop`");
-	loop {
+	loop { // equivalent to `while true`
 		let steps = collatz(i);
 		println(format!("{:?} has {:?} steps", i, steps));
 

@@ -84,7 +84,7 @@ hr {
 }
 
 
-pre , code { 
+pre, code { 
 	color: #000; 
 	font-family: monospace; 
 	font-size: 0.88em; 
@@ -104,6 +104,7 @@ pre {
 pre code { 
 	border: 0px !important; 
 	padding: 0;
+	margin: 0;
 }
 
 code { padding: 0 3px 0 3px; }
@@ -122,7 +123,17 @@ table {
 
 td { 
 	vertical-align: top; 
-	width: 50%; 
+}
+
+td.lines {
+	margin: 0; 
+	padding: 0; 
+	width: 3ex;
+}
+
+td.lines pre {
+	width: 3ex; 
+	margin: 0;
 }
 
 @media only screen and (min-width: 480px) {
