@@ -1,8 +1,6 @@
 .tabs ul {
 	box-align: left;
 	list-style: none;
-	padding-left: 0;
-	margin: 0;
 }
 
 .tabs li {
@@ -12,7 +10,7 @@
 }
 
 .tabs a {
-	padding:5px 10px;
+	padding:1px 8px;
 	display:inline-block;
 	background:#fff;
 	color:#000;
@@ -23,4 +21,7 @@
 	color:#000;
 }
 
-ul.tabs { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; }
+ul.tabs { 
+	margin: 0;
+	padding: 0;
+}
