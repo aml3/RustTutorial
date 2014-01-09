@@ -22,6 +22,9 @@ def process(name):
     # Format is: scode <tabs?> <dict of arguments>
     CODE_TAG = "scode"
 
+    # Format is: pnav <prev file> <next file>
+    NAV_TAG = "pnav"
+
     header = '''<!DOCTYPE html>
 <html>
     <head>
@@ -162,6 +165,15 @@ def process(name):
             if in_para:
                 fout.write("</p>\n")
                 in_para = False
+
+        #Case for the bottom-of-page navigation stuff
+        elif tokens[0] == NAV_TAG:
+            if in_para:
+                fout.write("</p>\n")
+                in_para = False
+            fout.write('<hr/><a href="http://aml3.github.io/RustTutorial/html/' + tokens[1]+ '" style="float:left"> Previous </a>')
+            #fout.write('<span style="width: 70% margin-left: auto margin-right: auto"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></span>')
+            fout.write('<a href="http://aml3.github.io/RustTutorial/html/' + tokens[2]+ '" style="float:right"> Next </a>')
 
         #The default case
         else:

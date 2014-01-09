@@ -1,0 +1,24 @@
+ptitle Baby's first Rust
+phead 1 Getting Started: Variables, Functions, and Syntax
+In this section, we'll be going over the basic syntax of Rust. You'll learn about
+variable declarations and mutability, how to work with functions, and some basic
+control flow, like loops, conditionals, and matching. Finally, we'll be analyzing
+a simple program to find
+plink http://en.wikipedia.org/wiki/Collatz_conjecture Collatz numbers
+, which will utilize the topics in this section.
+phead 2 Variables
+phead 4 Declaration and Typing:
+phead 4 Mutability:
+phead 4 Static Variables:
+phead 2 Functions
+phead 4 Definition and Invocation:
+phead 4 Parameters and Return Values:
+phead 2 Looping
+phead 4 <code class="src"><span class="k">loop</span></code> :
+phead 4 <code class="src"><span class="k">while</span></code> :
+phead 4 <code class="src"><span class="k">for</span></code>: 
+phead 2 Conditionals
+phead 2 Matching
+phead 2 Collatz
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': False}
+pnav toc.html 02.html

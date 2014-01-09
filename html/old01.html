@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/tabs.css" rel="stylesheet" type="text/css">
+<title>01</title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="js/tabs.js"></script>
+</head>
+
+<body>
+<h1 id="syntax-variables-and-functions">Syntax - Variables and Functions</h1>
+<p>Rust's syntax will look familar to C++ and Java programmers. For example, the scope of blocks
+is determined by braces (<code>{</code> and <code>}</code>), and statements end with a <code>;</code>. 
+Whitespace (e.g. tabs) is ignored by the compiler. </p>
+<p>Unlike Java, we create a function using the <code>fn</code> keyword.</p>
+
+<ul class="tabs">
+	<li><a href="#tab1-1">Rust</a></li>
+	<li><a href="#tab1-2">Java</a></li>
+</ul>
+<div id="tab1-1">
+	<pre><code class="rust">
+fn main() {
+	println("Hello World");
+}
+	</code></pre>
+</div>
+<div id="tab1-2">
+	<pre><code class="java">
+public static void main(String[] args) {
+	System.out.println("Hello World");
+}
+	</code></pre>
+</div>
+
+<p>A better example would be something like the following.</p>
+<ul class="tabs">
+	<li><a href="#tab2-1">Rust</a></li>
+	<li><a href="#tab2-2">Java</a></li>
+</ul>
+<div id="tab2-1">
+<table>
+	<tr>
+		<td class="lines">
+			<pre>
+<code>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</code></pre>
+		</td>
+		<td style="margin: 0; padding: 0;">
+			<pre style="margin: 0;">
+<code class="rust">fn main() {
+	let x = get_hello();
+	println(x); // prints `Hello World!`
+
+	// variables can be redeclared with the same name
+	let x = get_hello2();
+	println(x); // prints `Hello World, again!`
+}
+
+fn get_hello() -> ~str {
+	return "Hello World!";
+}
+
+// lines without a `;` are the same as using a return statement
+fn get_hello2() -> ~str {
+	"Hello World, again!"
+}
+</code></pre>
+		</td>
+	</tr>
+</table>
+</div>
+<div id="tab2-2">
+			<pre><code class="java">
+public static void main(String[] args) {
+	String x = get_hello();
+	System.out.println(x); // prints `Hello World!`
+}
+
+public String get_hello() {
+	return "Hello World!";
+}
+			</code></pre>
+</div>
+
+<p>Several things are going on in this code. First, variables are declared using 
+the <code>let</code> keyword. Notice that we didn't have to specify a type, such as <code>str</code>.
+The Rust compiler can infer types, as long as there isn't any ambiguity. If 
+something is ambiguous, a type can be specificied using <code>variable-name :type</code>.</p>
+<ul class="tabs">
+	<li><a href="#tab3-1">Rust</a></li>
+	<li><a href="#tab3-2">Java</a></li>
+</ul>
+<div id="tab3-1">
+	<pre><code class="rust">
+let x = 4; // uses the compiler default
+let y: uint = 4; // forces y to be an unsigned integer
+let z: i32 = 4; // forces z to be a 32-bit integer
+	</code></pre>
+</div>
+<div id="tab3-2">
+	<pre><code class="java">
+int x = 4; // uses the compiler default
+// Java doesn't have unsigned ints
+int z = 4; // depends on the machine
+	</code></pre>
+</div>
+
+<p>Second, we specified a return type using <code>-&gt;</code>. This is fairly straightforward. 
+Any valid type can be returned by a function.</p>
+<p>Third, there's a <code>&amp;</code> in the return type. This is will discussed in the <a href="file:///home/wil/RustTutorial/markdown/03.md">third 
+	section</a>. The next section deals with the basics of Rust variables and 
+syntax.</p>
+<hr />
+<p><a href="http://aml3.github.io/RustTutorial/html/02.md">Next</a></p>
+
+</body>
+</html>
