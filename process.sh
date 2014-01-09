@@ -2,8 +2,8 @@
 
 base=$(pwd)
 echo $base
-for file in html/*.html
+for file in html/pre/*.page
 do
-	echo "Processing $file"
-	python process.py $file
+    #Change this if python 2 is your default.
+	python2 process.py $file
 done

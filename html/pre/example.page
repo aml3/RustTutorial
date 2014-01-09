@@ -1,0 +1,35 @@
+ptitle Example of using the title tag
+phead 1 This is an example heading
+phead 4 Notice how the number determines the degree
+Normal text is straightforward, as is code from a file.
+scode False {'loc': 'code/collatz.rs', 'range': False, 'lang': 'rust'}
+A blank line creates a new paragraph.
+
+Now for code embedded
+scode False {'lang': 'rust'}
+code
+let x = 5;
+edoc
+in text!
+
+This next bit shows the improved tabs, as well as how to embed highlighted code
+which isn't from a file. The empty dictionary is currently necessary because
+I'm lazy.
+scode True {}
+rcode
+let x = 4; // uses the compiler default
+let y: uint = 4; // forces y to be an unsigned integer
+let z: i32 = 4; // forces z to be a 32-bit integer
+edocr
+jcode
+int x = 4; // uses the compiler default
+// Java doesn't have unsigned ints
+int z = 4; // depends on the machine
+edocj
+There is, of course, the option also to embed highlighted blocks without tabs.
+scode False {'lang': 'rust'}
+codeb
+let no: ~str = ~"yes";
+bedoc
+
+plink http://www.google.com This is an example of the link tag.
