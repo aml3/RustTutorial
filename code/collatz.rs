@@ -42,7 +42,7 @@ fn collatz(N: int) -> int {
 fn collatz2(N: int, steps: int) -> int {
 	if N == 1 { return steps; }
 
-	match N%2 {
+	match N % 2 {
 		0 => { return collatz2(N/2, steps+1); }
 		_ => { return collatz2(N*3+1, steps+1); }
 	}
