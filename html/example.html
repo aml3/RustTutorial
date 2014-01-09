@@ -128,29 +128,21 @@ This next bit shows the improved tabs, as well as how to embed highlighted code
 which isn't from a file. The empty dictionary is currently necessary because
 I'm lazy.
 </p>
-  <ul class="tabs">
-        <li><a href="#tab1-1">Rust</a></li>
-        <li><a href="#tab1-2">Java</a></li>
-    </ul>
-    <div id="tab1-1"><pre>
-                    <table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+<ul class="tabs">
+	<li><a href="#tab1-1">Rust</a></li>
+	<li><a href="#tab1-2">Java</a></li>
+</ul>
+<div id="tab1-1" class="tabcode"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span> <span class="c1">// uses the compiler default</span>
 <span class="k">let</span> <span class="n">y</span><span class="o">:</span> <span class="k">uint</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span> <span class="c1">// forces y to be an unsigned integer</span>
-<span class="k">let</span> <span class="n">z</span><span class="o">:</span> <span class="k">i32</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span> <span class="c1">// forces z to be a 32-bit integer</span>
-</pre></div>
-</td></tr></table>
-					</pre></div>
-                            
-    <div id="tab1-2"><pre>
-                    <table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+<span class="k">let</span> <span class="n">z</span><span class="o">:</span> <span class="k">i32</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span> <span class="c1">// forces z to be a 32-bit integer</span></pre></div></td></tr></table></pre></div><div id="tab1-2"><pre><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span> <span class="c1">// uses the compiler default</span>
 <span class="c1">// Java doesn&#39;t have unsigned ints</span>
-<span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span> <span class="c1">// depends on the machine</span>
-</pre></div>
-</td></tr></table>
-					</pre></div><p>
+<span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span> <span class="c1">// depends on the machine</span></pre></div></td></tr></table></div>
+
+<p>
 There is, of course, the option also to embed highlighted blocks without tabs.
 </p>
 <table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">no</span><span class="o">:</span> <span class="o">~</span><span class="k">str</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;yes&quot;</span><span class="p">;</span>

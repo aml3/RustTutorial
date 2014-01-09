@@ -109,17 +109,17 @@ def process(name):
         <li><a href="#tab{0}-1">Rust</a></li>
         <li><a href="#tab{0}-2">Java</a></li>
     </ul>
-    <div id="tab{0}-1"><pre>
+    <div id="tab{0}-1" class="tabcode">
                     '''.format(tab_num))
 
                 fout.write(highlight(rust.getvalue(), lexers['rust'], block_formatter) + '\n')
-                fout.write('''\t\t\t\t\t</pre></div>
+                fout.write('''\t\t\t\t\t</div>
                             
-    <div id="tab{0}-2"><pre>
+    <div id="tab{0}-2" class="tabcode">
                     '''.format(tab_num))
 
                 fout.write(highlight(java.getvalue(), lexers['java'], block_formatter) + '\n')
-                fout.write('''\t\t\t\t\t</pre></div>''')                        
+                fout.write('''\t\t\t\t\t</div>''')                        
                 tab_num += 1
 
             else:
