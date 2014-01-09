@@ -140,7 +140,7 @@ def process(name):
                         l = fin.readline()
                     high = highlight(code.getvalue(), lexers[args['lang']], snip_formatter)
                     fout.seek(-5, os.SEEK_CUR)
-                    fout.write('<span class="src">' + high[22:-13] + "</span>" + '\n')
+                    fout.write('<span class="src"><code>' + high[22:-13] + "</code></span>" + '\n')
 
                 else:
                     raise Exception("Bad codeblock format!")
