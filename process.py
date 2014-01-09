@@ -5,7 +5,7 @@ from pygments import highlight
 from pygments.lexers import RustLexer, JavaLexer
 from pygments.formatters import HtmlFormatter
 
-from cStringIO import StringIO
+from io import StringIO
 
 from ast import literal_eval
 
@@ -40,10 +40,10 @@ def process(name):
     footer = '''    </body>
                 </html>'''
 
-    print "File is " + name
+    print("File is ", name)
     fin = open(name, 'r')
     fout = open("html/" + name.split('.')[0][9:] + ".html", 'w')
-    print "Saving to " + "html/" + name.split('.')[0][9:] + ".html"
+    print("Saving to html/", name.split('.')[0][9:], ".html")
 
     block_formatter = HtmlFormatter(linenos = True, cssclass = "src")
     snip_formatter = HtmlFormatter(linenos = False, cssclass = "src")
@@ -139,7 +139,7 @@ def process(name):
                         code.write(l)
                         l = fin.readline()
                     high = highlight(code.getvalue(), lexers[args['lang']], snip_formatter)
-                    fout.seek(-5, os.SEEK_CUR)
+                    fout.seek(fout.tell()-5)
                     fout.write('<span class="src"><code>' + high[22:-13] + "</code></span>" + '\n')
 
                 else:
@@ -187,6 +187,6 @@ def process(name):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print "exiting" 
+        print("exiting") 
         sys.exit()
     process(sys.argv[1])
