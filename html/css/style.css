@@ -11,7 +11,7 @@ body {
 	font-size:12px;
 	line-height:1.5em;
 	background:#fefefe;
-	width: 80ex;
+	width: 85ex;
 	margin: 10px auto;
 	padding: 1em;
 	outline: 1300px solid #FAFAFA;
@@ -97,7 +97,7 @@ pre {
 	white-space: pre; 
 	white-space: pre-wrap; 
 	word-wrap: break-word; 
-	padding: 0.1px 12px;
+	padding: 0.1px 10px 0px 10px;
 	margin: 0;
 }
 
@@ -125,7 +125,7 @@ td {
 	vertical-align: top; 
 }
 
-td.lines {
+/*td.lines {
 	margin: 0; 
 	padding: 0; 
 	width: 3ex;
@@ -134,7 +134,7 @@ td.lines {
 td.lines pre {
 	width: 3ex; 
 	margin: 0;
-}
+}*/
 
 @media only screen and (min-width: 480px) {
 body{font-size:14px;}

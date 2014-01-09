@@ -12,6 +12,14 @@ let x = 5;
 edoc
 in text!
 
+Another embedding
+scode False {'lang': 'rust'}
+code
+let x = 5;
+let y = 4;
+edoc
+in text!
+
 This next bit shows the improved tabs, as well as how to embed highlighted code
 which isn't from a file. The empty dictionary is currently necessary because
 I'm lazy.

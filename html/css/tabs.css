@@ -39,3 +39,27 @@ ul.tabs {
 	padding: 5px 10px 5px 10px;
 	border: 1px solid #CCC;
 }
+
+.linenodiv {
+	text-align: left;
+}
+
+/* Debugging */
+
+/*
+.tabbed .linenodiv pre {
+	background: blue;
+}
+
+.notab .linenodiv pre {
+	background: red;
+}
+*/
+
+.notab .linenos {
+	width: 4ex;
+}
+
+.tabbed .linenos {
+	width: 4ex;
+}

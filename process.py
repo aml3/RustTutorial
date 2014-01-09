@@ -81,7 +81,9 @@ def process(name):
                     if start <= i and (not args['range'] or i <= stop):
                         code.write(l)
                     i += 1
+                fout.write('<div class="notab">')
                 fout.write(highlight(code.getvalue(), lexers[args['lang']], block_formatter) + '\n')
+                fout.write('</div>')
                 f.close()
                 code.close()
 
@@ -112,13 +114,17 @@ def process(name):
     <div id="tab{0}-1" class="tabcode">
                     '''.format(tab_num))
 
+                fout.write('<div class="tabbed">');
                 fout.write(highlight(rust.getvalue(), lexers['rust'], block_formatter) + '\n')
+                fout.write('</div>');
                 fout.write('''\t\t\t\t\t</div>
                             
     <div id="tab{0}-2" class="tabcode">
                     '''.format(tab_num))
 
+                fout.write('<div class="tabbed">');
                 fout.write(highlight(java.getvalue(), lexers['java'], block_formatter) + '\n')
+                fout.write('</div>');
                 fout.write('''\t\t\t\t\t</div>''')                        
                 tab_num += 1
 
@@ -130,7 +136,9 @@ def process(name):
                     while l != "bedoc\n":
                         code.write(l)
                         l = fin.readline()
+                    fout.write('<div class="notab">');
                     fout.write(highlight(code.getvalue(), lexers[args['lang']], block_formatter) +'\n')
+                    fout.write("</div>");
 
                 elif l == "code\n":
                     in_para = True
@@ -140,7 +148,7 @@ def process(name):
                         l = fin.readline()
                     high = highlight(code.getvalue(), lexers[args['lang']], snip_formatter)
                     fout.seek(fout.tell()-5)
-                    fout.write('<span class="src"><code>' + high[22:-13] + "</code></span>" + '\n')
+                    fout.write('<span class="src"><code>' + high[22:-13].rstrip() + "</code></span>" + '\n')
 
                 else:
                     raise Exception("Bad codeblock format!")
