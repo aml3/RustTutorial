@@ -1,27 +1,34 @@
-Collatz
+(Program: Collatz)
 variables
 functions
 controls
+program structure
 
-Decryption/Encryption?...idk
+(Program: Decryption/Encryption?)
 pointers
 boxes
-ownership
+ownership 
+io 
+error handling
+strings
+vectors
 
+(Program: ???)
 structs
 enums (they're new!)
+tuples
 
+(Program: ???)
 modules
 
-Web scraper
+(Program: Web scraper)
 closures
 lambdas
 concurrency
 
-io
-error handling
-
+(Program: ???)
 ffi
 
+(Program: MapReduce)
 traits
 generics
