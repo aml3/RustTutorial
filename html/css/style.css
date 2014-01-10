@@ -17,6 +17,11 @@ body {
 	outline: 1300px solid #FAFAFA;
 }
 
+.optional {
+	opacity: 0.5;
+	font-style: italic;
+}
+
 #title h1 {
 	display: inline-block;
 }

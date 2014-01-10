@@ -25,6 +25,9 @@ def process(name):
     # Format is: pnav <prev file> <next file>
     NAV_TAG = "pnav"
 
+    # Format is: syntax
+    SYNTAX_TAG = "synx" # wanted something that wouldn't be casually typed
+
     header = '''<!DOCTYPE html>
 <html>
     <head>
@@ -152,6 +155,37 @@ def process(name):
 
                 else:
                     raise Exception("Bad codeblock format!")
+        #Case for syntax
+        elif tokens[0] == SYNTAX_TAG:
+            fout.write('<span class="src"><code>')
+            code = StringIO()
+            l = fin.readline()
+            while l != "xnys\n":
+                code.write(l)
+                l = fin.readline()
+            high = code.getvalue()
+            code.close()
+            parsed = StringIO()
+            index = high.find("[")
+            while index != -1:
+                left = high[:index]
+                right = high[index+1:]
+                parsed.write(highlight(left, lexers[args['lang']], snip_formatter)[22:-13].rstrip())
+                parsed.write('<span class="optional">')
+                # handle ]
+                high = right
+                index = high.find("]")
+                if index == -1:
+                    raise Exception("Bad codeblock format!")
+                left = high[:index]
+                parsed.write(highlight(left, lexers[args['lang']], snip_formatter)[22:-13].rstrip())
+                parsed.write('</span>')
+                high = high[index+1:]
+                index = high.find("[")
+            fout.write(parsed.getvalue())
+            fout.write('</code></span>')
+            parsed.close()
+                    
         #Case for page title 
         elif tokens[0] == TITLE_TAG:
             fout.write("<title>" + ' '.join(tokens[1:]) + "</title>\n")

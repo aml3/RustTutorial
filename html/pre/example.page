@@ -20,6 +20,20 @@ let y = 4;
 edoc
 in text!
 
+Example of syntax
+synx
+let name[: type = value];
+xnys
+
+And another
+synx
+match condition {
+	value0 => { code }
+	[value1 => { code }]
+	[_ => { code }]
+}
+xnys
+
 This next bit shows the improved tabs, as well as how to embed highlighted code
 which isn't from a file. The empty dictionary is currently necessary because
 I'm lazy.

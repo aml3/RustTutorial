@@ -130,7 +130,7 @@ a simple program to find
 <span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
 
-	<span class="k">match</span> <span class="n">N</span><span class="o">%</span><span class="m">2</span> <span class="p">{</span>
+	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
 		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">);</span> <span class="p">}</span>
 		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">);</span> <span class="p">}</span>
 	<span class="p">}</span>
