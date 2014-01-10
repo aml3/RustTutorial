@@ -157,7 +157,7 @@ def process(name):
                     raise Exception("Bad codeblock format!")
         #Case for syntax
         elif tokens[0] == SYNTAX_TAG:
-            fout.write('<span class="src"><code>')
+            fout.write('<span class="src"><pre>')
             code = StringIO()
             l = fin.readline()
             while l != "xnys\n":
@@ -182,8 +182,11 @@ def process(name):
                 parsed.write('</span>')
                 high = high[index+1:]
                 index = high.find("[")
+                # sort of like flushing a buffer
+                if index == -1:
+                    parsed.write(high)
             fout.write(parsed.getvalue())
-            fout.write('</code></span>')
+            fout.write('</pre></span>')
             parsed.close()
                     
         #Case for page title 
