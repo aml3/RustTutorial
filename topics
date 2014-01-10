@@ -2,6 +2,7 @@
 variables
 functions
 controls
+program structure
 
 (Program: Decryption/Encryption?)
 pointers
@@ -9,6 +10,8 @@ boxes
 ownership 
 io 
 error handling
+strings
+vectors
 
 (Program: ???)
 structs
