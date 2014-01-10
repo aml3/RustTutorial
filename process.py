@@ -157,7 +157,7 @@ def process(name):
                     raise Exception("Bad codeblock format!")
         #Case for syntax
         elif tokens[0] == SYNTAX_TAG:
-            fout.write('<span class="src"><pre>')
+            fout.write('<div class="src"><pre>')
             code = StringIO()
             l = fin.readline()
             while l != "xnys\n":
@@ -166,27 +166,19 @@ def process(name):
             high = code.getvalue()
             code.close()
             parsed = StringIO()
-            index = high.find("[")
-            while index != -1:
-                left = high[:index]
-                right = high[index+1:]
-                parsed.write(highlight(left, lexers[args['lang']], snip_formatter)[22:-13].rstrip())
-                parsed.write('<span class="optional">')
-                # handle ]
-                high = right
-                index = high.find("]")
-                if index == -1:
-                    raise Exception("Bad codeblock format!")
-                left = high[:index]
-                parsed.write(highlight(left, lexers[args['lang']], snip_formatter)[22:-13].rstrip())
-                parsed.write('</span>')
-                high = high[index+1:]
-                index = high.find("[")
-                # sort of like flushing a buffer
-                if index == -1:
-                    parsed.write(high)
+            tokens = high.split("`")
+            flag = False
+            for token in tokens:
+                if not flag:
+                    flag = True
+                    parsed.write(highlight(token, lexers['rust'], snip_formatter)[22:-13])
+                    parsed.write('<span class="optional">')
+                else:
+                    flag = False
+                    parsed.write(highlight(token, lexers['rust'], snip_formatter)[22:-13])
+                    parsed.write('</span>')
             fout.write(parsed.getvalue())
-            fout.write('</pre></span>')
+            fout.write('</pre></div>')
             parsed.close()
                     
         #Case for page title 

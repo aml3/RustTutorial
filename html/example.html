@@ -130,14 +130,15 @@ in text!
 </p>
 <p>
 Example of syntax
-<span class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="optional"><span class="o">:</span> <span class="k">type</span> <span class="o">=</span> <span class="n">value</span></span>;
-</pre></span></p>
+<div class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="optional"><span class="o">:</span> <span class="k">type</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class="p">;</span><span class="optional"></pre></div></p>
 <p>
 And another
-<span class="src"><pre><span class="k">match</span> <span class="n">condition</span> <span class="p">{</span>
-	<span class="n">value0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span><span class="optional"><span class="n">value1</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span></span><span class="optional"><span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span></span>
-}
-</pre></span></p>
+<div class="src"><pre><span class="k">match</span> <span class="n">condition</span> <span class="p">{</span>
+	<span class="n">value0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span>
+	<span class="optional"><span class="n">value1</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span>
+</span>	<span class="optional"><span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">code</span> <span class="p">}</span>
+</span><span class="p">}</span><span class="optional"></pre></div></p>
 <p>
 This next bit shows the improved tabs, as well as how to embed highlighted code
 which isn't from a file. The empty dictionary is currently necessary because

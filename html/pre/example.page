@@ -22,15 +22,15 @@ in text!
 
 Example of syntax
 synx
-let name[: type = value];
+let name`: type = value`;
 xnys
 
 And another
 synx
 match condition {
 	value0 => { code }
-	[value1 => { code }]
-	[_ => { code }]
+	`value1 => { code }`
+	`_ => { code }`
 }
 xnys
 
