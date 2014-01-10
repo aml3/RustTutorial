@@ -151,35 +151,26 @@ def process(name):
                         l = fin.readline()
                     high = highlight(code.getvalue(), lexers[args['lang']], snip_formatter)
                     fout.seek(fout.tell()-5)
-                    fout.write('<span class="src"><code>' + high[22:-13].rstrip() + "</code></span>" + '\n')
+                    fout.write('<span class="src"><code>' + high[22:-14].rstrip() + "</code></span>" + '\n')
 
                 else:
                     raise Exception("Bad codeblock format!")
+                code.close()
         #Case for syntax
         elif tokens[0] == SYNTAX_TAG:
             fout.write('<div class="src"><pre>')
-            code = StringIO()
             l = fin.readline()
             while l != "xnys\n":
-                code.write(l)
+                tokens = l.split("`")
+                for index, token in enumerate(tokens):
+                    if index % 2 == 1:
+                        fout.write('<span class="optional">')
+                    fout.write(highlight(token, lexers['rust'], snip_formatter)[22:-14])
+                    if index % 2 == 1:
+                        fout.write('</span>')
+                fout.write("\n")
                 l = fin.readline()
-            high = code.getvalue()
-            code.close()
-            parsed = StringIO()
-            tokens = high.split("`")
-            flag = False
-            for token in tokens:
-                if not flag:
-                    flag = True
-                    parsed.write(highlight(token, lexers['rust'], snip_formatter)[22:-13])
-                    parsed.write('<span class="optional">')
-                else:
-                    flag = False
-                    parsed.write(highlight(token, lexers['rust'], snip_formatter)[22:-13])
-                    parsed.write('</span>')
-            fout.write(parsed.getvalue())
             fout.write('</pre></div>')
-            parsed.close()
                     
         #Case for page title 
         elif tokens[0] == TITLE_TAG:
