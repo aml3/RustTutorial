@@ -185,11 +185,197 @@ else if are optional for validity.
 </pre></div>
 </td></tr></table>
 </div><h2 id="Pattern_Matching" >Pattern Matching</h2>
-<h2 id="Looping" >Looping</h2>
-<h3 id="<code_class='src'><span_class='k'>loop</span></code>:" ><code class='src'><span class='k'>loop</span></code>:</h3>
+<p>
+Rather than using a “switch” statement, as you may have seen in other 
+languages, Rust uses the 
+<span class="src"><code><span class="k">match</span></code></span>
+statement. 
+<span class="src"><code><span class="k">match</span></code></span>
+is like a significantly more 
+powerful and useful switch, and is used fairly extensively in a lot of Rust 
+code. You’ll run into it frequently, particularly in the error handling 
+kection. 
+<span class="src"><code><span class="k">match</span></code></span>
+works like this:
+</p>
+  <ul class="tabs">
+        <li><a href="#tab1-1">Rust</a></li>
+        <li><a href="#tab1-2">Java</a></li>
+    </ul>
+    <div id="tab1-1" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span>
+<span class="k">match</span> <span class="n">x</span> <span class="p">{</span>
+	<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">;</span> <span class="p">}</span> <span class="c1">// Do nothing</span>
+	<span class="m">4</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">foo</span><span class="p">();</span> <span class="p">}</span>
+	<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">bar</span><span class="p">();</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                            
+    <div id="tab1-2" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+<span class="k">switch</span> <span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">case</span> <span class="mi">0</span><span class="o">:</span> <span class="n">foo</span><span class="o">();</span>
+		<span class="k">break</span><span class="o">;</span>
+	<span class="k">case</span> <span class="mi">4</span><span class="o">:</span> <span class="n">bar</span><span class="o">();</span>
+		<span class="k">break</span><span class="o">;</span>
+	<span class="k">default</span><span class="o">:</span> <span class="n">zot</span><span class="o">();</span>
+		<span class="k">break</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><p>
+The
+<span class="src"><code><span class="n">_</span></code></span>
+is equivalent to
+<span class="src"><code><span class="k">default</span></code></span>
+in Java. It serves as a catchall.
+</p>
+<p>
+Unlike a
+<span class="src"><code><span class="k">switch</span></code></span>
+statement, a
+<span class="src"><code><span class="k">match</span></code></span>
+statement must always exectute a branch, even if that branch does nothing.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span>
+<span class="k">match</span> <span class="n">x</span> <span class="p">{</span> <span class="c1">// Illegal</span>
+	<span class="m">0</span> <span class="o">=&gt;</span> <span class="n">foo</span><span class="p">(),</span>
+	<span class="m">1</span> <span class="o">=&gt;</span> <span class="n">bar</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">match</span> <span class="n">x</span> <span class="p">{</span> <span class="c1">// Legal</span>
+	<span class="m">0</span> <span class="o">=&gt;</span> <span class="n">foo</span><span class="p">(),</span>
+	<span class="m">1</span> <span class="o">=&gt;</span> <span class="n">bar</span><span class="p">(),</span>
+	<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+In summary, this is what a
+<span class="src"><code><span class="k">match</span></code></span>
+statement's syntax looks like:
+<div class="src"><pre><span class="k">match</span> <span class="n">expression</span> <span class="p">{</span>
+	<span class="n">value0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="optional"><span class="n">code</span></span> <span class="p">}</span>
+	<span class="n">value1</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="optional"><span class="n">code</span></span> <span class="p">}</span>
+	
+<span class="p">}</span>
+</pre></div><h2 id="Looping" >Looping</h2>
+In Rust loops, we can use
+<span class="src"><code><span class="k">break</span></code></span>
+to get out of the loop and 
+<span class="src"><code><span class="n">continue</span></code></span>
+to skip to the next iteration.
 <h3 id="<code_class='src'><span_class='k'>while</span></code>:" ><code class='src'><span class='k'>while</span></code>:</h3>
-<h3 id="<code_class='src'><span_class='k'>for</span></code>:_" ><code class='src'><span class='k'>for</span></code>: </h3>
-<h2 id="Functions" >Functions</h2>
+Like most other languages, a
+<span class="src"><code><span class="k">while</span></code></span>
+loop iterates until its condition is false. Its condition must be of type bool.
+</p>
+  <ul class="tabs">
+        <li><a href="#tab2-1">Rust</a></li>
+        <li><a href="#tab2-2">Java</a></li>
+    </ul>
+    <div id="tab2-1" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="k">mut</span> <span class="n">i</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="m">10</span> <span class="p">{</span> 
+	<span class="n">println</span><span class="p">(</span><span class="s">&quot;Hi there&quot;</span><span class="p">);</span>
+	<span class="n">i</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span> <span class="c1">// Rust doesn&#39;t support ++ or --</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                            
+    <div id="tab2-2" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+<span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">println</span><span class="o">(</span><span class="s">&quot;Hi there&quot;</span><span class="o">);</span>
+	<span class="n">i</span><span class="o">++;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><p>
+Its syntax is
+<div class="src"><pre><span class="k">while</span> <span class="n">condition</span> <span class="p">{</span>
+	<span class="optional"><span class="n">code</span></span>
+<span class="p">}</span>
+</pre></div><h3 id="<code_class='src'><span_class='k'>loop</span></code>:" ><code class='src'><span class='k'>loop</span></code>:</h3>
+<span class="src"><code><span class="k">loop</span></code></span>
+is syntactic sugar for 
+<span class="src"><code><span class="k">while</span> <span class="k">true</span></code></span>
+.
+</p>
+<p>
+For completeness, its syntax is
+<div class="src"><pre><span class="k">loop</span> <span class="p">{</span>
+	<span class="optional"><span class="n">code</span></span>
+<span class="p">}</span>
+</pre></div><h3 id="<code_class='src'><span_class='k'>for</span></code>:_" ><code class='src'><span class='k'>for</span></code>: </h3>
+Rust’s for loop is more akin to Java’s for-each loop than to a traditional 
+for loop. It uses an iterator to loop over the items in a variable. 
+Since we haven’t covered vectors, for now it’s enough to know that we can 
+achieve a traditional for loop by using 
+<span class="src"><code><span class="n">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></code></span>
+, which creates a set of integers, <code>[start, end)</code>.
+</p>
+  <ul class="tabs">
+        <li><a href="#tab3-1">Rust</a></li>
+        <li><a href="#tab3-2">Java</a></li>
+    </ul>
+    <div id="tab3-1" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="c1">// Calls foo with 0, 1, ..., 9</span>
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">foo</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                            
+    <div id="tab3-2" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="c1">// Calls foo with 0, 1, ..., 9</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+	<span class="n">foo</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><h2 id="Functions" >Functions</h2>
 <h3 id="Definition_and_Invocation:" >Definition and Invocation:</h3>
 <h3 id="Parameters_and_Return_Values:" >Parameters and Return Values:</h3>
 <h3 id="Expressions:" >Expressions:</h3>

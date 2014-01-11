@@ -217,10 +217,178 @@ else {
 }
 bedoc
 phead 2 Pattern Matching
+Rather than using a “switch” statement, as you may have seen in other 
+languages, Rust uses the 
+scode False { 'lang' : 'rust' }
+code
+match 
+edoc
+statement. 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+is like a significantly more 
+powerful and useful switch, and is used fairly extensively in a lot of Rust 
+code. You’ll run into it frequently, particularly in the error handling 
+kection. 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+works like this:
+scode True {}
+rcode
+let x = 4;
+match x {
+	0 => { ; } // Do nothing
+	4 => { foo(); }
+	_ => { bar(); }
+}
+edocr
+jcode
+int x = 4;
+switch (x) {
+	case 0: foo();
+		break;
+	case 4: bar();
+		break;
+	default: zot();
+		break;
+}
+edocj
+The
+scode False { 'lang' : 'rust'}
+code
+_
+edoc
+is equivalent to
+scode False { 'lang' : 'java' }
+code
+default
+edoc
+in Java. It serves as a catchall.
+
+Unlike a
+scode False { 'lang' : 'java' }
+code
+switch
+edoc
+statement, a
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statement must always exectute a branch, even if that branch does nothing.
+scode False { 'lang' : 'rust' }
+codeb
+let x = 4;
+match x { // Illegal
+	0 => foo(),
+	1 => bar()
+}
+
+match x { // Legal
+	0 => foo(),
+	1 => bar(),
+	_ => ;
+}
+bedoc
+In summary, this is what a
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statement's syntax looks like:
+synx
+match expression {
+	value0 => { `code` }
+	value1 => { `code` }
+	
+}
+xnys
 phead 2 Looping
-phead 3 <code class='src'><span class='k'>loop</span></code>:
+In Rust loops, we can use
+scode False { 'lang' : 'rust' }
+code
+break
+edoc
+to get out of the loop and 
+scode False { 'lang' : 'rust' }
+code
+continue
+edoc
+to skip to the next iteration.
 phead 3 <code class='src'><span class='k'>while</span></code>:
+Like most other languages, a
+scode False { 'lang' : 'rust' }
+code
+while
+edoc
+loop iterates until its condition is false. Its condition must be of type bool.
+scode True {}
+rcode
+let mut i = 0;
+while i < 10 { 
+	println("Hi there");
+	i += 1; // Rust doesn't support ++ or --
+}
+edocr
+jcode
+int i = 0;
+while (i < 10) {
+	println("Hi there");
+	i++;
+}
+edocj
+Its syntax is
+synx
+while condition {
+	`code`
+}
+xnys
+phead 3 <code class='src'><span class='k'>loop</span></code>:
+scode False { 'lang' : 'rust' }
+code
+loop
+edoc
+is syntactic sugar for 
+scode False { 'lang' : 'rust' }
+code
+while true
+edoc
+.
+
+For completeness, its syntax is
+synx
+loop {
+	`code`
+}
+xnys
 phead 3 <code class='src'><span class='k'>for</span></code>: 
+Rust’s for loop is more akin to Java’s for-each loop than to a traditional 
+for loop. It uses an iterator to loop over the items in a variable. 
+Since we haven’t covered vectors, for now it’s enough to know that we can 
+achieve a traditional for loop by using 
+scode False { 'lang' : 'rust' }
+code
+range(start, end)
+edoc
+, which creates a set of integers, <code>[start, end)</code>.
+
+scode True {}
+rcode
+// Calls foo with 0, 1, ..., 9
+for i in range(0, 10) {
+	foo(i);
+}
+edocr
+jcode
+// Calls foo with 0, 1, ..., 9
+for (int i = 0; i < 10; i++) {
+	foo(i);
+}
+edocj
 phead 2 Functions
 phead 3 Definition and Invocation:
 phead 3 Parameters and Return Values:
