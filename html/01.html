@@ -185,7 +185,100 @@ else if are optional for validity.
 </pre></div>
 </td></tr></table>
 </div><h2 id="Pattern_Matching" >Pattern Matching</h2>
-<h2 id="Looping" >Looping</h2>
+<p>
+Rather than use a "switch" statement, as you may have seen in other languages,
+Rust uses the
+<span class="src"><code><span class="k">match</span></code></span>
+statement. 
+<span class="src"><code><span class="k">match</span></code></span>
+is like a significantly more powerful and useful switch, and is used fairly 
+extensively in a lot of Rust code. You'll run into it frequently, particularly
+in the error handling section. 
+<span class="src"><code><span class="k">match</span></code></span>
+works like this: 
+</p>
+  <ul class="tabs">
+        <li><a href="#tab1-1">Rust</a></li>
+        <li><a href="#tab1-2">Java</a></li>
+    </ul>
+    <div id="tab1-1" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">is_odd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">true</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s odd&quot;</span><span class="p">),</span> <span class="c1">// notice the comma</span>
+	<span class="k">false</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s even&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                            
+    <div id="tab1-2" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">switch</span> <span class="o">(</span><span class="n">is_odd</span><span class="o">(</span><span class="n">x</span><span class="o">))</span> <span class="o">{</span>
+	<span class="k">case</span> <span class="kc">true</span><span class="o">:</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;It&#39;s odd&quot;</span><span class="o">);</span>
+		   <span class="k">break</span><span class="o">;</span>
+	<span class="k">case</span> <span class="kc">false</span><span class="o">:</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;It&#39;s even&quot;</span><span class="o">);</span>
+		    <span class="k">break</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><p>
+Like with if statements, the condition does not need to be in parentheses.
+</p>
+<p>
+If we want multiple statements in a branch, we need to use braces.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">is_odd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">true</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s odd&quot;</span><span class="p">);</span> <span class="n">foo</span><span class="p">();</span> <span class="p">},</span>
+	<span class="k">false</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s even&quot;</span><span class="p">);</span> 
+			<span class="n">foo</span><span class="p">();</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+ 
+<span class="src"><code><span class="k">match</span></code></span>
+statements are more strict than switch statements. When it is run, one of the
+branches must be evaluated. This means that the patterns being used to match a
+variable must be exhaustive. For booleans, this is easy; there's only 
+<span class="src"><code><span class="k">true</span></code></span>
+and
+<span class="src"><code><span class="k">false</span></code></span>
+.
+</p>
+<p>
+For other types, listing all the possibilities would be tedious or impossible.
+Fortunately, using a <code>_</code> as a pattern serves at a catchall, similar
+to 
+<span class="src"><code><span class="k">default</span></code></span>
+in Java.
+</p>
+<p>
+For instance, if we want to match an integer, the compiler will check to check
+to make sure every integer value is represented in the match patterns. To 
+prevent insanity, we can use a <code>_</code>.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">eval</span><span class="p">()</span> <span class="p">{</span>
+	<span class="m">1</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s one&quot;</span><span class="p">),</span>
+	<span class="m">2</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;It&#39;s two&quot;</span><span class="p">),</span>
+	<span class="n">_</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;In the catchall&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Looping" >Looping</h2>
 <h3 id="<code_class='src'><span_class='k'>loop</span></code>:" ><code class='src'><span class='k'>loop</span></code>:</h3>
 <h3 id="<code_class='src'><span_class='k'>while</span></code>:" ><code class='src'><span class='k'>while</span></code>:</h3>
 <h3 id="<code_class='src'><span_class='k'>for</span></code>:_" ><code class='src'><span class='k'>for</span></code>: </h3>

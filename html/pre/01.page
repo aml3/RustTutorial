@@ -217,6 +217,90 @@ else {
 }
 bedoc
 phead 2 Pattern Matching
+Rather than use a "switch" statement, as you may have seen in other languages,
+Rust uses the
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statement. 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+is like a significantly more powerful and useful switch, and is used fairly 
+extensively in a lot of Rust code. You'll run into it frequently, particularly
+in the error handling section. 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+works like this: 
+scode True {}
+rcode
+match is_odd(x) {
+	true => println("It's odd"), // notice the comma
+	false => println("It's even")
+}
+edocr
+jcode
+switch (is_odd(x)) {
+	case true: System.out.println("It's odd");
+		   break;
+	case false: System.out.println("It's even");
+		    break;
+}
+edocj
+Like with if statements, the condition does not need to be in parentheses.
+
+If we want multiple statements in a branch, we need to use braces.
+scode False { 'lang' : 'rust' }
+codeb
+match is_odd(x) {
+	true => { println("It's odd"); foo(); },
+	false => { println("It's even"); 
+			foo(); }
+}
+bedoc
+ 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statements are more strict than switch statements. When it is run, one of the
+branches must be evaluated. This means that the patterns being used to match a
+variable must be exhaustive. For booleans, this is easy; there's only 
+scode False { 'lang' : 'rust'} 
+code
+true
+edoc
+and
+scode False { 'lang' : 'rust' }
+code
+false
+edoc
+.
+
+For other types, listing all the possibilities would be tedious or impossible.
+Fortunately, using a <code>_</code> as a pattern serves at a catchall, similar
+to 
+scode False { 'lang' : 'java' }
+code
+default
+edoc
+in Java.
+
+For instance, if we want to match an integer, the compiler will check to check
+to make sure every integer value is represented in the match patterns. To 
+prevent insanity, we can use a <code>_</code>.
+scode False { 'lang' : 'rust' }
+codeb
+match eval() {
+	1 => println("It's one"),
+	2 => println("It's two"),
+	_ => println("In the catchall")
+}
+bedoc
 phead 2 Looping
 phead 3 <code class='src'><span class='k'>loop</span></code>:
 phead 3 <code class='src'><span class='k'>while</span></code>:
