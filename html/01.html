@@ -121,8 +121,70 @@ to make a mutable local variable, you must introduce another keyword -
 </pre></div>
 </td></tr></table>
 </div><h3 id="Static_Variables:" >Static Variables:</h3>
-<h2 id="Conditionals" >Conditionals</h2>
-<h2 id="Pattern_Matching" >Pattern Matching</h2>
+<p>
+Rust does have support for static variables; however, as they lead to all manner of trouble,
+particularly when dealing with concurrent programs, all static items must be either 
+immutable or only used in an unsafe function or block (which will be discussed later). 
+Static variables always require a type specification, and are declared with the static keyword, as so: 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">static</span> <span class="n">foo</span><span class="o">:</span> <span class="k">int</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Conditionals" >Conditionals</h2>
+<p>
+Rust’s conditionals are very similar to what you’ve probably seen in Java or another 
+C-family language, with two slight exceptions. The associated keywords are 
+<span class="src"><code><span class="k">if</span></code></span>
+,
+<span class="src"><code><span class="k">else</span> <span class="k">if</span></code></span>
+, and
+<span class="src"><code><span class="k">else</span></code></span>
+, and are followed by a boolean expression (it must be of type
+<span class="src"><code><span class="n">bool</span></code></span>
+; no type conversion will take place automatically) in the case of 
+<span class="src"><code><span class="k">if</span></code></span>
+ and
+<span class="src"><code><span class="k">else</span> <span class="k">if</span></code></span>
+. The boolean expressions need not be in parentheses, but the body of the conditional 
+block must be enclosed in braces. That is, whereas in Java, you could have something like: 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">if</span><span class="o">(</span><span class="n">foo</span> <span class="o">==</span> <span class="mi">5</span><span class="o">)</span> 
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;it worked&quot;</span><span class="o">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+the equivalent in Rust:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">5</span> 
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it worked&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+is illegal. The following is a legal conditional block; note that the else and 
+else if are optional for validity.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">5</span> <span class="p">{</span> 
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s five&quot;</span><span class="p">);</span> 
+<span class="p">}</span>
+<span class="k">else</span> <span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">6</span> <span class="p">{</span> 
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s six&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span> 
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s not five or six&quot;</span><span class="p">);</span> 
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Pattern_Matching" >Pattern Matching</h2>
 <h2 id="Looping" >Looping</h2>
 <h3 id="<code_class='src'><span_class='k'>loop</span></code>:" ><code class='src'><span class='k'>loop</span></code>:</h3>
 <h3 id="<code_class='src'><span_class='k'>while</span></code>:" ><code class='src'><span class='k'>while</span></code>:</h3>

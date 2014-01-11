@@ -148,7 +148,74 @@ let mut foo = 5;
 foo = 6;
 bedoc
 phead 3 Static Variables:
+Rust does have support for static variables; however, as they lead to all manner of trouble,
+particularly when dealing with concurrent programs, all static items must be either 
+immutable or only used in an unsafe function or block (which will be discussed later). 
+Static variables always require a type specification, and are declared with the static keyword, as so: 
+scode False {'lang': 'rust'}
+codeb
+static foo: int = 5;
+bedoc
+
 phead 2 Conditionals
+Rust’s conditionals are very similar to what you’ve probably seen in Java or another 
+C-family language, with two slight exceptions. The associated keywords are 
+scode False {'lang': 'rust'} 
+code
+if
+edoc
+,
+scode False {'lang': 'rust'} 
+code
+else if
+edoc
+, and
+scode False {'lang': 'rust'} 
+code
+else
+edoc
+, and are followed by a boolean expression (it must be of type
+scode False {'lang': 'rust'} 
+code
+bool
+edoc
+; no type conversion will take place automatically) in the case of 
+scode False {'lang': 'rust'} 
+code
+if
+edoc
+ and
+scode False {'lang': 'rust'} 
+code
+else if
+edoc
+. The boolean expressions need not be in parentheses, but the body of the conditional 
+block must be enclosed in braces. That is, whereas in Java, you could have something like: 
+scode False {'lang': 'java'} 
+codeb
+if(foo == 5) 
+    System.out.println("it worked");
+bedoc
+the equivalent in Rust:
+scode False {'lang': 'rust'}
+codeb
+if foo == 5 
+    println("it worked");
+bedoc
+is illegal. The following is a legal conditional block; note that the else and 
+else if are optional for validity.
+scode False {'lang': 'rust'}
+codeb
+if foo == 5 { 
+    println("it’s five"); 
+}
+else if foo == 6 { 
+    println("it’s six");
+}
+else { 
+    println("it’s not five or six"); 
+}
+bedoc
 phead 2 Pattern Matching
 phead 2 Looping
 phead 3 <code class='src'><span class='k'>loop</span></code>:
