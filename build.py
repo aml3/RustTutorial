@@ -45,6 +45,8 @@ def build(direc):
                     toc.write('</ol>\n')
                     level -= 1
                 text = link[0].replace('_', ' ')
+                if text.rstrip()[-1] == ':':
+                    text = text.rstrip()[:-1]
                 toc.write('<li> <a href="'+ path +'#' + link[0] + '">' + text + '</a> </li>\n')
     toc.write('</ol>\n')
     toc.write('</ol>\n')

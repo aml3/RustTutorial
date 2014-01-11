@@ -228,10 +228,9 @@ scode False { 'lang' : 'rust' }
 code
 match
 edoc
-is like a significantly more 
-powerful and useful switch, and is used fairly extensively in a lot of Rust 
-code. You’ll run into it frequently, particularly in the error handling 
-kection. 
+is like a significantly more powerful and useful switch, and is used fairly 
+extensively in a lot of Rust code. You'll run into it frequently, particularly
+in the error handling section. 
 scode False { 'lang' : 'rust' }
 code
 match
