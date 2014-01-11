@@ -39,7 +39,7 @@ def build(direc):
             level = 2
             for link in links[1:]:
                 if link[1] > level:
-                    toc.write('<ol type="'+levels[level-1 % 5]+'">' +'\n')
+                    toc.write('<ol type="'+levels[level % 5]+'">' +'\n')
                     level += 1
                 elif link[1] < level:
                     toc.write('</ol>\n')
