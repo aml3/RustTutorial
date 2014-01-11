@@ -8,14 +8,151 @@ plink http://en.wikipedia.org/wiki/Collatz_conjecture Collatz numbers
 , which will utilize the topics in this section.
 phead 2 Variables
 phead 3 Declaration and Typing:
+scode False {'lang': 'rust'}
+codeb
+let foo = 5; 
+bedoc
+The above is a valid variable declaration in Rust. There are several things you should notice about this. 
+First, the keyword 
+scode False {'lang': 'rust'}
+code
+let
+edoc
+.
+scode False {'lang': 'rust'}
+code
+let
+edoc
+ is used to declare local variables in Rust, and must preface every such declaration. 
+Second, if you're accustomed to other statically-typed languages, you've probably noticed that there is no explicit statement of type here; instead, the compiler infers that 
+scode False {'lang': 'rust'}
+code
+foo
+edoc
+ should be an int. 
+Rust's compiler is typically very good at correctly inferring types for variables. However, there are times that it draws an incorrect conclusion, usually when the type a variable could be is in some manner ambiguous. We can circumvent this by explicitly telling the compiler what type you want the variable to be, as so: 
+scode False {'lang': 'rust'} 
+codeb
+let foo: int = 5;
+bedoc
+Rust's primitive types are essentially what you would expect with a background in C-like languages:
+
+<table style="width: 90%; margin-left: auto; margin-right: auto; text-align: center; border: 1px solid #ccc">
+    <tr>
+        <td style="width: 30%; border: 1px solid #ccc">
+            Integral types:
+        </td>
+        <td style="border: 1px solid #ccc">
+            Signed and unsigned integers (
+scode False {'lang': 'rust'}
+code
+int
+edoc
+ and 
+scode False {'lang': 'rust'}
+code
+uint
+edoc
+, respectively), in 8-, 16-, 32-, and 64- bit sizes (
+scode False {'lang': 'rust'}
+code
+i8
+edoc
+,
+scode False {'lang': 'rust'}
+code
+u8
+edoc
+, etc.)
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Floating point:
+        </td>
+        <td style="border: 1px solid #ccc">
+            32- and 64- bit floating point numbers (
+scode False {'lang': 'rust'}
+code
+f32
+edoc
+ and 
+scode False {'lang': 'rust'}
+code
+f64
+edoc
+)
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Booleans:
+        </td>
+        <td style="border: 1px solid #ccc">
+scode False {'lang': 'rust'}
+code
+bool
+edoc
+, which has values of 
+scode False {'lang': 'rust'}
+code
+true
+edoc
+ or 
+scode False {'lang': 'rust'}
+code
+false
+edoc
+.
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Characters:
+        </td>
+        <td style="border: 1px solid #ccc">
+scode False {'lang': 'rust'}
+code
+char
+edoc
+, a 4-byte Unicode codepoint representation.
+        </td>
+    </tr>
+</table>
+
+
+Finally, you should notice that the above declaration uses =, as you would expect, for assignment, and terminates the statement with a semicolon. Operators in Rust are essentially all the same as in languages with which you're familiar, and we'll discuss the difference between statements and expressions (which are not terminated by a semicolon) later in this section. 
+To summarize, declarations of local variables in Rust follow the form: 
+synx
+let name`: type` `= value`;
+xnys
+where the grayed out items are optional.
 phead 3 Mutability:
+scode False {'lang': 'rust'}
+codeb
+let foo = 5;
+foo = 6;
+bedoc
+The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
+by default, immutable - meaning that you cannot change their assigned value once given. In order 
+to make a mutable local variable, you must introduce another keyword - 
+scode False {'lang': 'rust'}
+code
+mut
+edoc
+. The following code will work:
+scode False {'lang': 'rust'}
+codeb
+let mut foo = 5;
+foo = 6;
+bedoc
 phead 3 Static Variables:
 phead 2 Conditionals
 phead 2 Pattern Matching
 phead 2 Looping
-phead 3 <code class="src"><span class="k">loop</span></code> :
-phead 3 <code class="src"><span class="k">while</span></code> :
-phead 3 <code class="src"><span class="k">for</span></code>: 
+phead 3 <code class='src'><span class='k'>loop</span></code>:
+phead 3 <code class='src'><span class='k'>while</span></code>:
+phead 3 <code class='src'><span class='k'>for</span></code>: 
 phead 2 Functions
 phead 3 Definition and Invocation:
 phead 3 Parameters and Return Values:

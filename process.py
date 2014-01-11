@@ -54,6 +54,7 @@ def process(name):
 
     in_para = False
     tab_num = 1
+    fragments = []
 
     fout.write(header)
     # Note: You should lead with a heading.
@@ -178,7 +179,9 @@ def process(name):
 
         #Case for a heading    
         elif tokens[0] == HEADING_TAG:
-            fout.write("<h" + tokens[1] + ">" + ' '.join(tokens[2:]) + "</h" + tokens[1] + ">\n")
+            link = '_'.join(tokens[2:])
+            fout.write("<h" + tokens[1] + ' id="' + link + '" >' + ' '.join(tokens[2:]) + "</h" + tokens[1] + ">\n")
+            fragments.append((link,int(tokens[1])))
 
         #Case for a link
         elif tokens[0] == LINK_TAG:
@@ -209,9 +212,10 @@ def process(name):
                 fout.write("<p>\n")
                 in_para = True
             fout.write(line)
-
+    fout.write(footer)
     fin.close()
     fout.close()
+    return fragments
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

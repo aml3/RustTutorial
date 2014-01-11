@@ -10,7 +10,7 @@
     </head>
     <body>
 <title>Getting Started with Rust</title>
-<h1>Getting Started: Variables, Functions, and Syntax</h1>
+<h1 id="Getting_Started:_Variables,_Functions,_and_Syntax" >Getting Started: Variables, Functions, and Syntax</h1>
 <p>
 In this section, we'll be going over the basic syntax of Rust. You'll learn about
 variable declarations and mutability, how to work with functions, and some basic
@@ -18,25 +18,123 @@ control flow, like loops, conditionals, and matching. Finally, we'll be analyzin
 a simple program to find
 <a href="http://en.wikipedia.org/wiki/Collatz_conjecture">Collatz numbers</a>
 , which will utilize the topics in this section.
-<h2>Variables</h2>
-<h3>Declaration and Typing:</h3>
-<h3>Mutability:</h3>
-<h3>Static Variables:</h3>
-<h2>Conditionals</h2>
-<h2>Pattern Matching</h2>
-<h2>Looping</h2>
-<h3><code class="src"><span class="k">loop</span></code> :</h3>
-<h3><code class="src"><span class="k">while</span></code> :</h3>
-<h3><code class="src"><span class="k">for</span></code>: </h3>
-<h2>Functions</h2>
-<h3>Definition and Invocation:</h3>
-<h3>Parameters and Return Values:</h3>
-<h3>Expressions:</h3>
-<h2>Collatz</h2>
-<h3>The Collatz Conjecture:</h3>
-<h3>Finding Collatz Numbers:</h3>
-<h3>Breaking Down the Code:</h3>
+<h2 id="Variables" >Variables</h2>
+<h3 id="Declaration_and_Typing:" >Declaration and Typing:</h3>
 </p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span> 
+</pre></div>
+</td></tr></table>
+</div><p>
+The above is a valid variable declaration in Rust. There are several things you should notice about this. 
+First, the keyword 
+<span class="src"><code><span class="k">let</span></code></span>
+.
+<span class="src"><code><span class="k">let</span></code></span>
+ is used to declare local variables in Rust, and must preface every such declaration. 
+Second, if you're accustomed to other statically-typed languages, you've probably noticed that there is no explicit statement of type here; instead, the compiler infers that 
+<span class="src"><code><span class="n">foo</span></code></span>
+ should be an int. 
+Rust's compiler is typically very good at correctly inferring types for variables. However, there are times that it draws an incorrect conclusion, usually when the type a variable could be is in some manner ambiguous. We can circumvent this by explicitly telling the compiler what type you want the variable to be, as so: 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span><span class="o">:</span> <span class="k">int</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Rust's primitive types are essentially what you would expect with a background in C-like languages:
+</p>
+<p>
+<table style="width: 90%; margin-left: auto; margin-right: auto; text-align: center; border: 1px solid #ccc">
+    <tr>
+        <td style="width: 30%; border: 1px solid #ccc">
+            Integral types:
+        </td>
+        <td style="border: 1px solid #ccc">
+            Signed and unsigned integers (
+<span class="src"><code><span class="k">int</span></code></span>
+ and 
+<span class="src"><code><span class="k">uint</span></code></span>
+, respectively), in 8-, 16-, 32-, and 64- bit sizes (
+<span class="src"><code><span class="k">i8</span></code></span>
+,
+<span class="src"><code><span class="k">u8</span></code></span>
+, etc.)
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Floating point:
+        </td>
+        <td style="border: 1px solid #ccc">
+            32- and 64- bit floating point numbers (
+<span class="src"><code><span class="k">f32</span></code></span>
+ and 
+<span class="src"><code><span class="k">f64</span></code></span>
+)
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Booleans:
+        </td>
+        <td style="border: 1px solid #ccc">
+<span class="src"><code><span class="n">bool</span></code></span>
+, which has values of 
+<span class="src"><code><span class="k">true</span></code></span>
+ or 
+<span class="src"><code><span class="k">false</span></code></span>
+.
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ccc">
+            Characters:
+        </td>
+        <td style="border: 1px solid #ccc">
+<span class="src"><code><span class="n">char</span></code></span>
+, a 4-byte Unicode codepoint representation.
+        </td>
+    </tr>
+</table>
+</p>
+<p>
+Finally, you should notice that the above declaration uses =, as you would expect, for assignment, and terminates the statement with a semicolon. Operators in Rust are essentially all the same as in languages with which you're familiar, and we'll discuss the difference between statements and expressions (which are not terminated by a semicolon) later in this section. 
+To summarize, declarations of local variables in Rust follow the form: 
+<div class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="optional"><span class="o">:</span> <span class="k">type</span></span> <span class="optional"><span class="o">=</span> <span class="n">value</span></span><span class="p">;</span>
+</pre></div>where the grayed out items are optional.
+<h3 id="Mutability:" >Mutability:</h3>
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
+by default, immutable - meaning that you cannot change their assigned value once given. In order 
+to make a mutable local variable, you must introduce another keyword - 
+<span class="src"><code><span class="k">mut</span></code></span>
+. The following code will work:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="k">mut</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="Static_Variables:" >Static Variables:</h3>
+<h2 id="Conditionals" >Conditionals</h2>
+<h2 id="Pattern_Matching" >Pattern Matching</h2>
+<h2 id="Looping" >Looping</h2>
+<h3 id="<code_class='src'><span_class='k'>loop</span></code>:" ><code class='src'><span class='k'>loop</span></code>:</h3>
+<h3 id="<code_class='src'><span_class='k'>while</span></code>:" ><code class='src'><span class='k'>while</span></code>:</h3>
+<h3 id="<code_class='src'><span_class='k'>for</span></code>:_" ><code class='src'><span class='k'>for</span></code>: </h3>
+<h2 id="Functions" >Functions</h2>
+<h3 id="Definition_and_Invocation:" >Definition and Invocation:</h3>
+<h3 id="Parameters_and_Return_Values:" >Parameters and Return Values:</h3>
+<h3 id="Expressions:" >Expressions:</h3>
+<h2 id="Collatz" >Collatz</h2>
+<h3 id="The_Collatz_Conjecture:" >The Collatz Conjecture:</h3>
+<h3 id="Finding_Collatz_Numbers:" >Finding Collatz Numbers:</h3>
+<h3 id="Breaking_Down_the_Code:" >Breaking Down the Code:</h3>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -136,4 +234,5 @@ a simple program to find
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><hr/><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float:right"> Next </a>
+</div><hr/><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float:right"> Next </a>    </body>
+                </html>
