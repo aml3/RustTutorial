@@ -202,9 +202,9 @@ def process(name):
             if in_para:
                 fout.write("</p>\n")
                 in_para = False
-            fout.write('<hr/><a href="http://aml3.github.io/RustTutorial/html/' + tokens[1]+ '" style="float:left"> Previous </a>')
-            #fout.write('<span style="width: 70% margin-left: auto margin-right: auto"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></span>')
-            fout.write('<a href="http://aml3.github.io/RustTutorial/html/' + tokens[2]+ '" style="float:right"> Next </a>')
+            fout.write('<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/' + tokens[1]+ '" style="float:left"> Previous </a></td>')
+            fout.write('<td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td>')
+            fout.write('<td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/' + tokens[2]+ '" style="float: right"> Next </a></td></tr></table><br/>')
 
         #The default case
         else:
