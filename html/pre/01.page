@@ -293,19 +293,6 @@ match x { // Legal
 	_ => ;
 }
 bedoc
-In summary, this is what a
-scode False { 'lang' : 'rust' }
-code
-match
-edoc
-statement's syntax looks like:
-synx
-match expression {
-	value0 => { `code` }
-	value1 => { `code` }
-	
-}
-xnys
 phead 2 Looping
 In Rust loops, we can use
 scode False { 'lang' : 'rust' }
@@ -390,7 +377,63 @@ for (int i = 0; i < 10; i++) {
 edocj
 phead 2 Functions
 phead 3 Definition and Invocation:
+Functions are created by using fn. Like loops, their bodies must be surrounded 
+by braces. Functions are invoked by name. To make sure we’re on the same page, 
+here’s the syntax for a function that accepts no parameters and doesn't return 
+anything:
+synx
+fn name() {
+	`code`
+}
+xnys
+
+And here is an example:
+scode True {}
+rcode
+fn foo() {
+	println("foo");
+}
+edocr
+jcode
+void foo() {
+	System.out.println("foo");
+}
+edocj
+Interestingly, functions can be declared inside other functions. This means 
+that the following is valid Rust:
+scode False { 'lang' : 'rust' }
+codeb
+fn foo() {
+	fn bar() { println("bar"); }
+	bar();
+}
+bedoc
 phead 3 Parameters and Return Values:
+When parameters are given to a function, their types must be specified using
+the same syntax that specifies a type during variable declaration, 
+scode False { 'lang' : 'rust' }
+code
+name :type
+edoc
+.
+scode True {}
+rcode
+fn rprime_sum(x: int, y: int, m: int) {
+	match (x+y)%m {
+		0 => println("Multiple"),
+		_ => println("Relatively prime")
+	}
+}
+edocr
+jcode
+void rprime_sum(int x, int y, int m) {
+	if ((x+y)%m == 0)
+		System.out.println("Multiple");
+	else
+		System.out.println("Relatively prime");
+}
+edocj
+A return value is specified using <code>-></code>.
 phead 3 Expressions:
 phead 2 Collatz
 phead 3 The Collatz Conjecture:
