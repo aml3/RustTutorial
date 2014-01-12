@@ -249,7 +249,7 @@ Unlike a
 <span class="src"><code><span class="k">switch</span></code></span>
 statement, a
 <span class="src"><code><span class="k">match</span></code></span>
-statement must always exectute a branch, even if that branch does nothing.
+statement must always execute a branch, even if that branch does nothing.
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -493,13 +493,91 @@ list. To actually return a value, we use
 </div>					</div><h3 id="Expressions:" >Expressions:</h3>
 <p>
 Rust’s use of the semicolon may seem confusing when first encountered, but, once
- learned  is intuitive and remarkably useful. Essentially, everything that 
- doesn’t end with a semicolon is an expression, and everything that does is a 
- statement.
-<h2 id="Collatz" >Collatz</h2>
+learned  is intuitive and remarkably useful. Essentially, everything that 
+doesn’t end with a semicolon is an expression, and everything that does is a 
+statement. Expressions have an associated value, whereas statements do not (technically, 
+they have a value of nil or void, but for our purposes this is the same as having none.)
+You can think of the semicolon in Rust as suppressing the value of an expression, and 
+thereby turning it into a statement.
+</p>
+<p>
+Almost everything in Rust can be an expression - the only exceptions are declarations.
+This allows Rust code to be very nicely concise. For example, as we saw above in the 
+section on return values, an explicit return is not necessary in most cases. In general, this
+use of expressions makes the 
+<span class="src"><code><span class="k">return</span></code></span>
+ keyword necessary only when you want to leave a function early. Another common use of Rust's
+expressions is easy conditional assignment of variables:
+</p>
+  <ul class="tabs">
+        <li><a href="#tab7-1">Rust</a></li>
+        <li><a href="#tab7-2">Java</a></li>
+    </ul>
+    <div id="tab7-1" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">5</span> <span class="p">{</span>
+                <span class="s">&quot;five&quot;</span>
+          <span class="p">}</span>
+          <span class="k">else</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">6</span> <span class="p">{</span>
+                <span class="s">&quot;six&quot;</span>
+          <span class="p">}</span>
+          <span class="k">else</span> <span class="p">{</span>
+                <span class="s">&quot;neither&quot;</span>
+          <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                            
+    <div id="tab7-2" class="tabcode">
+                    <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="src"><pre><span class="n">string</span> <span class="n">foo</span><span class="o">;</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;five&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;six&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="k">else</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;neither&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><h2 id="Collatz" >Collatz</h2>
 <h3 id="The_Collatz_Conjecture:" >The Collatz Conjecture:</h3>
-<h3 id="Finding_Collatz_Numbers:" >Finding Collatz Numbers:</h3>
-<h3 id="Breaking_Down_the_Code:" >Breaking Down the Code:</h3>
+<p>
+The
+<a href="http://en.wikipedia.org/wiki/Collatz_conjecture">Collatz Conjecture,</a>
+ named after Lothar Collatz, states that, starting from any natural number, it is
+possible to reach 1 by following certain rules:
+<ol>
+    <li> Take n:
+        <ul>
+            <li> If n is odd, set n = 3n+1.
+            <li> Else, if n is even, set n = n/2.
+        </ul>
+    <li> Repeat the procedure until 1 is reached.
+</ol>
+</p>
+<p>
+The conjecture is currently unproven, although there is evidence that it should be true. 
+<h3 id="Finding_a_Collatz_Sequence:" >Finding a Collatz Sequence:</h3>
+As you might imagine, given the simple nature of the conjecture's rules, it's quite easy to 
+find the Collatz sequence for a given number programmatically. The below is Rust code to do just that:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -555,13 +633,13 @@ Rust’s use of the semicolon may seem confusing when first encountered, but, on
 	<span class="c1">// Basic function call</span>
 	<span class="n">println</span><span class="p">(</span><span class="s">&quot;Single Call&quot;</span><span class="p">);</span>
 	<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-	<span class="n">println</span><span class="p">(</span><span class="n">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">));</span>
+	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
 
 	<span class="c1">// Loop until we find a number with more than 10 steps</span>
 	<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Using `loop`&quot;</span><span class="p">);</span>
 	<span class="k">loop</span> <span class="p">{</span> <span class="c1">// equivalent to `while true`</span>
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-		<span class="n">println</span><span class="p">(</span><span class="n">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">));</span>
+		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
 
 		<span class="k">if</span> <span class="n">steps</span> <span class="o">&gt;</span> <span class="m">10</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
 
@@ -572,7 +650,7 @@ Rust’s use of the semicolon may seem confusing when first encountered, but, on
 	<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Using `for`&quot;</span><span class="p">);</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">11</span><span class="p">)</span> <span class="p">{</span>
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-		<span class="n">println</span><span class="p">(</span><span class="n">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">));</span>
+		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
 	<span class="p">}</span>
 
 	<span class="c1">// Equivalent loop</span>
@@ -580,25 +658,36 @@ Rust’s use of the semicolon may seem confusing when first encountered, but, on
 	<span class="n">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span>
 	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="m">10</span> <span class="p">{</span>
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-		<span class="n">println</span><span class="p">(</span><span class="n">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">));</span>
+		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
 		
 		<span class="n">i</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="n">collatz</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+	<span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
 	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
 
 	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
-		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">);</span> <span class="p">}</span>
-		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">);</span> <span class="p">}</span>
+		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
+		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float: right"> Next </a></td></tr></table><br/>    </body>
+</div><h3 id="Breaking_Down_the_Code:" >Breaking Down the Code:</h3>
+<p>
+This code uses the topics you've learned in this section, so we'll walk through it and discuss their use.
+The first thing to notice is the first line:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+All Rust programs must begin as such, with a 'main' function.
+</p>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float: right"> Next </a></td></tr></table><br/>    </body>
                 </html>
