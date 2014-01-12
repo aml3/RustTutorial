@@ -12,7 +12,7 @@ fn main() {
 		let steps = collatz(i);
 		println!("{:?} has {:?} steps", i, steps);
 
-		if steps > 10 { break; }
+		if steps > 10 { break }
 
 		i += 1;
 	}
@@ -40,6 +40,7 @@ fn collatz(N: int) -> int {
 }
 
 fn collatz2(N: int, steps: int) -> int {
+	println!("Step {:d}: {:d}", steps, N);
 	if N == 1 { return steps; }
 
 	match N % 2 {

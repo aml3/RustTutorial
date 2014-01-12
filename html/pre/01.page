@@ -529,8 +529,89 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': False}
 phead 3 Breaking Down the Code:
 This code uses the topics you've learned in this section, so we'll walk through it and discuss their use.
-The first thing to notice is the first line:
-scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 1, 'stop': 1}
-All Rust programs must begin as such, with a 'main' function.
+The first thing to notice is the first two lines:
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 1, 'stop': 2}
+All Rust programs must begin as such, with a 'main' function. This is much the same as other C-family languages.
+As for the second line, note the declaration of
+scode False {'lang': 'rust'}
+code
+i
+edoc
+ as 
+scode False {'lang': 'rust'}
+code
+mut
+edoc
+; as discussed in the section on mutability, this is necessary to allow us to be able to
+change the value of
+scode False {'lang': 'rust'}
+code
+i
+edoc
+ later in the code.
 
+The next bit of code should be fairly straightforward. We're calling 
+scode False {'lang': 'rust'}
+code
+println
+edoc
+, Rust's console output function, and finding the Collatz sequence for the value 1.
+However, the next line is a little more interesting:
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 7, 'stop': 7}
+Note here that we have an exclamation point after the function name. This indicates that we are calling a 
+macro (more on these later). For your purposes right now, know that 
+scode False {'lang': 'rust'}
+code
+println!
+edoc
+is how we do formatted output in Rust - the format string syntax is reminiscent of Python's.
+Here, we use 
+scode False {'lang': 'rust'}
+code
+{:?}
+edoc
+ to indicate that any type passed in will be accepted; later, on line 43, we use 
+scode False {'lang': 'rust'}
+code
+{:d}
+edoc
+ to indicate that we expect an integer.
+
+We also use the looping constructs discussed earlier; note the use on line 15 of
+scode False {'lang': 'rust'}
+code
+break
+edoc
+ to exit the infinite loop made with
+scode False {'lang': 'rust'}
+code
+loop
+edoc
+.
+
+The first of our non-main functions is fairly boring; note only that we use a function
+call as an expression (with no semicolon) to return a value rather than an explicit return statement.
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 38, 'stop': 40}
+
+The second and final of our non-main functions is slightly more interesting. 
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 42, 'stop': 50}
+Here, in addition to 
+the aforementioned use of a type specifier in
+scode False {'lang': 'rust'}
+code
+println!
+edoc
+ , we also make use of a match block to carry out the actual Collatz conjecture algorithm.
+ Notice that we have to have the
+scode False {'lang': 'rust'}
+code
+_
+edoc
+ arm of the block in order for it to be comprehensive; given this, it makes sense to only have
+one other arm (as opposed to two other arms, one for 0 and one for 1).
+Finally, notice again that, by not putting semicolons at the end of the calls in each arm of the match
+block, we are able to use the value of whichever arm of the block is selected as our return value, without
+an explicit return statement.
+
+Ready for more Rust? Head to the next section.
 pnav toc.html 02.html

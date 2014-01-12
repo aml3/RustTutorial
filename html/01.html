@@ -311,7 +311,7 @@ loop iterates until its condition is false. Its condition must be of type bool.
 4
 5</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
 <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">println</span><span class="o">(</span><span class="s">&quot;Hi there&quot;</span><span class="o">);</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Hi there&quot;</span><span class="o">);</span>
 	<span class="n">i</span><span class="o">++;</span>
 <span class="o">}</span>
 </pre></div>
@@ -545,7 +545,7 @@ expressions is easy conditional assignment of variables:
  7
  8
  9
-10</pre></div></td><td class="code"><div class="src"><pre><span class="n">string</span> <span class="n">foo</span><span class="o">;</span>
+10</pre></div></td><td class="code"><div class="src"><pre><span class="n">String</span> <span class="n">foo</span><span class="o">;</span>
 <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;five&quot;</span><span class="o">;</span>
 <span class="o">}</span>
@@ -627,7 +627,8 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 46
 47
 48
-49</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+49
+50</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="k">let</span> <span class="k">mut</span> <span class="n">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span>
 
 	<span class="c1">// Basic function call</span>
@@ -641,7 +642,7 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
 
-		<span class="k">if</span> <span class="n">steps</span> <span class="o">&gt;</span> <span class="m">10</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">if</span> <span class="n">steps</span> <span class="o">&gt;</span> <span class="m">10</span> <span class="p">{</span> <span class="k">break</span> <span class="p">}</span>
 
 		<span class="n">i</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
 	<span class="p">}</span>
@@ -669,6 +670,7 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Step {:d}: {:d}&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
 	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
 
 	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
@@ -681,13 +683,99 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 </div><h3 id="Breaking_Down_the_Code:" >Breaking Down the Code:</h3>
 <p>
 This code uses the topics you've learned in this section, so we'll walk through it and discuss their use.
-The first thing to notice is the first line:
+The first thing to notice is the first two lines:
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span>
 </pre></div>
 </td></tr></table>
 </div><p>
-All Rust programs must begin as such, with a 'main' function.
+All Rust programs must begin as such, with a 'main' function. This is much the same as other C-family languages.
+As for the second line, note the declaration of
+<span class="src"><code><span class="n">i</span></code></span>
+ as 
+<span class="src"><code><span class="k">mut</span></code></span>
+; as discussed in the section on mutability, this is necessary to allow us to be able to
+change the value of
+<span class="src"><code><span class="n">i</span></code></span>
+ later in the code.
+</p>
+<p>
+The next bit of code should be fairly straightforward. We're calling 
+<span class="src"><code><span class="n">println</span></code></span>
+, Rust's console output function, and finding the Collatz sequence for the value 1.
+However, the next line is a little more interesting:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre>	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Note here that we have an exclamation point after the function name. This indicates that we are calling a 
+macro (more on these later). For your purposes right now, know that 
+<span class="src"><code><span class="n">println</span><span class="o">!</span></code></span>
+is how we do formatted output in Rust - the format string syntax is reminiscent of Python's.
+Here, we use 
+<span class="src"><code><span class="p">{</span><span class="o">:?</span><span class="p">}</span></code></span>
+ to indicate that any type passed in will be accepted; later, on line 43, we use 
+<span class="src"><code><span class="p">{</span><span class="o">:</span><span class="n">d</span><span class="p">}</span></code></span>
+ to indicate that we expect an integer.
+</p>
+<p>
+We also use the looping constructs discussed earlier; note the use on line 15 of
+<span class="src"><code><span class="k">break</span></code></span>
+ to exit the infinite loop made with
+<span class="src"><code><span class="k">loop</span></code></span>
+.
+</p>
+<p>
+The first of our non-main functions is fairly boring; note only that we use a function
+call as an expression (with no semicolon) to return a value rather than an explicit return statement.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">collatz</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+	<span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The second and final of our non-main functions is slightly more interesting. 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Step {:d}: {:d}&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
+	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
+
+	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
+		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
+		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Here, in addition to 
+the aforementioned use of a type specifier in
+<span class="src"><code><span class="n">println</span><span class="o">!</span></code></span>
+ , we also make use of a match block to carry out the actual Collatz conjecture algorithm.
+ Notice that we have to have the
+<span class="src"><code><span class="n">_</span></code></span>
+ arm of the block in order for it to be comprehensive; given this, it makes sense to only have
+one other arm (as opposed to two other arms, one for 0 and one for 1).
+Finally, notice again that, by not putting semicolons at the end of the calls in each arm of the match
+block, we are able to use the value of whichever arm of the block is selected as our return value, without
+an explicit return statement.
+</p>
+<p>
+Ready for more Rust? Head to the next section.
 </p>
 <br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float: right"> Next </a></td></tr></table><br/>    </body>
                 </html>
