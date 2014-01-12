@@ -323,7 +323,7 @@ edocr
 jcode
 int i = 0;
 while (i < 10) {
-	println("Hi there");
+	System.out.println("Hi there");
 	i++;
 }
 edocj
@@ -495,7 +495,7 @@ let foo = if x == 5 {
           }
 edocr
 jcode
-string foo;
+String foo;
 if (x == 5) {
     foo = "five";
 }
