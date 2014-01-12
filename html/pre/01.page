@@ -377,8 +377,13 @@ for (int i = 0; i < 10; i++) {
 edocj
 phead 2 Functions
 phead 3 Definition and Invocation:
-Functions are created by using fn. Like loops, their bodies must be surrounded 
-by braces. Functions are invoked by name. To make sure we’re on the same page, 
+Functions are created by using 
+scode False { 'lang' : 'rust' }
+code
+fn
+edoc
+. Like loops, their bodies must be surrounded 
+by braces. To make sure we’re on the same page, 
 here’s the syntax for a function that accepts no parameters and doesn't return 
 anything:
 synx
@@ -399,6 +404,12 @@ void foo() {
 	System.out.println("foo");
 }
 edocj
+As expected, this function can be called with 
+scode False { 'lang' : 'rust' }
+code
+foo();
+edoc
+
 Interestingly, functions can be declared inside other functions. This means 
 that the following is valid Rust:
 scode False { 'lang' : 'rust' }
@@ -433,8 +444,31 @@ void rprime_sum(int x, int y, int m) {
 		System.out.println("Relatively prime");
 }
 edocj
-A return value is specified using <code>-></code>.
+A return value is specified using <code>-> type</code> after the parameter 
+list. To actually return a value, we use 
+scode False { 'lang' : 'rust' }
+code
+return
+edoc
+(or an expression, discussed next).
+scode True {}
+rcode
+fn square(x: int) -> int {
+	return x*x;
+}
+edocr
+jcode
+int square(int x) {
+	return x*x;
+}
+edocj
+
 phead 3 Expressions:
+Rust’s use of the semicolon may seem confusing when first encountered, but, once
+ learned  is intuitive and remarkably useful. Essentially, everything that 
+ doesn’t end with a semicolon is an expression, and everything that does is a 
+ statement.
+
 phead 2 Collatz
 phead 3 The Collatz Conjecture:
 phead 3 Finding Collatz Numbers:
