@@ -55,3 +55,9 @@ let no: ~str = ~"yes";
 bedoc
 
 plink http://www.google.com This is an example of the link tag.
+
+Now there's shorthand for
+scode
+let foo = 5;
+edoc
+inline code!

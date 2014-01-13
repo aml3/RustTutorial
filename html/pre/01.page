@@ -658,7 +658,7 @@ edoc
  arm of the block in order for it to be comprehensive; given this, it makes sense to only have
 one other arm (as opposed to two other arms, one for 0 and one for 1).
 Finally, notice again that, by not putting semicolons at the end of the calls in each arm of the match
-block, we are able to use the value of whichever arm of the block is selected as our return value, without
+block, we are able to use the value of whichever arm of the block is selected as our return value without
 an explicit return statement.
 
 Ready for more Rust? Head to the next section.
