@@ -20,11 +20,9 @@ a simple program to find
 , which will utilize the topics in this section.
 <h2 id="Variables" >Variables</h2>
 <h3 id="Declaration_and_Typing:" >Declaration and Typing:</h3>
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span> 
-</pre></div>
-</td></tr></table>
-</div><p>
+scodeb
+let foo = 5; 
+bedoc
 The above is a valid variable declaration in Rust. There are several things you should notice about this. 
 First, the keyword 
 <span class="src"><code><span class="k">let</span></code></span>
@@ -102,35 +100,29 @@ To summarize, declarations of local variables in Rust follow the form:
 <div class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="optional"><span class="o">:</span> <span class="k">type</span></span> <span class="optional"><span class="o">=</span> <span class="n">value</span></span><span class="p">;</span>
 </pre></div>where the grayed out items are optional.
 <h3 id="Mutability:" >Mutability:</h3>
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
-<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
-</pre></div>
-</td></tr></table>
-</div><p>
+scodeb
+let foo = 5;
+foo = 6;
+bedoc
 The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
 by default, immutable - meaning that you cannot change their assigned value once given. In order 
 to make a mutable local variable, you must introduce another keyword - 
 <span class="src"><code><span class="k">mut</span></code></span>
 . The following code will work:
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="k">mut</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
-<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
-</pre></div>
-</td></tr></table>
-</div><h3 id="Static_Variables:" >Static Variables:</h3>
-<p>
+scodeb
+let mut foo = 5;
+foo = 6;
+bedoc
+<h3 id="Static_Variables:" >Static Variables:</h3>
 Rust does have support for static variables; however, as they lead to all manner of trouble,
 particularly when dealing with concurrent programs, all static items must be either 
 immutable or only used in an unsafe function or block (which will be discussed later). 
 Static variables always require a type specification, and are declared with the static keyword, as so: 
+scodeb
+static foo: int = 5;
+bedoc
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">static</span> <span class="n">foo</span><span class="o">:</span> <span class="k">int</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
-</pre></div>
-</td></tr></table>
-</div><h2 id="Conditionals" >Conditionals</h2>
+<h2 id="Conditionals" >Conditionals</h2>
 <p>
 Rust’s conditionals are very similar to what you’ve probably seen in Java or another 
 C-family language, with two slight exceptions. The associated keywords are 
@@ -155,37 +147,24 @@ block must be enclosed in braces. That is, whereas in Java, you could have somet
 </td></tr></table>
 </div><p>
 the equivalent in Rust:
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="src"><pre><span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">5</span> 
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it worked&quot;</span><span class="p">);</span>
-</pre></div>
-</td></tr></table>
-</div><p>
+scodeb
+if foo == 5 
+    println("it worked");
+bedoc
 is illegal. The following is a legal conditional block; note that the else and 
 else if are optional for validity.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="src"><pre><span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">5</span> <span class="p">{</span> 
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s five&quot;</span><span class="p">);</span> 
-<span class="p">}</span>
-<span class="k">else</span> <span class="k">if</span> <span class="n">foo</span> <span class="o">==</span> <span class="m">6</span> <span class="p">{</span> 
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s six&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">else</span> <span class="p">{</span> 
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;it’s not five or six&quot;</span><span class="p">);</span> 
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><h2 id="Pattern_Matching" >Pattern Matching</h2>
-<p>
+scodeb
+if foo == 5 { 
+    println("it’s five"); 
+}
+else if foo == 6 { 
+    println("it’s six");
+}
+else { 
+    println("it’s not five or six"); 
+}
+bedoc
+<h2 id="Pattern_Matching" >Pattern Matching</h2>
 Rather than using a “switch” statement, as you may have seen in other 
 languages, Rust uses the 
 <span class="src"><code><span class="k">match</span></code></span>
@@ -278,7 +257,25 @@ To prevent insanity, Rust includes a <code>_</code> that matches everything.
 <span class="o">}</span>
 </pre></div>
 </td></tr></table>
-</div>					</div><h3 id="Tuples:" >Tuples:</h3>
+</div>					</div><span class="src"><code><span class="k">match</span></code></span>
+<p>
+ can also use simple logical expressions in its arms. For example, 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">x</span> <span class="p">{</span>
+    <span class="m">3</span><span class="o">|</span><span class="m">5</span><span class="o">|</span><span class="m">6</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;First arm!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="m">10.</span><span class="p">.</span><span class="m">16</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Second arm!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">_</span>      <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Default arm!&quot;</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+will print "First arm!" if x is 3, 5, or 6, "Second arm!" if x is between 10 and 16, and "Default arm!" otherwise.
+</p>
+<h3 id="Tuples:" >Tuples:</h3>
 <p>
 Rust features an additional type named a tuple. Tuples are groupings of values,
 similar in appearance but different in function to a list of variables. 
@@ -318,12 +315,35 @@ statements too.
 5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">status</span> <span class="p">{</span>
 	<span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Success&quot;</span><span class="p">),</span>
 	<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Pyrrhic victory&quot;</span><span class="p">),</span> <span class="c1">// Any first value matches</span>
-	<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Complete loss&quot;</span><span class="p">)</span>
+	<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Complete loss&quot;</span><span class="p">)</span> <span class="c1">// Any pair of values will match</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h2 id="Looping" >Looping</h2>
+</div><p>
+(note that in this case <code>status</code> would need to be of type
+<span class="src"><code><span class="p">(</span><span class="k">int</span><span class="p">,</span> <span class="n">bool</span><span class="p">)</span></code></span>
+)
+</p>
 <p>
+ 
+<span class="src"><code><span class="k">match</span></code></span>
+ also allows for "pattern guards" - logical expressions that can be used to further
+narrow down what a particular arm selects. For example:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">x</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Decreasing&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">x</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Increasing&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">_</span>              <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">()}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+will print correctly the relation between <code>x</code> and <code>y</code>.
+<h2 id="Looping" >Looping</h2>
 In Rust loops, we can use
 <span class="src"><code><span class="k">break</span></code></span>
 to get out of the loop and 

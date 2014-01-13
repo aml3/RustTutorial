@@ -9,25 +9,21 @@ plink http://en.wikipedia.org/wiki/Collatz_conjecture Collatz numbers
 , which will utilize the topics in this section.
 phead 2 Variables
 phead 3 Declaration and Typing:
-scode False {'lang': 'rust'}
-codeb
+scodeb
 let foo = 5; 
 bedoc
 The above is a valid variable declaration in Rust. There are several things you should notice about this. 
 First, the keyword 
-scode False {'lang': 'rust'}
-code
+scode
 let
 edoc
 .
-scode False {'lang': 'rust'}
-code
+scode
 let
 edoc
  is used to declare local variables in Rust, and must preface every such declaration. 
 Second, if you're accustomed to other statically-typed languages, you've probably noticed that there is no explicit statement of type here; instead, the compiler infers that 
-scode False {'lang': 'rust'}
-code
+scode
 foo
 edoc
  should be an int. 
@@ -45,23 +41,19 @@ Rust's primitive types are essentially what you would expect with a background i
         </td>
         <td style="border: 1px solid #ccc">
             Signed and unsigned integers (
-scode False {'lang': 'rust'}
-code
+scode
 int
 edoc
  and 
-scode False {'lang': 'rust'}
-code
+scode
 uint
 edoc
 , respectively), in 8-, 16-, 32-, and 64- bit sizes (
-scode False {'lang': 'rust'}
-code
+scode
 i8
 edoc
 ,
-scode False {'lang': 'rust'}
-code
+scode
 u8
 edoc
 , etc.)
@@ -73,13 +65,11 @@ edoc
         </td>
         <td style="border: 1px solid #ccc">
             32- and 64- bit floating point numbers (
-scode False {'lang': 'rust'}
-code
+scode
 f32
 edoc
  and 
-scode False {'lang': 'rust'}
-code
+scode
 f64
 edoc
 )
@@ -90,18 +80,15 @@ edoc
             Booleans:
         </td>
         <td style="border: 1px solid #ccc">
-scode False {'lang': 'rust'}
-code
+scode
 bool
 edoc
 , which has values of 
-scode False {'lang': 'rust'}
-code
+scode
 true
 edoc
  or 
-scode False {'lang': 'rust'}
-code
+scode
 false
 edoc
 .
@@ -112,8 +99,7 @@ edoc
             Characters:
         </td>
         <td style="border: 1px solid #ccc">
-scode False {'lang': 'rust'}
-code
+scode
 char
 edoc
 , a 4-byte Unicode codepoint representation.
@@ -129,21 +115,18 @@ let name`: type` `= value`;
 xnys
 where the grayed out items are optional.
 phead 3 Mutability:
-scode False {'lang': 'rust'}
-codeb
+scodeb
 let foo = 5;
 foo = 6;
 bedoc
 The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
 by default, immutable - meaning that you cannot change their assigned value once given. In order 
 to make a mutable local variable, you must introduce another keyword - 
-scode False {'lang': 'rust'}
-code
+scode
 mut
 edoc
 . The following code will work:
-scode False {'lang': 'rust'}
-codeb
+scodeb
 let mut foo = 5;
 foo = 6;
 bedoc
@@ -152,8 +135,7 @@ Rust does have support for static variables; however, as they lead to all manner
 particularly when dealing with concurrent programs, all static items must be either 
 immutable or only used in an unsafe function or block (which will be discussed later). 
 Static variables always require a type specification, and are declared with the static keyword, as so: 
-scode False {'lang': 'rust'}
-codeb
+scodeb
 static foo: int = 5;
 bedoc
 
@@ -197,15 +179,13 @@ if(foo == 5)
     System.out.println("it worked");
 bedoc
 the equivalent in Rust:
-scode False {'lang': 'rust'}
-codeb
+scodeb
 if foo == 5 
     println("it worked");
 bedoc
 is illegal. The following is a legal conditional block; note that the else and 
 else if are optional for validity.
-scode False {'lang': 'rust'}
-codeb
+scodeb
 if foo == 5 { 
     println("it’s five"); 
 }
@@ -303,6 +283,21 @@ switch (x) {
 		break;
 }
 edocj
+
+scode
+match
+edoc
+ can also use simple logical expressions in its arms. For example, 
+scode False {'lang': 'rust'}
+codeb
+match x {
+    3|5|6  => { println("First arm!"); }
+    10..16 => { println("Second arm!"); }
+    _      => { println("Default arm!"); }
+}
+bedoc
+will print "First arm!" if x is 3, 5, or 6, "Second arm!" if x is between 10 and 16, and "Default arm!" otherwise.
+
 phead 3 Tuples:
 Rust features an additional type named a tuple. Tuples are groupings of values,
 similar in appearance but different in function to a list of variables. 
@@ -328,8 +323,7 @@ let tup = (4, 5.0, false, "hello");
 let (a, b, c, _) = tup;
 bedoc
 The <code>_</code> is handy for  
-scode False { 'lang' : 'rust' }
-code
+scode
 match
 edoc
 statements too.
@@ -338,9 +332,30 @@ codeb
 match status {
 	(0, true) => println("Success"),
 	(_, true) => println("Pyrrhic victory"), // Any first value matches
-	(_, _) => println("Complete loss")
+	(_, _) => println("Complete loss") // Any pair of values will match
 }
 bedoc
+(note that in this case <code>status</code> would need to be of type
+scode
+(int, bool)
+edoc
+)
+
+ 
+scode
+match
+edoc
+ also allows for "pattern guards" - logical expressions that can be used to further
+narrow down what a particular arm selects. For example:
+scode False {'lang': 'rust'}
+codeb
+match x {
+    (x,y) if x > y => { println("Decreasing"); }
+    (x,y) if y > x => { println("Increasing"); }
+    _              => { println()}
+}
+bedoc
+will print correctly the relation between <code>x</code> and <code>y</code>.
 phead 2 Looping
 In Rust loops, we can use
 scode False { 'lang' : 'rust' }
@@ -524,8 +539,7 @@ Almost everything in Rust can be an expression - the only exceptions are declara
 This allows Rust code to be very nicely concise. For example, as we saw above in the 
 section on return values, an explicit return is not necessary in most cases. In general, this
 use of expressions makes the 
-scode False {'lang': 'rust'}
-code
+scode
 return
 edoc
  keyword necessary only when you want to leave a function early. Another common use of Rust's
@@ -581,26 +595,22 @@ The first thing to notice is the first two lines:
 scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 1, 'stop': 2}
 All Rust programs must begin as such, with a 'main' function. This is much the same as other C-family languages.
 As for the second line, note the declaration of
-scode False {'lang': 'rust'}
-code
+scode
 i
 edoc
  as 
-scode False {'lang': 'rust'}
-code
+scode
 mut
 edoc
 ; as discussed in the section on mutability, this is necessary to allow us to be able to
 change the value of
-scode False {'lang': 'rust'}
-code
+scode
 i
 edoc
  later in the code.
 
 The next bit of code should be fairly straightforward. We're calling 
-scode False {'lang': 'rust'}
-code
+scode
 println
 edoc
 , Rust's console output function, and finding the Collatz sequence for the value 1.
@@ -608,31 +618,26 @@ However, the next line is a little more interesting:
 scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 7, 'stop': 7}
 Note here that we have an exclamation point after the function name. This indicates that we are calling a 
 macro (more on these later). For your purposes right now, know that 
-scode False {'lang': 'rust'}
-code
+scode
 println!
 edoc
 is how we do formatted output in Rust - the format string syntax is reminiscent of Python's.
 Here, we use 
-scode False {'lang': 'rust'}
-code
+scode
 {:?}
 edoc
  to indicate that any type passed in will be accepted; later, on line 43, we use 
-scode False {'lang': 'rust'}
-code
+scode
 {:d}
 edoc
  to indicate that we expect an integer.
 
 We also use the looping constructs discussed earlier; note the use on line 15 of
-scode False {'lang': 'rust'}
-code
+scode
 break
 edoc
  to exit the infinite loop made with
-scode False {'lang': 'rust'}
-code
+scode
 loop
 edoc
 .
@@ -645,14 +650,12 @@ The second and final of our non-main functions is slightly more interesting.
 scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 42, 'stop': 50}
 Here, in addition to 
 the aforementioned use of a type specifier in
-scode False {'lang': 'rust'}
-code
+scode
 println!
 edoc
  , we also make use of a match block to carry out the actual Collatz conjecture algorithm.
  Notice that we have to have the
-scode False {'lang': 'rust'}
-code
+scode
 _
 edoc
  arm of the block in order for it to be comprehensive; given this, it makes sense to only have
