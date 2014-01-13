@@ -230,67 +230,115 @@ match
 edoc
 is like a significantly more powerful and useful switch, and is used fairly 
 extensively in a lot of Rust code. You'll run into it frequently, particularly
-in the error handling section. 
+in the error handling section.
 scode False { 'lang' : 'rust' }
 code
 match
 edoc
 works like this:
+scode False { 'lang' : 'rust' }
+codeb
+match isOdd(x) {
+	true => println("Odd"), // Notice the comma
+	false => println("Even")
+}
+bedoc
+A
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statement evaluates the first branch with a matching pattern.
+
+If we want to include more than one statement in a branch of the 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+, we have to surround the code in braces. With braces, we don't need a comma, 
+but they're allowed.
+scode False { 'lang' : 'rust' }
+codeb
+match isOdd(x) {
+	true => { println("Odd"); return 0; }
+	false => { println("Even"); return 1; }
+}
+bedoc
+The compiler checks to ensure that one branch of the 
+scode False { 'lang' : 'rust' }
+code
+match
+edoc
+statment always evaluates. When a variable is matched, the patterns must 
+completely represent the possible values the variable could hold. This is easy
+for booleans; there's just 
+scode False { 'lang' : 'rust' }
+code
+true
+edoc
+and
+scode False { 'lang' : 'rust' }
+code
+false
+edoc
+. For other types, listing every possible value would be tedious and awful. 
+
+To prevent insanity, Rust includes a <code>_</code> that matches everything.
 scode True {}
 rcode
 let x = 4;
 match x {
 	0 => { ; } // Do nothing
-	4 => { foo(); }
-	_ => { bar(); }
+	4 => { foo(); } 
+	_ => { bar(); } // Matches every integer value
 }
 edocr
 jcode
 int x = 4;
 switch (x) {
-	case 0: foo();
+	case 0: break;
+	case 4: foo();
 		break;
-	case 4: bar();
-		break;
-	default: zot();
+	default: bar();
 		break;
 }
 edocj
-The
-scode False { 'lang' : 'rust'}
-code
-_
-edoc
-is equivalent to
-scode False { 'lang' : 'java' }
-code
-default
-edoc
-in Java. It serves as a catchall.
+phead 3 Tuples:
+Rust features an additional type named a tuple. Tuples are groupings of values,
+similar in appearance but different in function to a list of variables. 
 
-Unlike a
-scode False { 'lang' : 'java' }
-code
-switch
-edoc
-statement, a
+Making a tuple is easy. The values to be included are enclosed in parentheses 
+and separated by commas. One nice feature is that tuples are heterogeneous; 
+we can mix field types.
+scode False { 'lang' : 'rust' }
+codeb
+let tup = (4, 5.0, false, "hello"); 
+bedoc
+There are a few caveats that we need to be wary of:
+<ul>
+<li>Elements in a tuple are immutable</li>
+<li>Tuple fields cannot be accessed directly</li>
+<li>A tuple must have at least one field</li>
+</ul>
+Pattern matching is used to access tuple values. If we don't care about a value,
+we can use <code>_</code> to ignore it.
+scode False { 'lang' : 'rust' }
+codeb
+let tup = (4, 5.0, false, "hello"); 
+let (a, b, c, _) = tup;
+bedoc
+The <code>_</code> is handy for  
 scode False { 'lang' : 'rust' }
 code
 match
 edoc
-statement must always execute a branch, even if that branch does nothing.
+statements too.
 scode False { 'lang' : 'rust' }
 codeb
-let x = 4;
-match x { // Illegal
-	0 => foo(),
-	1 => bar()
-}
-
-match x { // Legal
-	0 => foo(),
-	1 => bar(),
-	_ => ;
+match status {
+	(0, true) => println("Success"),
+	(_, true) => println("Pyrrhic victory"), // Any first value matches
+	(_, _) => println("Complete loss")
 }
 bedoc
 phead 2 Looping

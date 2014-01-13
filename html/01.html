@@ -193,9 +193,52 @@ statement.
 <span class="src"><code><span class="k">match</span></code></span>
 is like a significantly more powerful and useful switch, and is used fairly 
 extensively in a lot of Rust code. You'll run into it frequently, particularly
-in the error handling section. 
+in the error handling section.
 <span class="src"><code><span class="k">match</span></code></span>
 works like this:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">isOdd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">true</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Odd&quot;</span><span class="p">),</span> <span class="c1">// Notice the comma</span>
+	<span class="k">false</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Even&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+A
+<span class="src"><code><span class="k">match</span></code></span>
+statement evaluates the first branch with a matching pattern.
+</p>
+<p>
+If we want to include more than one statement in a branch of the 
+<span class="src"><code><span class="k">match</span></code></span>
+, we have to surround the code in braces. With braces, we don't need a comma, 
+but they're allowed.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">isOdd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">true</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Odd&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="m">0</span><span class="p">;</span> <span class="p">}</span>
+	<span class="k">false</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Even&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="m">1</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The compiler checks to ensure that one branch of the 
+<span class="src"><code><span class="k">match</span></code></span>
+statment always evaluates. When a variable is matched, the patterns must 
+completely represent the possible values the variable could hold. This is easy
+for booleans; there's just 
+<span class="src"><code><span class="k">true</span></code></span>
+and
+<span class="src"><code><span class="k">false</span></code></span>
+. For other types, listing every possible value would be tedious and awful. 
+</p>
+<p>
+To prevent insanity, Rust includes a <code>_</code> that matches everything.
 </p>
   <ul class="tabs">
         <li><a href="#tab1-1">Rust</a></li>
@@ -210,8 +253,8 @@ works like this:
 6</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span>
 <span class="k">match</span> <span class="n">x</span> <span class="p">{</span>
 	<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">;</span> <span class="p">}</span> <span class="c1">// Do nothing</span>
-	<span class="m">4</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">foo</span><span class="p">();</span> <span class="p">}</span>
-	<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">bar</span><span class="p">();</span> <span class="p">}</span>
+	<span class="m">4</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">foo</span><span class="p">();</span> <span class="p">}</span> 
+	<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">bar</span><span class="p">();</span> <span class="p">}</span> <span class="c1">// Matches every integer value</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -225,52 +268,57 @@ works like this:
 5
 6
 7
-8
-9</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+8</pre></div></td><td class="code"><div class="src"><pre><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
 <span class="k">switch</span> <span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">case</span> <span class="mi">0</span><span class="o">:</span> <span class="n">foo</span><span class="o">();</span>
+	<span class="k">case</span> <span class="mi">0</span><span class="o">:</span> <span class="k">break</span><span class="o">;</span>
+	<span class="k">case</span> <span class="mi">4</span><span class="o">:</span> <span class="n">foo</span><span class="o">();</span>
 		<span class="k">break</span><span class="o">;</span>
-	<span class="k">case</span> <span class="mi">4</span><span class="o">:</span> <span class="n">bar</span><span class="o">();</span>
-		<span class="k">break</span><span class="o">;</span>
-	<span class="k">default</span><span class="o">:</span> <span class="n">zot</span><span class="o">();</span>
+	<span class="k">default</span><span class="o">:</span> <span class="n">bar</span><span class="o">();</span>
 		<span class="k">break</span><span class="o">;</span>
 <span class="o">}</span>
 </pre></div>
 </td></tr></table>
-</div>					</div><p>
-The
-<span class="src"><code><span class="n">_</span></code></span>
-is equivalent to
-<span class="src"><code><span class="k">default</span></code></span>
-in Java. It serves as a catchall.
+</div>					</div><h3 id="Tuples:" >Tuples:</h3>
+<p>
+Rust features an additional type named a tuple. Tuples are groupings of values,
+similar in appearance but different in function to a list of variables. 
 </p>
 <p>
-Unlike a
-<span class="src"><code><span class="k">switch</span></code></span>
-statement, a
-<span class="src"><code><span class="k">match</span></code></span>
-statement must always execute a branch, even if that branch does nothing.
+Making a tuple is easy. The values to be included are enclosed in parentheses 
+and separated by commas. One nice feature is that tuples are heterogeneous; 
+we can mix field types.
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">4</span><span class="p">;</span>
-<span class="k">match</span> <span class="n">x</span> <span class="p">{</span> <span class="c1">// Illegal</span>
-	<span class="m">0</span> <span class="o">=&gt;</span> <span class="n">foo</span><span class="p">(),</span>
-	<span class="m">1</span> <span class="o">=&gt;</span> <span class="n">bar</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="k">match</span> <span class="n">x</span> <span class="p">{</span> <span class="c1">// Legal</span>
-	<span class="m">0</span> <span class="o">=&gt;</span> <span class="n">foo</span><span class="p">(),</span>
-	<span class="m">1</span> <span class="o">=&gt;</span> <span class="n">bar</span><span class="p">(),</span>
-	<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">;</span>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">5.0</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">);</span> 
+</pre></div>
+</td></tr></table>
+</div><p>
+There are a few caveats that we need to be wary of:
+<ul>
+<li>Elements in a tuple are immutable</li>
+<li>Tuple fields cannot be accessed directly</li>
+<li>A tuple must have at least one field</li>
+</ul>
+Pattern matching is used to access tuple values. If we don't care about a value,
+we can use <code>_</code> to ignore it.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">5.0</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">);</span> 
+<span class="k">let</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">tup</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The <code>_</code> is handy for  
+<span class="src"><code><span class="k">match</span></code></span>
+statements too.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">status</span> <span class="p">{</span>
+	<span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Success&quot;</span><span class="p">),</span>
+	<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Pyrrhic victory&quot;</span><span class="p">),</span> <span class="c1">// Any first value matches</span>
+	<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Complete loss&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
