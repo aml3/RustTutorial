@@ -1,0 +1,17 @@
+ptitle Starting to Corrode
+phead 1 Starting to Corrode: Pointers, Memory, Strings, and I/O
+phead 2 Memory Management
+phead 3 Types of Pointer:
+phead 3 Ownership:
+phead 3 Lifetimes:
+phead 3 Boxes:
+phead 2 Basic I/O
+phead 3 Working with stdin:
+phead 3 File I/O:
+phead 2 Strings and Vectors
+phead 3 Common String Operations:
+phead 3 Common Vector Operations:
+phead 2 Error Handling
+phead 2 Codebreaker
+phead 3 The code:
+phead 3 Stepping through:
