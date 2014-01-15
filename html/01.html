@@ -11,19 +11,22 @@
     <body>
 <title>Getting Started with Rust</title>
 <h1 id="Getting_Started:_Variables,_Functions,_and_Syntax" >Getting Started: Variables, Functions, and Syntax</h1>
-<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float: right"> Next </a></td></tr></table><br/><p>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
 In this section, we'll be going over the basic syntax of Rust. You'll learn about
 variable declarations and mutability, how to work with functions, and some basic
-control flow, like loops, conditionals, and matching. Finally, we'll be analyzing
+control structures including loops, conditionals, and matching. Finally, we will analyze
 a simple program to find
 <a href="http://en.wikipedia.org/wiki/Collatz_conjecture">Collatz numbers</a>
-, which will utilize the topics in this section.
+that employs the topics in this section.
 <h2 id="Variables" >Variables</h2>
 <h3 id="Declaration_and_Typing:" >Declaration and Typing:</h3>
-scodeb
-let foo = 5; 
-bedoc
-The above is a valid variable declaration in Rust. There are several things you should notice about this. 
+Here is a valid variable declaration in Rust:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span> 
+</pre></div>
+</td></tr></table>
+</div><p>
+There are several things you should notice about this. 
 First, the keyword 
 <span class="src"><code><span class="k">let</span></code></span>
 .
@@ -38,89 +41,65 @@ Rust's compiler is typically very good at correctly inferring types for variable
 </pre></div>
 </td></tr></table>
 </div><p>
-Rust's primitive types are essentially what you would expect with a background in C-like languages:
-</p>
-<p>
-<table style="width: 90%; margin-left: auto; margin-right: auto; text-align: center; border: 1px solid #ccc">
-    <tr>
-        <td style="width: 30%; border: 1px solid #ccc">
-            Integral types:
-        </td>
-        <td style="border: 1px solid #ccc">
-            Signed and unsigned integers (
-<span class="src"><code><span class="k">int</span></code></span>
- and 
-<span class="src"><code><span class="k">uint</span></code></span>
-, respectively), in 8-, 16-, 32-, and 64- bit sizes (
-<span class="src"><code><span class="k">i8</span></code></span>
-,
-<span class="src"><code><span class="k">u8</span></code></span>
-, etc.)
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Floating point:
-        </td>
-        <td style="border: 1px solid #ccc">
-            32- and 64- bit floating point numbers (
-<span class="src"><code><span class="k">f32</span></code></span>
- and 
-<span class="src"><code><span class="k">f64</span></code></span>
-)
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Booleans:
-        </td>
-        <td style="border: 1px solid #ccc">
-<span class="src"><code><span class="n">bool</span></code></span>
-, which has values of 
-<span class="src"><code><span class="k">true</span></code></span>
- or 
-<span class="src"><code><span class="k">false</span></code></span>
-.
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Characters:
-        </td>
-        <td style="border: 1px solid #ccc">
-<span class="src"><code><span class="n">char</span></code></span>
-, a 4-byte Unicode codepoint representation.
-        </td>
-    </tr>
-</table>
+Rust's primitive types are similar to those in other C-like languages. There are more details at the 
+<a href="http://static.rust-lang.org/doc/0.9/tutorial.html#syntax-basics">official tutorial;</a>
+look for "Primitive types and literals".
 </p>
 <p>
 Finally, you should notice that the above declaration uses =, as you would expect, for assignment, and terminates the statement with a semicolon. Operators in Rust are essentially all the same as in languages with which you're familiar, and we'll discuss the difference between statements and expressions (which are not terminated by a semicolon) later in this section. 
 To summarize, declarations of local variables in Rust follow the form: 
-<div class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="optional"><span class="o">:</span> <span class="k">type</span></span> <span class="optional"><span class="o">=</span> <span class="n">value</span></span><span class="p">;</span>
-</pre></div>where the grayed out items are optional.
+<div class="src"><pre><span class="k">let</span> <span class="n">name</span><span class="p">[</span><span class="o">:</span> <span class="k">type</span><span class="p">]</span> <span class="p">[</span><span class="o">=</span> <span class="n">value</span><span class="p">];</span>
+</pre></div>where the items in brackets are optional.
 <h3 id="Mutability:" >Mutability:</h3>
-scodeb
-let foo = 5;
-foo = 6;
-bedoc
-The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
-by default, immutable - meaning that you cannot change their assigned value once given. In order 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The above code is invalid Rust; it will not compile. Instead, you'll get:
+<pre><code>test.rs:3:2: 3:5 <span style="color:red;">error:</span> re-assignment of immutable variable `foo`
+test.rs:3   foo = 6;
+            <span style="color:red;">^~~</span>
+test.rs:2:6: 2:9 <span style="color:green;">note</span>: prior assignment occurs here
+test.rs:2   let foo = 5;
+                <span style="color:green;">^~~</span>
+error: aborting due to previous error
+</code></pre>
+This is because all Rust local variables are, 
+by default, immutable - meaning that you cannot change their assigned value once given.
+In other words, variables are not actually variable by default. This will be familiar if
+you have experience with functional programming. In order 
 to make a mutable local variable, you must introduce another keyword - 
 <span class="src"><code><span class="k">mut</span></code></span>
 . The following code will work:
-scodeb
-let mut foo = 5;
-foo = 6;
-bedoc
-<h3 id="Static_Variables:" >Static Variables:</h3>
-Rust does have support for static variables; however, as they lead to all manner of trouble,
-particularly when dealing with concurrent programs, all static items must be either 
-immutable or only used in an unsafe function or block (which will be discussed later). 
-Static variables always require a type specification, and are declared with the static keyword, as so: 
-scodeb
-static foo: int = 5;
-bedoc
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="k">mut</span> <span class="n">foo</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="m">6</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="Tuples:" >Tuples:</h3>
+<p>
+Rust features an additional type named a tuple. Tuples are groupings of values,
+similar in appearance but different in function to a list of variables. 
+</p>
+<p>
+Making a tuple is easy. The values to be included are enclosed in parentheses 
+and separated by commas. One nice feature is that tuples are heterogeneous; 
+we can mix field types.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">5.0</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">);</span> 
+</pre></div>
+</td></tr></table>
+</div><p>
+There are a few caveats that we need to be wary of:
+<ul>
+<li>Elements in a tuple are immutable</li>
+<li>Tuple fields cannot be accessed directly</li>
+<li>A tuple must have at least one field</li>
+</ul>
 </p>
 <h2 id="Conditionals" >Conditionals</h2>
 <p>
@@ -172,9 +151,7 @@ statement.
 <span class="src"><code><span class="k">match</span></code></span>
 is like a significantly more powerful and useful switch, and is used fairly 
 extensively in a lot of Rust code. You'll run into it frequently, particularly
-in the error handling section.
-<span class="src"><code><span class="k">match</span></code></span>
-works like this:
+in the error handling section. Here's an example:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -188,7 +165,10 @@ works like this:
 </div><p>
 A
 <span class="src"><code><span class="k">match</span></code></span>
-statement evaluates the first branch with a matching pattern.
+statement evaluates the first branch with a matching pattern. The pattern is an expression
+with the same type as the object being matched. If the object has the same value as one that the pattern
+accepts (see below for accepting multiple values with a single match arm), then the corresponding arm
+will be evaluated.
 </p>
 <p>
 If we want to include more than one statement in a branch of the 
@@ -200,15 +180,15 @@ but they're allowed.
 2
 3
 4</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">isOdd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">true</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Odd&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="m">0</span><span class="p">;</span> <span class="p">}</span>
-	<span class="k">false</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Even&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="m">1</span><span class="p">;</span> <span class="p">}</span>
+	<span class="k">true</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Odd&quot;</span><span class="p">);</span> <span class="m">0</span> <span class="p">}</span>
+	<span class="k">false</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Even&quot;</span><span class="p">);</span> <span class="m">1</span> <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
 </div><p>
-The compiler checks to ensure that one branch of the 
+The compiler checks that at least one pattern of the 
 <span class="src"><code><span class="k">match</span></code></span>
-statment always evaluates. When a variable is matched, the patterns must 
+ expression will always match. When a variable is matched, the patterns must 
 completely represent the possible values the variable could hold. This is easy
 for booleans; there's just 
 <span class="src"><code><span class="k">true</span></code></span>
@@ -257,8 +237,9 @@ To prevent insanity, Rust includes a <code>_</code> that matches everything.
 <span class="o">}</span>
 </pre></div>
 </td></tr></table>
-</div>					</div><span class="src"><code><span class="k">match</span></code></span>
-<p>
+</div>					</div><p>
+ 
+<span class="src"><code><span class="k">match</span></code></span>
  can also use simple logical expressions in its arms. For example, 
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -275,26 +256,7 @@ To prevent insanity, Rust includes a <code>_</code> that matches everything.
 </div><p>
 will print "First arm!" if x is 3, 5, or 6, "Second arm!" if x is between 10 and 16, and "Default arm!" otherwise.
 </p>
-<h3 id="Tuples:" >Tuples:</h3>
 <p>
-Rust features an additional type named a tuple. Tuples are groupings of values,
-similar in appearance but different in function to a list of variables. 
-</p>
-<p>
-Making a tuple is easy. The values to be included are enclosed in parentheses 
-and separated by commas. One nice feature is that tuples are heterogeneous; 
-we can mix field types.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">5.0</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">);</span> 
-</pre></div>
-</td></tr></table>
-</div><p>
-There are a few caveats that we need to be wary of:
-<ul>
-<li>Elements in a tuple are immutable</li>
-<li>Tuple fields cannot be accessed directly</li>
-<li>A tuple must have at least one field</li>
-</ul>
 Pattern matching is used to access tuple values. If we don't care about a value,
 we can use <code>_</code> to ignore it.
 </p>
@@ -343,7 +305,10 @@ narrow down what a particular arm selects. For example:
 </td></tr></table>
 </div><p>
 will print correctly the relation between <code>x</code> and <code>y</code>.
+</p>
 <h2 id="Looping" >Looping</h2>
+<p>
+Rust provides several choices of looping structure, similar to those in C and Java.
 In Rust loops, we can use
 <span class="src"><code><span class="k">break</span></code></span>
 to get out of the loop and 
@@ -434,14 +399,94 @@ achieve a traditional for loop by using
 <span class="o">}</span>
 </pre></div>
 </td></tr></table>
-</div>					</div><h2 id="Functions" >Functions</h2>
+</div>					</div><h2 id="Expressions:" >Expressions:</h2>
+<p>
+Rust’s use of the semicolon may seem confusing when first encountered, but, once
+learned  is intuitive and remarkably useful. Essentially, everything that 
+doesn’t end with a semicolon is an expression, and everything that does is a 
+statement. Expressions have an associated value, whereas statements do not (technically, 
+they have a value of nil or void, but for our purposes this is the same as having none.)
+You can think of the semicolon in Rust as suppressing the value of an expression, 
+turning it into a statement.
+</p>
+<p>
+Almost everything in Rust can be an expression - the only exceptions are declarations.
+This allows Rust code to be very nicely concise. For example, an explicit return from a function is not necessary in most cases. 
+In general, this use of expressions makes the 
+<span class="src"><code><span class="k">return</span></code></span>
+ keyword necessary only when you want to leave a function early. Another common use of Rust's
+expressions is easy conditional assignment of variables, as a conditional block will have the
+value of its last expression:
+</p>
+  <ul class="tabs">
+<li><a href="#tab1-1">Rust</a></li>
+<li><a href="#tab1-2">Java</a></li>
+    </ul>
+<div id="tab1-1" class="tabcode">
+        <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">5</span> <span class="p">{</span>
+                <span class="s">&quot;five&quot;</span>
+          <span class="p">}</span>
+          <span class="k">else</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">6</span> <span class="p">{</span>
+                <span class="s">&quot;six&quot;</span>
+          <span class="p">}</span>
+          <span class="k">else</span> <span class="p">{</span>
+                <span class="s">&quot;neither&quot;</span>
+          <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div>
+                
+<div id="tab1-2" class="tabcode">
+        <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="src"><pre><span class="n">String</span> <span class="n">foo</span><span class="o">;</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;five&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;six&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="k">else</span> <span class="o">{</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;neither&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table>
+</div>					</div><p>
+The same can be done with pattern matching, as, again, the block will have the value of its
+last expression:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="k">match</span> <span class="n">y</span> <span class="p">{</span>
+    <span class="m">0.</span><span class="p">.</span><span class="m">9</span>    <span class="o">=&gt;</span>  <span class="p">{</span> <span class="s">&quot;Less than 10&quot;</span> <span class="p">}</span>
+    <span class="n">_</span>       <span class="o">=&gt;</span>  <span class="p">{</span> <span class="s">&quot;Greater than 10&quot;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Functions" >Functions</h2>
 <h3 id="Definition_and_Invocation:" >Definition and Invocation:</h3>
 <p>
 Functions are created by using 
 <span class="src"><code><span class="k">fn</span></code></span>
 . Like loops, their bodies must be surrounded 
-by braces. To make sure we’re on the same page, 
-here’s the syntax for a function that accepts no parameters and doesn't return 
+by braces.
+Here’s the syntax for a function that accepts no parameters and doesn't return 
 anything:
 <div class="src"><pre><span class="k">fn</span> <span class="n">name</span><span class="p">()</span> <span class="p">{</span>
 	<span class="optional"><span class="n">code</span></span>
@@ -474,10 +519,10 @@ And here is an example:
 </td></tr></table>
 </div>					</div><p>
 As expected, this function can be called with 
-<span class="src"><code><span class="n">foo</span><span class="p">();</span></code></span>
+<span class="src"><code><span class="n">foo</span><span class="p">()</span></code></span>
 </p>
 <p>
-Interestingly, functions can be declared inside other functions. This means 
+Functions can be declared inside other functions. This means 
 that the following is valid Rust:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -532,9 +577,7 @@ the same syntax that specifies a type during variable declaration,
 </td></tr></table>
 </div>					</div><p>
 A return value is specified using <code>-> type</code> after the parameter 
-list. To actually return a value, we use 
-<span class="src"><code><span class="k">return</span></code></span>
-(or an expression, discussed next).
+list. To actually return a value, we use Rust's expressions.
 </p>
   <ul class="tabs">
 <li><a href="#tab1-1">Rust</a></li>
@@ -544,7 +587,7 @@ list. To actually return a value, we use
         <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
+	<span class="n">x</span><span class="o">*</span><span class="n">x</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -558,74 +601,7 @@ list. To actually return a value, we use
 <span class="o">}</span>
 </pre></div>
 </td></tr></table>
-</div>					</div><h3 id="Expressions:" >Expressions:</h3>
-<p>
-Rust’s use of the semicolon may seem confusing when first encountered, but, once
-learned  is intuitive and remarkably useful. Essentially, everything that 
-doesn’t end with a semicolon is an expression, and everything that does is a 
-statement. Expressions have an associated value, whereas statements do not (technically, 
-they have a value of nil or void, but for our purposes this is the same as having none.)
-You can think of the semicolon in Rust as suppressing the value of an expression, and 
-thereby turning it into a statement.
-</p>
-<p>
-Almost everything in Rust can be an expression - the only exceptions are declarations.
-This allows Rust code to be very nicely concise. For example, as we saw above in the 
-section on return values, an explicit return is not necessary in most cases. In general, this
-use of expressions makes the 
-<span class="src"><code><span class="k">return</span></code></span>
- keyword necessary only when you want to leave a function early. Another common use of Rust's
-expressions is easy conditional assignment of variables:
-</p>
-  <ul class="tabs">
-<li><a href="#tab1-1">Rust</a></li>
-<li><a href="#tab1-2">Java</a></li>
-    </ul>
-<div id="tab1-1" class="tabcode">
-        <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="src"><pre><span class="k">let</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">5</span> <span class="p">{</span>
-                <span class="s">&quot;five&quot;</span>
-          <span class="p">}</span>
-          <span class="k">else</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="m">6</span> <span class="p">{</span>
-                <span class="s">&quot;six&quot;</span>
-          <span class="p">}</span>
-          <span class="k">else</span> <span class="p">{</span>
-                <span class="s">&quot;neither&quot;</span>
-          <span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div>					</div>
-                
-<div id="tab1-2" class="tabcode">
-        <div class="tabbed"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="src"><pre><span class="n">String</span> <span class="n">foo</span><span class="o">;</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;five&quot;</span><span class="o">;</span>
-<span class="o">}</span>
-<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;six&quot;</span><span class="o">;</span>
-<span class="o">}</span>
-<span class="k">else</span> <span class="o">{</span>
-    <span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;neither&quot;</span><span class="o">;</span>
-<span class="o">}</span>
-</pre></div>
-</td></tr></table>
-</div>					</div><h2 id="Collatz" >Collatz</h2>
+</div>					</div><h2 id="Program_1:_Collatz" >Program 1: Collatz</h2>
 <h3 id="The_Collatz_Conjecture:" >The Collatz Conjecture:</h3>
 <p>
 The
@@ -642,7 +618,7 @@ possible to reach 1 by following certain rules:
 </ol>
 </p>
 <p>
-The conjecture is currently unproven, although there is evidence that it should be true. 
+The conjecture is currently unproven, although it has been shown to hold for numbers up to 5476377146882523136. 
 <h3 id="Finding_a_Collatz_Sequence:" >Finding a Collatz Sequence:</h3>
 As you might imagine, given the simple nature of the conjecture's rules, it's quite easy to 
 find the Collatz sequence for a given number programmatically. The below is Rust code to do just that:
@@ -692,11 +668,7 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 43
 44
 45
-46
-47
-48
-49
-50</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+46</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="k">let</span> <span class="k">mut</span> <span class="n">i</span> <span class="o">=</span> <span class="m">1</span><span class="p">;</span>
 
 	<span class="c1">// Basic function call</span>
@@ -709,9 +681,7 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 	<span class="k">loop</span> <span class="p">{</span> <span class="c1">// equivalent to `while true`</span>
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
-
 		<span class="k">if</span> <span class="n">steps</span> <span class="o">&gt;</span> <span class="m">10</span> <span class="p">{</span> <span class="k">break</span> <span class="p">}</span>
-
 		<span class="n">i</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
 	<span class="p">}</span>
 
@@ -728,7 +698,6 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="m">10</span> <span class="p">{</span>
 		<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 		<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?} has {:?} steps&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">steps</span><span class="p">);</span>
-		
 		<span class="n">i</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
 	<span class="p">}</span>
 <span class="p">}</span>
@@ -740,7 +709,6 @@ find the Collatz sequence for a given number programmatically. The below is Rust
 <span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
 	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Step {:d}: {:d}&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
 	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
-
 	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
 		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
 		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
@@ -801,10 +769,8 @@ The first of our non-main functions is fairly boring; note only that we use a fu
 call as an expression (with no semicolon) to return a value rather than an explicit return statement.
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">collatz</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-	<span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
-<span class="p">}</span>
+2</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Step {:d}: {:d}&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
 </pre></div>
 </td></tr></table>
 </div><p>
@@ -814,15 +780,7 @@ The second and final of our non-main functions is slightly more interesting.
 2
 3
 4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">steps</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-	<span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Step {:d}: {:d}&quot;</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
-	<span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="m">1</span> <span class="p">{</span> <span class="k">return</span> <span class="n">steps</span><span class="p">;</span> <span class="p">}</span>
-
-	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
+5</pre></div></td><td class="code"><div class="src"><pre>	<span class="k">match</span> <span class="n">N</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
 		<span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
 		<span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">collatz2</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">+</span><span class="m">1</span><span class="p">)</span> <span class="p">}</span>
 	<span class="p">}</span>
@@ -845,5 +803,5 @@ an explicit return statement.
 <p>
 Ready for more Rust? Head to the next section.
 </p>
-<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/02.html" style="float: right"> Next </a></td></tr></table><br/>    </body>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="toc.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/>    </body>
                 </html>
