@@ -83,6 +83,7 @@ def process(name):
             # Also doesn't support dynamic number of tabs. Again, easy fix.
             elif literal_eval(tokens[1]):
                 write_tab_code(fout, fin, lexers, block_formatter, tab_num)
+                tab_num += 1
 
             else:
                 l = fin.readline()
@@ -139,9 +140,9 @@ def process(name):
     return fragments
 
 def write_nav(fout, data):
-    fout.write('<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/' + data[1]+ '" style="float:left"> Previous </a></td>')
-    fout.write('<td style="text-align: center;"><a href="http://aml3.github.io/RustTutorial/html/toc.html"> Table of Contents </a></td>')
-    fout.write('<td style="width:20%"><a href="http://aml3.github.io/RustTutorial/html/' + data[2]+ '" style="float: right"> Next </a></td></tr></table><br/>')
+    fout.write('<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="' + data[1]+ '" style="float:left"> Previous </a></td>')
+    fout.write('<td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td>')
+    fout.write('<td style="width:20%"><a href="' + data[2]+ '" style="float: right"> Next </a></td></tr></table><br/>')
 
 def write_link(in_para, fout, data):
     if not in_para:
@@ -222,7 +223,6 @@ def write_tab_code(fout, fin, lexers, block_formatter, tab_num):
     fout.write(highlight(java.getvalue(), lexers['java'], block_formatter) + '\n')
     fout.write('</div>');
     fout.write('''\t\t\t\t\t</div>''')                        
-    tab_num += 1
 
 def write_code_block(fout, fin, lexers, args, block_formatter):
     code = StringIO()

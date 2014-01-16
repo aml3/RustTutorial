@@ -1,50 +1,19 @@
+use std::os;
+
 fn main() {
-	let mut i = 1;
-
-	// Basic function call
-	println("Single Call");
-	let steps = collatz(i);
-	println!("{:?} has {:?} steps", i, steps);
-
-	// Loop until we find a number with more than 10 steps
-	println("\nUsing `loop`");
-	loop { // equivalent to `while true`
-		let steps = collatz(i);
-		println!("{:?} has {:?} steps", i, steps);
-
-		if steps > 10 { break }
-
-		i += 1;
+	if os::args().len() < 2 {
+		println("Error: Please provide a number as argument.");
+		return;
 	}
 
-	// Find the first 10 Collatz numbers
-	println("\nUsing `for`");
-	for i in range(1, 11) {
-		let steps = collatz(i);
-		println!("{:?} has {:?} steps", i, steps);
-	}
-
-	// Equivalent loop
-	println("\nUsing `while`");
-	i = 1;
-	while i <= 10 {
-		let steps = collatz(i);
-		println!("{:?} has {:?} steps", i, steps);
-		
-		i += 1;
-	}
+	let i = from_str::<int>(os::args()[1]).unwrap();
+	println!("{:d} has {:d} Collatz steps", i, collatz(i));
 }
 
 fn collatz(N: int) -> int {
-	collatz2(N, 0)
-}
-
-fn collatz2(N: int, steps: int) -> int {
-	println!("Step {:d}: {:d}", steps, N);
-	if N == 1 { return steps; }
-
+	if N == 1 { return 0; }
 	match N % 2 {
-		0 => { collatz2(N/2, steps+1) }
-		_ => { collatz2(N*3+1, steps+1) }
+		0 => { 1 + collatz(N/2) }
+		_ => { 1 + collatz(N*3+1) }
 	}
 }

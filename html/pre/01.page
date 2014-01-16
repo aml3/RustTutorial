@@ -1,18 +1,20 @@
 ptitle Getting Started with Rust
 phead 1 Getting Started: Variables, Functions, and Syntax
-pnav toc.html 02.html
+pnav toc.html incomplete.html
 In this section, we'll be going over the basic syntax of Rust. You'll learn about
 variable declarations and mutability, how to work with functions, and some basic
-control flow, like loops, conditionals, and matching. Finally, we'll be analyzing
+control structures including loops, conditionals, and matching. Finally, we will analyze
 a simple program to find
 plink http://en.wikipedia.org/wiki/Collatz_conjecture Collatz numbers
-, which will utilize the topics in this section.
+that employs the topics in this section.
 phead 2 Variables
 phead 3 Declaration and Typing:
-scodeb
+Here is a valid variable declaration in Rust:
+scode False {'lang': 'rust'}
+codeb
 let foo = 5; 
 bedoc
-The above is a valid variable declaration in Rust. There are several things you should notice about this. 
+There are several things you should notice about this. 
 First, the keyword 
 scode
 let
@@ -32,112 +34,63 @@ scode False {'lang': 'rust'}
 codeb
 let foo: int = 5;
 bedoc
-Rust's primitive types are essentially what you would expect with a background in C-like languages:
-
-<table style="width: 90%; margin-left: auto; margin-right: auto; text-align: center; border: 1px solid #ccc">
-    <tr>
-        <td style="width: 30%; border: 1px solid #ccc">
-            Integral types:
-        </td>
-        <td style="border: 1px solid #ccc">
-            Signed and unsigned integers (
-scode
-int
-edoc
- and 
-scode
-uint
-edoc
-, respectively), in 8-, 16-, 32-, and 64- bit sizes (
-scode
-i8
-edoc
-,
-scode
-u8
-edoc
-, etc.)
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Floating point:
-        </td>
-        <td style="border: 1px solid #ccc">
-            32- and 64- bit floating point numbers (
-scode
-f32
-edoc
- and 
-scode
-f64
-edoc
-)
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Booleans:
-        </td>
-        <td style="border: 1px solid #ccc">
-scode
-bool
-edoc
-, which has values of 
-scode
-true
-edoc
- or 
-scode
-false
-edoc
-.
-        </td>
-    </tr>
-    <tr>
-        <td style="border: 1px solid #ccc">
-            Characters:
-        </td>
-        <td style="border: 1px solid #ccc">
-scode
-char
-edoc
-, a 4-byte Unicode codepoint representation.
-        </td>
-    </tr>
-</table>
-
+Rust's primitive types are similar to those in other C-like languages. There are more details at the 
+plink http://static.rust-lang.org/doc/0.9/tutorial.html#syntax-basics official tutorial;
+look for "Primitive types and literals".
 
 Finally, you should notice that the above declaration uses =, as you would expect, for assignment, and terminates the statement with a semicolon. Operators in Rust are essentially all the same as in languages with which you're familiar, and we'll discuss the difference between statements and expressions (which are not terminated by a semicolon) later in this section. 
 To summarize, declarations of local variables in Rust follow the form: 
 synx
-let name`: type` `= value`;
+let name[: type] [= value];
 xnys
-where the grayed out items are optional.
+where the items in brackets are optional.
 phead 3 Mutability:
-scodeb
+scode False {'lang': 'rust'}
+codeb
 let foo = 5;
 foo = 6;
 bedoc
-The above code is invalid Rust; it will not compile. This is because all Rust local variables are, 
-by default, immutable - meaning that you cannot change their assigned value once given. In order 
+The above code is invalid Rust; it will not compile. Instead, you'll get:
+<pre><code>test.rs:3:2: 3:5 <span style="color:red;">error:</span> re-assignment of immutable variable `foo`
+test.rs:3   foo = 6;
+            <span style="color:red;">^~~</span>
+test.rs:2:6: 2:9 <span style="color:green;">note</span>: prior assignment occurs here
+test.rs:2   let foo = 5;
+                <span style="color:green;">^~~</span>
+error: aborting due to previous error
+</code></pre>
+This is because all Rust local variables are, 
+by default, immutable - meaning that you cannot change their assigned value once given.
+In other words, variables are not actually variable by default. This will be familiar if
+you have experience with functional programming. In order 
 to make a mutable local variable, you must introduce another keyword - 
 scode
 mut
 edoc
 . The following code will work:
-scodeb
+scode False {'lang':'rust'}
+codeb
 let mut foo = 5;
 foo = 6;
 bedoc
-phead 3 Static Variables:
-Rust does have support for static variables; however, as they lead to all manner of trouble,
-particularly when dealing with concurrent programs, all static items must be either 
-immutable or only used in an unsafe function or block (which will be discussed later). 
-Static variables always require a type specification, and are declared with the static keyword, as so: 
-scodeb
-static foo: int = 5;
+
+phead 3 Tuples:
+Rust features an additional type named a tuple. Tuples are groupings of values,
+similar in appearance but different in function to a list of variables. 
+
+Making a tuple is easy. The values to be included are enclosed in parentheses 
+and separated by commas. One nice feature is that tuples are heterogeneous; 
+we can mix field types.
+scode False { 'lang' : 'rust' }
+codeb
+let tup = (4, 5.0, false, "hello"); 
 bedoc
+There are a few caveats that we need to be wary of:
+<ul>
+<li>Elements in a tuple are immutable</li>
+<li>Tuple fields cannot be accessed directly</li>
+<li>A tuple must have at least one field</li>
+</ul>
 
 phead 2 Conditionals
 Rust’s conditionals are very similar to what you’ve probably seen in Java or another 
@@ -210,12 +163,7 @@ match
 edoc
 is like a significantly more powerful and useful switch, and is used fairly 
 extensively in a lot of Rust code. You'll run into it frequently, particularly
-in the error handling section.
-scode False { 'lang' : 'rust' }
-code
-match
-edoc
-works like this:
+in the error handling section. Here's an example:
 scode False { 'lang' : 'rust' }
 codeb
 match isOdd(x) {
@@ -228,7 +176,10 @@ scode False { 'lang' : 'rust' }
 code
 match
 edoc
-statement evaluates the first branch with a matching pattern.
+statement evaluates the first branch with a matching pattern. The pattern is an expression
+with the same type as the object being matched. If the object has the same value as one that the pattern
+accepts (see below for accepting multiple values with a single match arm), then the corresponding arm
+will be evaluated.
 
 If we want to include more than one statement in a branch of the 
 scode False { 'lang' : 'rust' }
@@ -240,16 +191,16 @@ but they're allowed.
 scode False { 'lang' : 'rust' }
 codeb
 match isOdd(x) {
-	true => { println("Odd"); return 0; }
-	false => { println("Even"); return 1; }
+	true => { println("Odd"); 0 }
+	false => { println("Even"); 1 }
 }
 bedoc
-The compiler checks to ensure that one branch of the 
+The compiler checks that at least one pattern of the 
 scode False { 'lang' : 'rust' }
 code
 match
 edoc
-statment always evaluates. When a variable is matched, the patterns must 
+ expression will always match. When a variable is matched, the patterns must 
 completely represent the possible values the variable could hold. This is easy
 for booleans; there's just 
 scode False { 'lang' : 'rust' }
@@ -283,7 +234,7 @@ switch (x) {
 		break;
 }
 edocj
-
+ 
 scode
 match
 edoc
@@ -298,23 +249,6 @@ match x {
 bedoc
 will print "First arm!" if x is 3, 5, or 6, "Second arm!" if x is between 10 and 16, and "Default arm!" otherwise.
 
-phead 3 Tuples:
-Rust features an additional type named a tuple. Tuples are groupings of values,
-similar in appearance but different in function to a list of variables. 
-
-Making a tuple is easy. The values to be included are enclosed in parentheses 
-and separated by commas. One nice feature is that tuples are heterogeneous; 
-we can mix field types.
-scode False { 'lang' : 'rust' }
-codeb
-let tup = (4, 5.0, false, "hello"); 
-bedoc
-There are a few caveats that we need to be wary of:
-<ul>
-<li>Elements in a tuple are immutable</li>
-<li>Tuple fields cannot be accessed directly</li>
-<li>A tuple must have at least one field</li>
-</ul>
 Pattern matching is used to access tuple values. If we don't care about a value,
 we can use <code>_</code> to ignore it.
 scode False { 'lang' : 'rust' }
@@ -356,7 +290,9 @@ match x {
 }
 bedoc
 will print correctly the relation between <code>x</code> and <code>y</code>.
+
 phead 2 Looping
+Rust provides several choices of looping structure, similar to those in C and Java.
 In Rust loops, we can use
 scode False { 'lang' : 'rust' }
 code
@@ -375,6 +311,7 @@ code
 while
 edoc
 loop iterates until its condition is false. Its condition must be of type bool.
+
 scode True {}
 rcode
 let mut i = 0;
@@ -390,6 +327,7 @@ while (i < 10) {
 	i++;
 }
 edocj
+
 Its syntax is
 synx
 while condition {
@@ -438,6 +376,58 @@ for (int i = 0; i < 10; i++) {
 	foo(i);
 }
 edocj
+phead 2 Expressions:
+Rust’s use of the semicolon may seem confusing when first encountered, but, once
+learned  is intuitive and remarkably useful. Essentially, everything that 
+doesn’t end with a semicolon is an expression, and everything that does is a 
+statement. Expressions have an associated value, whereas statements do not (technically, 
+they have a value of nil or void, but for our purposes this is the same as having none.)
+You can think of the semicolon in Rust as suppressing the value of an expression, 
+turning it into a statement.
+
+Almost everything in Rust can be an expression - the only exceptions are declarations.
+This allows Rust code to be very nicely concise. For example, an explicit return from a function is not necessary in most cases. 
+In general, this use of expressions makes the 
+scode
+return
+edoc
+ keyword necessary only when you want to leave a function early. Another common use of Rust's
+expressions is easy conditional assignment of variables, as a conditional block will have the
+value of its last expression:
+scode True {}
+rcode
+let foo = if x == 5 {
+                "five"
+          }
+          else if x == 6 {
+                "six"
+          }
+          else {
+                "neither"
+          }
+edocr
+jcode
+String foo;
+if (x == 5) {
+    foo = "five";
+}
+else if (x == 6) {
+    foo = "six";
+}
+else {
+    foo = "neither";
+}
+edocj
+
+The same can be done with pattern matching, as, again, the block will have the value of its
+last expression:
+scode False {'lang': 'rust'}
+codeb
+let x = match y {
+    0..9    =>  { "Less than 10" }
+    _       =>  { "Greater than 10" }
+}
+bedoc
 phead 2 Functions
 phead 3 Definition and Invocation:
 Functions are created by using 
@@ -446,8 +436,8 @@ code
 fn
 edoc
 . Like loops, their bodies must be surrounded 
-by braces. To make sure we’re on the same page, 
-here’s the syntax for a function that accepts no parameters and doesn't return 
+by braces.
+Here’s the syntax for a function that accepts no parameters and doesn't return 
 anything:
 synx
 fn name() {
@@ -470,10 +460,10 @@ edocj
 As expected, this function can be called with 
 scode False { 'lang' : 'rust' }
 code
-foo();
+foo()
 edoc
 
-Interestingly, functions can be declared inside other functions. This means 
+Functions can be declared inside other functions. This means 
 that the following is valid Rust:
 scode False { 'lang' : 'rust' }
 codeb
@@ -508,16 +498,11 @@ void rprime_sum(int x, int y, int m) {
 }
 edocj
 A return value is specified using <code>-> type</code> after the parameter 
-list. To actually return a value, we use 
-scode False { 'lang' : 'rust' }
-code
-return
-edoc
-(or an expression, discussed next).
+list. To actually return a value, we use Rust's expressions.
 scode True {}
 rcode
 fn square(x: int) -> int {
-	return x*x;
+	x*x
 }
 edocr
 jcode
@@ -526,50 +511,7 @@ int square(int x) {
 }
 edocj
 
-phead 3 Expressions:
-Rust’s use of the semicolon may seem confusing when first encountered, but, once
-learned  is intuitive and remarkably useful. Essentially, everything that 
-doesn’t end with a semicolon is an expression, and everything that does is a 
-statement. Expressions have an associated value, whereas statements do not (technically, 
-they have a value of nil or void, but for our purposes this is the same as having none.)
-You can think of the semicolon in Rust as suppressing the value of an expression, and 
-thereby turning it into a statement.
-
-Almost everything in Rust can be an expression - the only exceptions are declarations.
-This allows Rust code to be very nicely concise. For example, as we saw above in the 
-section on return values, an explicit return is not necessary in most cases. In general, this
-use of expressions makes the 
-scode
-return
-edoc
- keyword necessary only when you want to leave a function early. Another common use of Rust's
-expressions is easy conditional assignment of variables:
-scode True {}
-rcode
-let foo = if x == 5 {
-                "five"
-          }
-          else if x == 6 {
-                "six"
-          }
-          else {
-                "neither"
-          }
-edocr
-jcode
-String foo;
-if (x == 5) {
-    foo = "five";
-}
-else if (x == 6) {
-    foo = "six";
-}
-else {
-    foo = "neither";
-}
-edocj
-
-phead 2 Collatz
+phead 2 Program 1: Collatz
 phead 3 The Collatz Conjecture:
 The
 plink http://en.wikipedia.org/wiki/Collatz_conjecture Collatz Conjecture,
@@ -584,76 +526,40 @@ possible to reach 1 by following certain rules:
     <li> Repeat the procedure until 1 is reached.
 </ol>
 
-The conjecture is currently unproven, although there is evidence that it should be true. 
+The conjecture is currently unproven, although it has been shown to hold for numbers up to 5476377146882523136. 
 phead 3 Finding a Collatz Sequence:
 As you might imagine, given the simple nature of the conjecture's rules, it's quite easy to 
 find the Collatz sequence for a given number programmatically. The below is Rust code to do just that:
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 13, 'stop': 19}
+We can use this code in the following program to find the number of Collatz steps for a user-input number:
 scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': False}
 phead 3 Breaking Down the Code:
-This code uses the topics you've learned in this section, so we'll walk through it and discuss their use.
-The first thing to notice is the first two lines:
-scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 1, 'stop': 2}
-All Rust programs must begin as such, with a 'main' function. This is much the same as other C-family languages.
-As for the second line, note the declaration of
+First, let's look at the main function. There are a couple of things at the beginning which you haven't seen thus far
+in the tutorial, namely the contents of the first conditional block:
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 4, 'stop': 7}
+We aren't going to worry about the meaning of the <code>os::</code> in the boolean expression of the conditional block just yet;
+for now, just know that 
 scode
-i
+os::args().len()
 edoc
- as 
-scode
-mut
-edoc
-; as discussed in the section on mutability, this is necessary to allow us to be able to
-change the value of
-scode
-i
-edoc
- later in the code.
-
-The next bit of code should be fairly straightforward. We're calling 
+ gets the number of command-line arguments passed in. 
 scode
 println
 edoc
-, Rust's console output function, and finding the Collatz sequence for the value 1.
-However, the next line is a little more interesting:
-scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 7, 'stop': 7}
-Note here that we have an exclamation point after the function name. This indicates that we are calling a 
-macro (more on these later). For your purposes right now, know that 
+, as you've probably guessed based on your use of other languages, prints the string argument passed in. 
+The conditional block ends with a return statement, which, as we discussed earlier, is being used to prematurely exit the function.
+There's only one other thing to notice in the main function (we're ignoring line 9 - just know that it gets the first command line argument, changes it from a string to an int, and assigns that to a variable), and that's the slight variation in line 10's 
 scode
-println!
+println
 edoc
-is how we do formatted output in Rust - the format string syntax is reminiscent of Python's.
-Here, we use 
-scode
-{:?}
-edoc
- to indicate that any type passed in will be accepted; later, on line 43, we use 
-scode
-{:d}
-edoc
- to indicate that we expect an integer.
+ statement. Specifically, notice the !, and the arguments being passed in. The ! specifies that the call is to a macro, which
+is a kind of language extension in Rust. We'll be going over them in more detail later. In particular, this macro is like <code>printf</code> in C, and takes as its first argument a format string, with the remaining arguments being used to fill the slots of the format string. The syntax Rust uses for its format strings is similar to that of 
+plink http://docs.python.org/2/library/string.html#format-string-syntax Python.
 
-We also use the looping constructs discussed earlier; note the use on line 15 of
-scode
-break
-edoc
- to exit the infinite loop made with
-scode
-loop
-edoc
-.
-
-The first of our non-main functions is fairly boring; note only that we use a function
-call as an expression (with no semicolon) to return a value rather than an explicit return statement.
-scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 38, 'stop': 40}
-
-The second and final of our non-main functions is slightly more interesting. 
-scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 42, 'stop': 50}
-Here, in addition to 
-the aforementioned use of a type specifier in
-scode
-println!
-edoc
- , we also make use of a match block to carry out the actual Collatz conjecture algorithm.
+Moving into the <code>collatz</code> routine, we see the function declaration syntax we discussed above.
+<code>collatz</code> takes in an int and returns an int:
+scode False {'loc': 'code/collatz.rs', 'lang': 'rust', 'range': True, 'start': 13, 'stop': 19}
+The main takeaway from this code is the use of a match block to carry out the actual Collatz conjecture algorithm.
  Notice that we have to have the
 scode
 _
@@ -664,5 +570,13 @@ Finally, notice again that, by not putting semicolons at the end of the calls in
 block, we are able to use the value of whichever arm of the block is selected as our return value without
 an explicit return statement.
 
+phead 3 Final Exercises:
+To finish off this section, we have a small programming problem for you to solve. Starting with the above code (also available in a file
+plink http://aml3.github.io/RustTutorial/code/collatz.rs here
+), make a program that takes as command-line input a single number, representing a number of Collatz steps 
+(steps required to reach 1 by following the Collatz procedure), and computes the lowest number (starting from 1) which requires this 
+number of Collatz steps. For example, if the number input was 949, your program should output 63,728,127; similarly, if you input 1132, it should output 9,780,657,630 as the lowest number requiring 1132 Collatz steps.
+Bonus points if you can do it using each type of loop in Rust, as well as if you can do it recursively.
+
 Ready for more Rust? Head to the next section.
-pnav toc.html 02.html
+pnav toc.html incomplete.html
