@@ -131,14 +131,16 @@ codeb
 if(foo == 5) 
     System.out.println("it worked");
 bedoc
-the equivalent in Rust:
-scodeb
+the equivalent in Rust of 
+scode False {'lang': 'rust'}
+codeb
 if foo == 5 
     println("it worked");
 bedoc
-is illegal. The following is a legal conditional block; note that the else and 
+is illegal. The following is a legal conditional block. Note that the else and 
 else if are optional for validity.
-scodeb
+scode False {'lang': 'rust'}
+codeb
 if foo == 5 { 
     println("it’s five"); 
 }
