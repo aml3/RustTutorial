@@ -288,7 +288,7 @@ codeb
 match x {
     (x,y) if x > y => { println("Decreasing"); }
     (x,y) if y > x => { println("Increasing"); }
-    _              => { println()}
+    _              => { println("Equal")}
 }
 bedoc
 will print correctly the relation between <code>x</code> and <code>y</code>.
@@ -296,7 +296,7 @@ will print correctly the relation between <code>x</code> and <code>y</code>.
 phead 3 An Exercise in Matching
 To quickly test your comprehension of what you've learned so far, try writing a simple program to do the following:
 Given a tuple containing an int and a bool, use a match statement to determine (a) if the bool is true and the int is 
-between 20 and 26, or is 75, (b) if the bool is true and neither of the aforementioned conditions are true for the int, 
+between 20 and 26, (b) if the bool is true and the aforementioned condition isn't true for the int, 
 (c) if the int is between 40 and 49 (where the value of the bool doesn't matter), and (d), wherein none of the previous
 conditions are true. Print out an appropriate message using <code>println</code> for each case (e.g. for (a), you could print
 "True and in range", or something of the sort). Since you haven't learned how to get input yet, just define a variable like this:
