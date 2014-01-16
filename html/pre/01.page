@@ -532,7 +532,10 @@ int square(int x) {
 	return x*x;
 }
 edocj
-
+phead 3 Yet More Exercise:
+As another check to make sure you're good to go so far, try to implement
+plink http://c2.com/cgi/wiki?FizzBuzzTest Fizz Buzz,
+as specified on that page. Remember that you'll need to put your code in a main function, as shown above.
 phead 2 Program 1: Collatz
 phead 3 The Collatz Conjecture:
 The
