@@ -305,6 +305,13 @@ codeb
 let x = (51, true);
 bedoc
 match on it, and manually change its value to test the different branches.
+Put your code inside a block of this form, and run "rustc <filename>" to compile it.
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+    // Code goes here
+}
+bedoc
 
 phead 2 Looping
 Rust provides several choices of looping structure, similar to those in C and Java.
