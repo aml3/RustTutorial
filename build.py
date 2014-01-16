@@ -22,34 +22,42 @@ def build(direc):
     </head>
     <body>
         <h1 style="text-align: center;"> Table of Contents </h1>
-        <ol>'''
+        '''
 
     footer = '''    </body>
                 </html>'''
 
     levels = ['1','I','i','A','a']
     toc.write(header)
-    for file in os.listdir("html/pre/"):
+    pages = os.listdir("html/pre/")
+    pages.sort()
+    toc.write("<ol>\n")
+    for file in pages:
+        opened = 0
         if file.endswith(".page"):
             links = process("html/pre/"+file)
             path = file[:-5]+".html"
             text = links[0][0].replace('_', ' ')
             toc.write('<li> <a href="'+ path +'#' + links[0][0] + '">' + text + '</a> </li>\n')
             toc.write('<ol type="I">\n')
+            opened += 1
             level = 2
             for link in links[1:]:
                 if link[1] > level:
                     toc.write('<ol type="'+levels[level % 5]+'">' +'\n')
                     level += 1
+                    opened += 1
                 elif link[1] < level:
                     toc.write('</ol>\n')
                     level -= 1
+                    opened -= 1
                 text = link[0].replace('_', ' ')
                 if text.rstrip()[-1] == ':':
                     text = text.rstrip()[:-1]
                 toc.write('<li> <a href="'+ path +'#' + link[0] + '">' + text + '</a> </li>\n')
-    toc.write('</ol>\n')
-    toc.write('</ol>\n')
+        for i in range(0, opened):
+            toc.write("</ol>\n")
+    toc.write("<ol>\n")
     toc.write(footer)
     toc.close()
 
