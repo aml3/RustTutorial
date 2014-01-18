@@ -1,13 +1,309 @@
 ptitle Starting to Corrode
 phead 1 Starting to Corrode: Pointers, Memory, Strings, and I/O
+For this section of the tutorial, we will start exploring some of the more compelling details of Rust. We'll be going through memory managment in rust, file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, a program which employs simple encryption and decryption will tie these concepts together.
 phead 2 Memory Management
-phead 3 Types of Pointer:
-phead 3 Ownership:
-phead 3 Lifetimes:
 phead 3 Boxes:
+The "box" in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
+scode
+int
+edoc
+or a complicated 
+scode
+struct
+edoc
+will be a pointer to a box. Because Rust has a priority on safe memory, any allocated memory in Rust is "boxed," and thus any box can be thought of as simply a chunck of memory. 
+phead 3 Types of Pointer:
+As of Rust 0.9, there are two types of pointers: the owned pointer (indicated by the 
+scode
+~
+edoc
+) and the borrowed reference ( 
+scode
+&
+edoc
+. These point to a box, regardless of the underlying typing on the box, similar to how C style pointers function. Similarly, dereferencing a Rust pointer is done with the star operator ( 
+scode
+*
+edoc
+ ). The next section on ownership will go into more detail on the usage and interaction of both of these.
+
+A note: Legacy Rust code (before 0.9) also has a "managed pointer" represented by the 
+scode
+@
+edoc
+ which was automatically garbage collected. As of Rust 0.9, this syntax is no longer supported, however it is planned to be reintroduced in future releases. These added a deal of simplicity to pointer management, however other pointer types could be used with more efficency.
+phead 3 Ownership:
+phead 4 Owned Boxes
+A declaration of the owned pointer ( 
+scode
+~
+edoc
+ ) can be thought of as the following: "unless otherwise specified, only the declaration that owns this box can be used to access the value inside." What does this mean in code? The following block works as anticipated, printing out "10".
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    println!("{:d}", *x);
+bedoc
+However the following block doesn't even compile, giving the following error.
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    let y = x;
+    println!("{:d}", *x);
+bedoc
+<pre><code>tut2.rs:5:23: 5:24 <span style="color:red;">error:</span> use of moved value: `x`
+tut2.rs:5     println!("{:d}", *x);
+</code></pre>
+What's happening here, exactly? When we create the owned box of 
+scode
+~10
+edoc
+, the ownership of the pointer is assigned to the variable 
+scode
+x
+edoc
+. Declaring 
+scode
+let y = x;
+edoc
+assigns the pointer to y. Because of Rust's emphasis on safety, if both x and y were pointing to the same data, this could cause some inconsistencies. Thus, in the eyes of the compiler at this point, 
+scode
+x
+edoc
+has given up the ownership of its pointer and handed it over to 
+scode
+y
+edoc
+. From this point on, any attempts to dereference the pointer of 
+scode
+x
+edoc
+will result in a compiler error.
+
+What if we need to copy this value, though? The default library has a 
+scode
+clone
+edoc
+ method which copies over the content of a box and creates a new owned pointer to the copy. So the following code will assign 
+scode
+y
+edoc
+ to a new owned pointer pointing to a new copy of the value "10". The dereferencing of 
+scode
+x
+edoc
+ no longer causes a compiler error, as 
+scode
+x
+edoc
+ still has proper ownership of its box.
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    let y = x.clone();
+    println!("{:d}", *x);
+bedoc
+phead 4 Borrowed References
+Using the 
+scode
+&
+edoc
+ operator creates a temporary reference to some memory that has already been allocated. These references are refered to as "borrowed" because they can access the contents of the box referenced to, but have no ownership thereof. This most commonly used to pass in a pointer reference to a method.
+
+Once again because of Rust's emphasis on safety (this comes up a lot, if you haven't noticed yet), there are many resctriction of what can and can't be done with a reference. Most notably, if a pointer has a borrowed reference in scope (more on scope in the next section), any function which would free the memory or change the type being pointed to would cause a compile-time error. Think of it this way: creating a reference to a box "lends" that box's contents to the reference until the reference itself is done being used. Thus, full control over the lent out box isn't possible until the reference won't be used again.
+phead 4 Pointer Mutability
+Pointer mutability in Rust can be a bit finicky at first, but follows some simple principles. First off, mutability applies to the contents of a box, and not the pointer itself. Memory safety dictates that pointers shouldn't be able to be arbitrarily reassigned, so Rust simply isn't going to allow that. References, on the other hand, CAN be mutable, provided that they are reassigned to references of a similar type.
+
+The first example of mutability is with the owned pointer, which is fairly intuitive. For a owned pointer, only the value of the box can be reassigned. Note that the 2nd and 3rd lines are functionally identical. For a mutable pointer, the dereferenced value ( 
+scode
+*x
+edoc
+ in this case) can be used on the left side of an assignment.
+scode False {'lang': 'rust'}
+codeb
+    let mut x = ~10;
+    x = ~20;
+    *x = 20;
+bedoc
+
+References are a bit more complicated in this regard, as either the reference itself, or the value being referenced can be set as mutable. For example, this code will not compile, giving the following errors:
+scode False {'lang': 'rust'}
+codeb
+    let mut val1 = 10;
+    let mut val2 = 20;
+    let borrowed = &val1;
+    *borrowed = 11;
+    borrowed = &val2;
+bedoc
+<pre><code>tut2.rs:7:5: 7:14 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+tut2.rs:7     *borrowed = 11;
+              <span style="color:red;">^~~~~~~~~</span>
+tut2.rs:8:5: 8:13 <span style="color:red;">error:</span> re-assignment of immutable variable `borrowed`
+tut2.rs:8     borrowed = &val2;
+              <span style="color:red;">^~~~~~~~</span>
+</code></pre>
+Both of these errors refer to mutability issues in the reference 
+scode
+borrowed
+edoc
+ and can be changed by adding mutability specifiers. Changing the declaration of 
+scode
+borrowed
+edoc
+ to
+scode
+    let borrowed = &mut val1;
+edoc
+ removes the first error (but not the second), as the 
+scode
+mut
+edoc
+ on the right side of a reference assignment allows modifying the values of the box being borrowed. Changing this line to 
+scode
+    let mut borrowed = &val1;
+edoc
+ removes the second error (but not the first), as 
+scode
+mut
+edoc
+ on the left side of a declaration allows reassigning a variable, as 
+scode
+mut
+edoc
+ normally does. To remove both errors, this line can be written as 
+scode
+    let mut borrowed = &mut val1;
+edoc
+ which allows both modifying the referenced box and changing what 
+scode
+borrowed
+edoc
+ references. Keep in mind that references are type checked (yet another safety measure of Rust!) so the following code produces an error at compile time due to trying to reassign an int reference to a float reference.
+scode False {'lang': 'rust'}
+codeb
+    let mut val1 = 10;
+    let mut val3 = 10.0;
+    let borrowed = &val1;
+    borrowed = &val3;
+bedoc
+<pre><code>tut2.rs:6:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&<VI0>` but found `&<VF0>` (expected integral variable but found floating-point variable)
+tut2.rs:6     borrowed = &val3;
+</code></pre>
+phead 3 Lifetimes:
+The memory allocated in Rust is automatically freed when something goes out of scope. For both references and owned boxes, this has important consequences for getting code to compile. A pointer can be assumed to go out of scope once the bracket it is defined in. 
+
+The following program produces a compiler error. When the reference 
+scode
+y
+edoc
+ is created, the value of 
+scode
+x
+edoc
+ is frozen to reassignment until the reference to it goes out of scope. Thus, the FIRST reassignment here is invalid, but the 2nd is fine.
+scode False {'lang': 'rust'}
+codeb
+    let mut x = 10;
+    {
+        let y = &x;
+        x = 11; //This throws the error
+    } // y is deallocated here
+    x = 12; //This is fine
+bedoc
+<pre><code>tut2.rs:6:9: 6:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
+tut2.rs:6         x = 11;
+</code></pre>
+
+Owned pointers follow similar rules of deallocation, so borrowing a reference to some box and trying to access it once it has gone out of scope throws a compiler error.
+scode False {'lang': 'rust'}
+codeb
+    let mut reference: &~int;
+    {
+        let val: ~int = ~10;
+        reference = &val;
+    } //val deallocated here
+    println!("{:d}", **reference); //Referencing something that's gone!
+bedoc
+<pre><code>tut2.rs:6:21: 6:25 <span style="color:red;">error:</span> borrowed value does not live long enough
+tut2.rs:6         reference = &val;
+                              <span style="color:red;">^~~~</span>
+tut2.rs:2:1: 9:2 note: reference must be valid for the block at 2:0...
+	     [full block of code]
+tut2.rs:4:5: 7:6 note: ...but borrowed value is only valid for the block at 4:4
+	     [block within brackets]
+</code></pre>
 phead 2 Basic I/O
+As of Rust 0.9, file and user I/O are handled through the 
+plink http://static.rust-lang.org/doc/0.9/std/io/index.html std::io
+ module. The most intuitive way to really work with these is through the use of a 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
+, which will be explained more in depth in the proceeding sections. Take note that many methods in BufferedReader return vectors of bytes, not strings, so appropriate conversion may be necessary.
 phead 3 Working with stdin:
+stdin is called in Rust through std::io::stdin, and implemented by creating a buffered reader. The following example is from the Rust documentation for printing out a series of lines from stdin, automatically stopping at the end of input. The 
+scode
+lines
+edoc
+ method returns an iterator that goes through each line until the end of imput.
+scode False {'lang': 'rust'}
+codeb
+use std::io::buffered::BufferedReader;
+use std::io::stdin;
+fn main(){
+    let mut stdin = BufferedReader::new(stdin());
+    for line in stdin.lines() {
+        print(line);
+    }
+}
+bedoc
+Reading line by line is a bit more difficult, as the 
+scode
+read_line
+edoc
+ method is of an 
+scode
+Option<~str>
+edoc
+ type. These option types are explained more in depth in the "Error Handling" section later on this page of the tutorial. The gist of it is the following though: a call to 
+scode
+read_line
+edoc
+ can either succeed or fail. Thus, when it is called, we need a match statement to determine if it succeeded (where it will return 
+scode
+line
+edoc
+ in the following example) or fail (which returns
+scode
+None
+edoc
+). The example code below reads in the next 5 lines from stdin, and prints them. If there are less than 5 lines, the loop ends without crashing the program.
+scode False {'lang': 'rust'}
+codeb
+use std::io::buffered::BufferedReader;
+use std::io::stdin;
+fn main(){
+    let mut stdin = BufferedReader::new(stdin());
+    for i in range(0, 5) {
+        match stdin.read_line() {
+            Some(line) => {
+                print(line);
+            }
+            None => {
+                print("End of input!\n");
+                break;
+            }
+        }
+    }
+}
+bedoc
 phead 3 File I/O:
+scode False {'lang': 'rust'}
+codeb
+
+bedoc
+scode False {'lang': 'rust'}
+codeb
+
+bedoc
 phead 2 Strings and Vectors
 phead 3 Common String Operations:
 phead 3 Common Vector Operations:
