@@ -607,6 +607,11 @@ efficiently checking to see if you've already found the number of steps remainin
  you can use the following smaller test cases: For an input of 6, your code should output 10. For an input of 45, it should
 output 361. Finally, for an input of 260, it should print 18514.
 Bonus points if you can do it using each type of loop in Rust, as well as if you can do it recursively.
-
+N.B.: Trying to call 
+scode
+collatz(0)
+edoc
+ will result in a stack overflow, as the Collatz sequence is only defined for positive integers.
+ 
 Ready for more Rust? Head to the next section.
 pnav toc.html incomplete.html
