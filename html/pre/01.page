@@ -612,6 +612,6 @@ scode
 collatz(0)
 edoc
  will result in a stack overflow, as the Collatz sequence is only defined for positive integers.
- 
+
 Ready for more Rust? Head to the next section.
 pnav toc.html incomplete.html
