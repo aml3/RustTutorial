@@ -1,9 +1,9 @@
 ptitle Starting to Corrode
 phead 1 Starting to Corrode: Pointers, Memory, Strings, and I/O
-This section of the tutorial introduces one of the most "rusty" aspects of Rust: memory management.  Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs all of the new concepts.
+This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs all of the new concepts.
 phead 2 Memory Management
-phead 3 Boxes:
-The "box" in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
+phead 3 Boxes
+The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
 scode
 int
 edoc
@@ -11,17 +11,17 @@ or a complicated
 scode
 struct
 edoc
-will be a pointer to a box. Because Rust is designed to emphasize safety, any allocated memory in Rust is "boxed," and thus any box can be thought of as simply a chunk of memory. 
-phead 3 Types of Pointer:
-As of Rust 0.9, there are two types of pointers: the owned pointer (indicated by the tilde:
+will be a pointer to a box. Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
+phead 3 Pointer Types
+Rust provides two main pointer types: the <em>owned</em> pointer (indicated by the tilde:
 scode
 ~
 edoc
-) and the borrowed reference (denoted with ampersand: 
+) and the <em>borrowed</em> reference (denoted with ampersand: 
 scode
 &
 edoc
-). These point to a box, regardless of the type of data the box contains, roughly similar to how pointers work in C. For example,
+). Both kinds of pointers point to a box, and the pointer types are orthogonal to the type of data the box contains. For example,
 scode
 ~[&str]
 edoc
@@ -40,13 +40,21 @@ edoc
  which was automatically managed (garbage collected). As of Rust 0.9, this syntax is deprecated, however it is planned to be reintroduced in future releases. These added a deal of simplicity to pointer management, however other pointer types could be used with more efficency.  Automatically managed pointers may be implemented as library types.
 </div>
 
-phead 3 Ownership:
+phead 3 Ownership
+
+In Rust, there is a notion of <em>ownership</em> of an object.  The owner of an
+object, which could be a variable that refers to that object, manages
+the object's lifetime (that is, when its memory is allocated and
+reclaimed).  Programmers do not have to explicitly allocated and
+deallocate storage.  Rather, it is done by the Rust compiler and runtime
+based on how the object references are used.
+
 phead 4 Owned Boxes
-A declaration of an owned pointer ( 
+A declaration of an owned (
 scode
 ~
 edoc
- ) can be thought of as meaning that the declaration <em>owns</em> this box.  What does this mean in code? The following block works as anticipated, printing out "10".
+) pointer can be thought of as giving the declared variable ownership of the box.  What does this mean in code? The following block works as anticipated, printing out "10".
 scode False {'lang': 'rust'}
 codeb
     let x = ~10;
@@ -74,16 +82,18 @@ edoc
 scode
 let y = x;
 edoc
-assigns the <em>pointer</em> to y. Because of Rust's emphasis on safety this is not allowed: it creates two references to an owned box.  In other languages, such as C and Java, there are no restrictions on pointer sharing.  We could do, <!-- markup do distinguish C/Rust code? -->
+assigns the <em>pointer</em> to y. Because of Rust's emphasis on safety this is not allowed: it creates two references to an owned box.  
+
+In other languages, such as C and Java, there are no restrictions on pointer sharing.  We could do, <!-- markup do distinguish C/Rust code? -->
 scode
     y = x;
     *y = 3;
 edoc
-thus changing the value 
+thus changing the value of
 scode
-x
+*x
 edoc
-refers to.  With Rust, the assignment, 
+through the alias.  With Rust, the assignment, 
 scode
 y = x
 edoc
@@ -99,11 +109,11 @@ reference to the
 scode
 y 
 edoc
-reference.  From this point on, any attempts to dereference the pointer of 
+reference.  From this point on, any attempts to use 
 scode
 x
 edoc
-will result in a compiler error.
+to manipulate that box will result in a compiler error.
 
 We can make a copy of a box using the 
 scode
@@ -147,6 +157,11 @@ edoc
 .
 
 phead 4 Borrowed References
+
+All that copying would be expensive, and eliminate the benefits of data
+sharing for uses like pass-by-reference and data structures.  Rust's
+solution is to provide a way for owners to loan out their objects.  
+
 Using the 
 scode
 &
@@ -155,7 +170,30 @@ edoc
 
 Because of Rust's emphasis on safety there are many resctriction on what can be done with a reference. Most notably, if a pointer has a borrowed reference in scope (more on scope in the next section), any function which would free the memory or change the type being pointed to would cause a compile-time error. Think of it this way: creating a reference to a box "lends" that box's contents to the reference until the loaned box is "returned".  Thus, a reference owner gives up full control over a loaned box while it is being borrowed.
 
-TODO: add a simple example of borrowing before getting into mutability
+Borrowed references are frequently used as function parameters.  For example,
+scode False {'lang': 'rust'}
+codeb
+fn borrow(r : &int) -> int {
+    *r
+}
+bedoc
+declares the function 
+scode
+borrow
+edoc
+to take a borrowed pointer to an int.  We can call it by passing in an owned pointer:
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    println!("borrow(x): {:d}", borrow(x));
+bedoc
+Borrowed pointers can also be loaned by the borrowee, within the lifetime of the original loan.  We can pass in an owned pointer to borrow2, which borrows that pointer and passes it as a borrowed pointer to borrow:
+scode False {'lang': 'rust'}
+codeb
+fn borrow2(r : &int) -> int {
+   borrow(r)
+}
+bedoc
 
 phead 4 Pointer Mutability
 Pointer mutability in Rust seem a bit tricky at first, but consistently follows a few simple principles. First, mutability applies to the <em>contents</em> of a box, and not the pointer itself. Memory safety dictates that pointers shouldn't be able to be arbitrarily reassigned, so Rust simply isn't going to allow that. References, on the other hand, CAN be mutable, provided that they are reassigned to references of a similar type.
