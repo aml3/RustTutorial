@@ -67,8 +67,8 @@ codeb
     let y = x;
     println!("{:d}", *x);
 bedoc
-<pre><code>tut2.rs:5:23: 5:24 <span style="color:red;">error:</span> use of moved value: `x`
-tut2.rs:5     println!("{:d}", *x);
+<pre><code>tut2.rs:3:23: 3:24 <span style="color:red;">error:</span> use of moved value: `x`
+tut2.rs:3     println!("{:d}", *x);
 </code></pre>
 The error message is a bit unclear, but what it is reporting is a violation of ownership rules.  When we create the owned box of 
 scode
@@ -196,13 +196,68 @@ fn borrow2(r : &int) -> int {
 bedoc
 
 phead 4 Pointer Mutability
-Pointer mutability in Rust seem a bit tricky at first, but consistently follows a few simple principles. First, mutability applies to the <em>contents</em> of a box, and not the pointer itself. Memory safety dictates that pointers shouldn't be able to be arbitrarily reassigned, so Rust simply isn't going to allow that. References, on the other hand, CAN be mutable, provided that they are reassigned to references of a similar type.
-
-The first example of mutability is with the owned pointer, which is fairly intuitive. For a owned pointer, only the value of the box can be reassigned. Note that the 2nd and 3rd lines are functionally identical. For a mutable pointer, the dereferenced value ( 
+As with scalar variables, boxes are immutable by default.  The 
 scode
-*x
+mut
 edoc
- in this case) can be used on the left side of an assignment.
+qualifier is used to indicate that a box is mutable.  Mutability applies to the <em>contents</em> of a box, and not the pointer itself.
+
+For example,
+scode False {'lang': 'rust'}
+codeb
+fn increment(r: &int) {
+    *r = *r + 1;
+}
+bedoc
+is not permitted:
+<pre><code>
+borrowed.rs:2:4: 2:6 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:2     *r = *r + 1;
+                   ^~
+</code></pre>
+To allow the modification, we need to declare the parameter as a borrowed, mutable reference:
+scode
+r: &mut int
+edoc
+Now, the compiler produces an error for the callsite since the passed object is not mutable:
+<pre><code>
+borrowed.rs:16:14: 16:15 <span style="color:red;">error:</span> cannot borrow immutable dereference of ~ pointer as mutable
+borrowed.rs:16     increment(x);
+</code></pre>
+
+To change this, we need to add 
+scode
+mut
+edoc
+to the declaration:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+    let mut x = ~10;
+    increment(x);
+bedoc
+
+The 
+scode
+mut
+edoc
+here applies to the reference 
+scode
+x
+edoc
+and is also inherited by the box (so no separate 
+scode
+mut
+edoc
+annotation is needed for the 
+scode
+~
+edoc
+.  It allows both the variable 
+scode
+x
+edoc
+to be reassigned, as well as the contents of the owned box to be modified:
 scode False {'lang': 'rust'}
 codeb
     let mut x = ~10;
@@ -226,72 +281,27 @@ edoc
 scode
 mut
 edoc
-neither assignment would be permitted by the Rust compiler, but the 
-scode
-mut
-edoc
-here applies to the reference 
-scode
-x
-edoc
-and is also inherited by the box (so no separate 
-scode
-mut
-edoc
-annotation is needed for the 
-scode
-~
-edoc
-.
+neither assignment would be permitted by the Rust compiler.
 
-Borrowed references are a bit more complicated in this regard, as either the reference itself, or the value being referenced can be set as mutable independently. For example, this code will not compile, giving the following errors:
+Borrowed references do not inherit mutability.  For example, this code is invalid:
 scode False {'lang': 'rust'}
 codeb
     let mut val1 = 10;
     let mut val2 = 20;
-    let borrowed = &val1;
-    *borrowed = 11;
-    borrowed = &val2;
-bedoc
-<pre><code>tut2.rs:7:5: 7:14 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
-tut2.rs:7     *borrowed = 11;
-              <span style="color:red;">^~~~~~~~~</span>
-tut2.rs:8:5: 8:13 <span style="color:red;">error:</span> re-assignment of immutable variable `borrowed`
-tut2.rs:8     borrowed = &val2;
-              <span style="color:red;">^~~~~~~~</span>
-</code></pre>
-Both of these errors refer to mutability issues in the reference 
-scode
-borrowed
-edoc
- and can be changed by adding mutability specifiers. Changing the declaration of 
-scode
-borrowed
-edoc
- to
-scode
-    let borrowed = &mut val1;
-edoc
- removes the first error (but not the second), as the 
-scode
-mut
-edoc
- on the right side of a reference assignment allows modifying the value in the borrow box. Changing this line to 
-scode
     let mut borrowed = &val1;
-edoc
- removes the second error (but not the first), as 
-scode
-mut
-edoc
- on the left side of a declaration allows reassigning a variable, as 
-scode
-mut
-edoc
- normally does. To remove both errors, this line can be written as 
-scode
+    borrowed = &val2;
+    *borrowed = 11;
+bedoc
+<pre><code>
+borrowed.rs:23:4: 23:13 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:23     *borrowed = 11;
+                   <span style="color:red;">^~~~~~~~~</span>
+</code></pre>
+To allow both modifications, we need:
+scode False {'lang': 'rust'}
+codeb
     let mut borrowed = &mut val1;
-edoc
+bedoc
  which allows both modifying the referenced box and changing what 
 scode
 borrowed
@@ -306,10 +316,10 @@ codeb
     let borrowed = &val1;
     borrowed = &val3;
 bedoc
-<pre><code>tut2.rs:6:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&<VI0>` but found `&<VF0>` (expected integral variable but found floating-point variable)
-tut2.rs:6     borrowed = &val3;
+<pre><code>tut2.rs:4:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&&lt;VI0&gt;` but found `&&lt;VF0&gt;` (expected integral variable but found floating-point variable)
+tut2.rs:4     borrowed = &val3;
 </code></pre>
-phead 3 Lifetimes:
+phead 3 Lifetimes
 Memory allocated in Rust is automatically freed when its owner either goes out of scope or is reassigned. This eliminates the need to explicitly free storage (as in C or C++), but guarantees safety without giving up control to a garbage collector.  For both references and owned boxes, this has important consequences for getting code to compile. 
 
 TODO: I don't really like the following example - this seems more related to mutability rules and lifetimes
