@@ -319,10 +319,13 @@ bedoc
 <pre><code>tut2.rs:4:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&&lt;VI0&gt;` but found `&&lt;VF0&gt;` (expected integral variable but found floating-point variable)
 tut2.rs:4     borrowed = &val3;
 </code></pre>
-phead 3 Lifetimes
-Memory allocated in Rust is automatically freed when its owner either goes out of scope or is reassigned. This eliminates the need to explicitly free storage (as in C or C++), but guarantees safety without giving up control to a garbage collector.  For both references and owned boxes, this has important consequences for getting code to compile. 
 
-TODO: I don't really like the following example - this seems more related to mutability rules and lifetimes
+phead 4 Freezing Objects
+
+When an object is loaned through a borrowed reference, the lender loses
+the ability to modify that object.  This is especially important for
+multi-tasking (which we'll get to soon), but still relevant with a
+single thread.
 
 For example, the following program produces a compiler error: 
 scode False {'lang': 'rust'}
@@ -330,24 +333,35 @@ codeb
     let mut x = 10;
     {
         let y = &x;
-        x = 11; //This throws the error
-    } // y is deallocated here
+        x = 11; // Error
+    }
     x = 12; //This is fine
 bedoc
-<pre><code>tut2.rs:6:9: 6:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
-tut2.rs:6         x = 11;
+
+<pre><code>example.rs:4:9: 4:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
+example.rs:4         x = 11;
 </code></pre>
 
 When the reference 
 scode
 y
 edoc
- is created, the value of 
+ borrows the value 
 scode
 x
 edoc
- is frozen to reassignment until the reference to it goes out of scope. Thus, the FIRST reassignment here is invalid, but the 2nd is fine.
+refers to, the value of 
+scode
+x
+edoc
+ is frozen until the reference to it goes out of scope. Thus, the first reassignment here is invalid, but the second (after 
+scode
+y
+edoc
+is out of scope) is fine.
 
+phead 3 Lifetimes
+Memory allocated in Rust is automatically freed when its owner either goes out of scope or is reassigned. This eliminates the need to explicitly free storage (as in C or C++), but guarantees safety without giving up control to a garbage collector.  
 
 Owned pointers follow similar rules of deallocation, so borrowing a reference to some box and trying to access it once it has gone out of scope throws a compiler error.
 scode False {'lang': 'rust'}
@@ -359,22 +373,33 @@ codeb
     } //val deallocated here
     println!("{:d}", **reference); //Referencing something that's gone!
 bedoc
-<pre><code>tut2.rs:6:21: 6:25 <span style="color:red;">error:</span> borrowed value does not live long enough
-tut2.rs:6         reference = &val;
-                              <span style="color:red;">^~~~</span>
-tut2.rs:2:1: 9:2 note: reference must be valid for the block at 2:0...
-	     [full block of code]
-tut2.rs:4:5: 7:6 note: ...but borrowed value is only valid for the block at 4:4
-	     [block within brackets]
+<pre><code>example.rs:4:21: 4:25 <span style="color:red;">error:</span> borrowed value does not live long enough
+example.rs:4         reference = &val;
 </code></pre>
+
+TODO: add exercise here
+
+
 phead 2 Basic I/O
-As of Rust 0.9, file and user I/O are handled through the 
+Rust handles file and user I/O using the 
 plink http://static.rust-lang.org/doc/0.9/std/io/index.html std::io
- module. The most intuitive way to really work with these is through the use of a 
+ module. 
+
+The most intuitive way to work with these is through the use of a 
 plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
-, which will be explained more in depth in the proceeding sections. Take note that many methods in BufferedReader return vectors of bytes, not strings, so appropriate conversion may be necessary.
-phead 3 Working with stdin:
-stdin is called in Rust through std::io::stdin, and implemented by creating a buffered reader. The following example is from the Rust documentation for printing out a series of lines from stdin, automatically stopping at the end of input. The 
+, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+scode
+BufferedReader 
+edoc
+return vectors of bytes, not strings, so appropriate conversions may be necessary.
+
+phead 3 Working with Standard Input (stdin)
+
+Standard input is provided through 
+scode
+std::io::stdin
+edoc
+, and implemented by creating a buffered reader.  The following example (taken from the Rust documentation) prints out a series of lines from standard input, automatically stopping at the end of input. The 
 scode
 lines
 edoc
@@ -383,6 +408,7 @@ scode False {'lang': 'rust'}
 codeb
 use std::io::buffered::BufferedReader;
 use std::io::stdin;
+
 fn main(){
     let mut stdin = BufferedReader::new(stdin());
     for line in stdin.lines() {

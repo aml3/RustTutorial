@@ -12,32 +12,47 @@
 <title>Starting to Corrode</title>
 <h1 id="Starting_to_Corrode:_Pointers,_Memory,_Strings,_and_I/O" >Starting to Corrode: Pointers, Memory, Strings, and I/O</h1>
 <p>
-For this section of the tutorial, we will start exploring some of the more compelling details of Rust. We'll be going through memory managment in rust, file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, a program which employs simple encryption and decryption will tie these concepts together.
+This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs all of the new concepts.
 <h2 id="Memory_Management" >Memory Management</h2>
-<h3 id="Boxes:" >Boxes:</h3>
-The "box" in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
+<h3 id="Boxes" >Boxes</h3>
+The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
 <span class="src"><code><span class="k">int</span></code></span>
 or a complicated 
 <span class="src"><code><span class="k">struct</span></code></span>
-will be a pointer to a box. Because Rust has a priority on safe memory, any allocated memory in Rust is "boxed," and thus any box can be thought of as simply a chunck of memory. 
-<h3 id="Types_of_Pointer:" >Types of Pointer:</h3>
-As of Rust 0.9, there are two types of pointers: the owned pointer (indicated by the 
+will be a pointer to a box. Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
+<h3 id="Pointer_Types" >Pointer Types</h3>
+Rust provides two main pointer types: the <em>owned</em> pointer (indicated by the tilde:
 <span class="src"><code><span class="o">~</span></code></span>
-) and the borrowed reference ( 
+) and the <em>borrowed</em> reference (denoted with ampersand: 
 <span class="src"><code><span class="o">&amp;</span></code></span>
-. These point to a box, regardless of the underlying typing on the box, similar to how C style pointers function. Similarly, dereferencing a Rust pointer is done with the star operator ( 
-<span class="src"><code><span class="o">*</span></code></span>
- ). The next section on ownership will go into more detail on the usage and interaction of both of these.
+). Both kinds of pointers point to a box, and the pointer types are orthogonal to the type of data the box contains. For example,
+<span class="src"><code><span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span></code></span>
+is a owned reference to a vector of borrowed strings.
 </p>
 <p>
-A note: Legacy Rust code (before 0.9) also has a "managed pointer" represented by the 
+Similarly, dereferencing a Rust pointer is done with the star operator ( 
+<span class="src"><code><span class="o">*</span></code></span>
+ ). The next section on ownership will go into more detail on the usage and interaction of both of these.
+<div class="note">
+Note: Legacy Rust code (before 0.9) also has a "managed pointer" represented by the 
 <span class="src"><code><span class="o">@</span></code></span>
- which was automatically garbage collected. As of Rust 0.9, this syntax is no longer supported, however it is planned to be reintroduced in future releases. These added a deal of simplicity to pointer management, however other pointer types could be used with more efficency.
-<h3 id="Ownership:" >Ownership:</h3>
+ which was automatically managed (garbage collected). As of Rust 0.9, this syntax is deprecated, however it is planned to be reintroduced in future releases. These added a deal of simplicity to pointer management, however other pointer types could be used with more efficency.  Automatically managed pointers may be implemented as library types.
+</div>
+</p>
+<h3 id="Ownership" >Ownership</h3>
+<p>
+In Rust, there is a notion of <em>ownership</em> of an object.  The owner of an
+object, which could be a variable that refers to that object, manages
+the object's lifetime (that is, when its memory is allocated and
+reclaimed).  Programmers do not have to explicitly allocated and
+deallocate storage.  Rather, it is done by the Rust compiler and runtime
+based on how the object references are used.
+</p>
 <h4 id="Owned_Boxes" >Owned Boxes</h4>
-A declaration of the owned pointer ( 
+<p>
+A declaration of an owned (
 <span class="src"><code><span class="o">~</span></code></span>
- ) can be thought of as the following: "unless otherwise specified, only the declaration that owns this box can be used to access the value inside." What does this mean in code? The following block works as anticipated, printing out "10".
+) pointer can be thought of as giving the declared variable ownership of the box.  What does this mean in code? The following block works as anticipated, printing out "10".
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="o">~</span><span class="m">10</span><span class="p">;</span>
@@ -45,7 +60,7 @@ A declaration of the owned pointer (
 </pre></div>
 </td></tr></table>
 </div><p>
-However the following block doesn't even compile, giving the following error.
+However the following block gives a compilation error:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -55,25 +70,37 @@ However the following block doesn't even compile, giving the following error.
 </pre></div>
 </td></tr></table>
 </div><p>
-<pre><code>tut2.rs:5:23: 5:24 <span style="color:red;">error:</span> use of moved value: `x`
-tut2.rs:5     println!("{:d}", *x);
+<pre><code>tut2.rs:3:23: 3:24 <span style="color:red;">error:</span> use of moved value: `x`
+tut2.rs:3     println!("{:d}", *x);
 </code></pre>
-What's happening here, exactly? When we create the owned box of 
+The error message is a bit unclear, but what it is reporting is a violation of ownership rules.  When we create the owned box of 
 <span class="src"><code><span class="o">~</span><span class="m">10</span></code></span>
-, the ownership of the pointer is assigned to the variable 
+, that box is owned by the variable
 <span class="src"><code><span class="n">x</span></code></span>
-. Declaring 
+. The initialization,
 <span class="src"><code><span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span></code></span>
-assigns the pointer to y. Because of Rust's emphasis on safety, if both x and y were pointing to the same data, this could cause some inconsistencies. Thus, in the eyes of the compiler at this point, 
-<span class="src"><code><span class="n">x</span></code></span>
-has given up the ownership of its pointer and handed it over to 
-<span class="src"><code><span class="n">y</span></code></span>
-. From this point on, any attempts to dereference the pointer of 
-<span class="src"><code><span class="n">x</span></code></span>
-will result in a compiler error.
+assigns the <em>pointer</em> to y. Because of Rust's emphasis on safety this is not allowed: it creates two references to an owned box.  
 </p>
 <p>
-What if we need to copy this value, though? The default library has a 
+In other languages, such as C and Java, there are no restrictions on pointer sharing.  We could do, <!-- markup do distinguish C/Rust code? -->
+<span class="src"><code>    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">y</span> <span class="o">=</span> <span class="m">3</span><span class="p">;</span></code></span>
+thus changing the value of
+<span class="src"><code><span class="o">*</span><span class="n">x</span></code></span>
+through the alias.  With Rust, the assignment, 
+<span class="src"><code><span class="n">y</span> <span class="o">=</span> <span class="n">x</span></code></span>
+<em>transfers</em> ownership of the box 
+<span class="src"><code><span class="n">x</span></code></span>
+refers to from the 
+<span class="src"><code><span class="n">x</span></code></span>
+reference to the 
+<span class="src"><code><span class="n">y</span></code></span>
+reference.  From this point on, any attempts to use 
+<span class="src"><code><span class="n">x</span></code></span>
+to manipulate that box will result in a compiler error.
+</p>
+<p>
+We can make a copy of a box using the 
 <span class="src"><code><span class="n">clone</span></code></span>
  method which copies over the content of a box and creates a new owned pointer to the copy. So the following code will assign 
 <span class="src"><code><span class="n">y</span></code></span>
@@ -90,31 +117,137 @@ What if we need to copy this value, though? The default library has a
     <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="p">);</span>
 </pre></div>
 </td></tr></table>
-</div><h4 id="Borrowed_References" >Borrowed References</h4>
+</div><p>
+But, 
+<span class="src"><code><span class="n">x</span></code></span>
+and 
+<span class="src"><code><span class="n">y</span></code></span>
+refer to different boxes now &mdash; a modification of 
+<span class="src"><code><span class="o">*</span><span class="n">x</span></code></span>
+will not be visible through 
+<span class="src"><code><span class="n">y</span></code></span>
+.
+</p>
+<h4 id="Borrowed_References" >Borrowed References</h4>
+<p>
+All that copying would be expensive, and eliminate the benefits of data
+sharing for uses like pass-by-reference and data structures.  Rust's
+solution is to provide a way for owners to loan out their objects.  
+</p>
 <p>
 Using the 
 <span class="src"><code><span class="o">&amp;</span></code></span>
- operator creates a temporary reference to some memory that has already been allocated. These references are refered to as "borrowed" because they can access the contents of the box referenced to, but have no ownership thereof. This most commonly used to pass in a pointer reference to a method.
+ operator creates a temporary reference to some memory that has already been allocated. These references are refered to as "borrowed" because they can access the contents of the box during the borrowing period, but do not own the box. This most commonly used to pass in a pointer reference to a method.
 </p>
 <p>
-Once again because of Rust's emphasis on safety (this comes up a lot, if you haven't noticed yet), there are many resctriction of what can and can't be done with a reference. Most notably, if a pointer has a borrowed reference in scope (more on scope in the next section), any function which would free the memory or change the type being pointed to would cause a compile-time error. Think of it this way: creating a reference to a box "lends" that box's contents to the reference until the reference itself is done being used. Thus, full control over the lent out box isn't possible until the reference won't be used again.
-<h4 id="Pointer_Mutability" >Pointer Mutability</h4>
-Pointer mutability in Rust can be a bit finicky at first, but follows some simple principles. First off, mutability applies to the contents of a box, and not the pointer itself. Memory safety dictates that pointers shouldn't be able to be arbitrarily reassigned, so Rust simply isn't going to allow that. References, on the other hand, CAN be mutable, provided that they are reassigned to references of a similar type.
+Because of Rust's emphasis on safety there are many resctriction on what can be done with a reference. Most notably, if a pointer has a borrowed reference in scope (more on scope in the next section), any function which would free the memory or change the type being pointed to would cause a compile-time error. Think of it this way: creating a reference to a box "lends" that box's contents to the reference until the loaned box is "returned".  Thus, a reference owner gives up full control over a loaned box while it is being borrowed.
 </p>
 <p>
-The first example of mutability is with the owned pointer, which is fairly intuitive. For a owned pointer, only the value of the box can be reassigned. Note that the 2nd and 3rd lines are functionally identical. For a mutable pointer, the dereferenced value ( 
-<span class="src"><code><span class="o">*</span><span class="n">x</span></code></span>
- in this case) can be used on the left side of an assignment.
+Borrowed references are frequently used as function parameters.  For example,
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">borrow</span><span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="o">&amp;</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="o">*</span><span class="n">r</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+declares the function 
+<span class="src"><code><span class="n">borrow</span></code></span>
+to take a borrowed pointer to an int.  We can call it by passing in an owned pointer:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="o">~</span><span class="m">10</span><span class="p">;</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;borrow(x): {:d}&quot;</span><span class="p">,</span> <span class="n">borrow</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Borrowed pointers can also be loaned by the borrowee, within the lifetime of the original loan.  We can pass in an owned pointer to borrow2, which borrows that pointer and passes it as a borrowed pointer to borrow:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">borrow2</span><span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="o">&amp;</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+   <span class="n">borrow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="Pointer_Mutability" >Pointer Mutability</h4>
+<p>
+As with scalar variables, boxes are immutable by default.  The 
+<span class="src"><code><span class="k">mut</span></code></span>
+qualifier is used to indicate that a box is mutable.  Mutability applies to the <em>contents</em> of a box, and not the pointer itself.
+</p>
+<p>
+For example,
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">increment</span><span class="p">(</span><span class="n">r</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">*</span><span class="n">r</span> <span class="o">=</span> <span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+is not permitted:
+<pre><code>
+borrowed.rs:2:4: 2:6 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:2     *r = *r + 1;
+                   ^~
+</code></pre>
+To allow the modification, we need to declare the parameter as a borrowed, mutable reference:
+<span class="src"><code><span class="n">r</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="k">int</span></code></span>
+Now, the compiler produces an error for the callsite since the passed object is not mutable:
+<pre><code>
+borrowed.rs:16:14: 16:15 <span style="color:red;">error:</span> cannot borrow immutable dereference of ~ pointer as mutable
+borrowed.rs:16     increment(x);
+</code></pre>
+</p>
+<p>
+To change this, we need to add 
+<span class="src"><code><span class="k">mut</span></code></span>
+to the declaration:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">x</span> <span class="o">=</span> <span class="o">~</span><span class="m">10</span><span class="p">;</span>
+    <span class="n">increment</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The 
+<span class="src"><code><span class="k">mut</span></code></span>
+here applies to the reference 
+<span class="src"><code><span class="n">x</span></code></span>
+and is also inherited by the box (so no separate 
+<span class="src"><code><span class="k">mut</span></code></span>
+annotation is needed for the 
+<span class="src"><code><span class="o">~</span></code></span>
+.  It allows both the variable 
+<span class="src"><code><span class="n">x</span></code></span>
+to be reassigned, as well as the contents of the owned box to be modified:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">x</span> <span class="o">=</span> <span class="o">~</span><span class="m">10</span><span class="p">;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="o">~</span><span class="m">20</span><span class="p">;</span>
-    <span class="o">*</span><span class="n">x</span> <span class="o">=</span> <span class="m">20</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">x</span> <span class="o">=</span> <span class="m">30</span><span class="p">;</span>
 </pre></div>
 </td></tr></table>
 </div><p>
-References are a bit more complicated in this regard, as either the reference itself, or the value being referenced can be set as mutable. For example, this code will not compile, giving the following errors:
+The first assignment statement creates a new box owned by 
+<span class="src"><code><span class="n">x</span></code></span>
+holding the value
+<span class="src"><code><span class="m">20</span></code></span>
+. The second assignment statement modifies the value in that box to be
+<span class="src"><code><span class="m">30</span></code></span>
+.  Without the 
+<span class="src"><code><span class="k">mut</span></code></span>
+neither assignment would be permitted by the Rust compiler.
+</p>
+<p>
+Borrowed references do not inherit mutability.  For example, this code is invalid:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -122,38 +255,29 @@ References are a bit more complicated in this regard, as either the reference it
 4
 5</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">val1</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">val2</span> <span class="o">=</span> <span class="m">20</span><span class="p">;</span>
-    <span class="k">let</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">val1</span><span class="p">;</span>
-    <span class="o">*</span><span class="n">borrowed</span> <span class="o">=</span> <span class="m">11</span><span class="p">;</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">val1</span><span class="p">;</span>
     <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">val2</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">borrowed</span> <span class="o">=</span> <span class="m">11</span><span class="p">;</span>
 </pre></div>
 </td></tr></table>
 </div><p>
-<pre><code>tut2.rs:7:5: 7:14 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
-tut2.rs:7     *borrowed = 11;
-              <span style="color:red;">^~~~~~~~~</span>
-tut2.rs:8:5: 8:13 <span style="color:red;">error:</span> re-assignment of immutable variable `borrowed`
-tut2.rs:8     borrowed = &val2;
-              <span style="color:red;">^~~~~~~~</span>
+<pre><code>
+borrowed.rs:23:4: 23:13 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:23     *borrowed = 11;
+                   <span style="color:red;">^~~~~~~~~</span>
 </code></pre>
-Both of these errors refer to mutability issues in the reference 
-<span class="src"><code><span class="n">borrowed</span></code></span>
- and can be changed by adding mutability specifiers. Changing the declaration of 
-<span class="src"><code><span class="n">borrowed</span></code></span>
- to
-<span class="src"><code>    <span class="k">let</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">val1</span><span class="p">;</span></code></span>
- removes the first error (but not the second), as the 
-<span class="src"><code><span class="k">mut</span></code></span>
- on the right side of a reference assignment allows modifying the values of the box being borrowed. Changing this line to 
-<span class="src"><code>    <span class="k">let</span> <span class="k">mut</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">val1</span><span class="p">;</span></code></span>
- removes the second error (but not the first), as 
-<span class="src"><code><span class="k">mut</span></code></span>
- on the left side of a declaration allows reassigning a variable, as 
-<span class="src"><code><span class="k">mut</span></code></span>
- normally does. To remove both errors, this line can be written as 
-<span class="src"><code>    <span class="k">let</span> <span class="k">mut</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">val1</span><span class="p">;</span></code></span>
+To allow both modifications, we need:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">borrowed</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">val1</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+</div><p>
  which allows both modifying the referenced box and changing what 
 <span class="src"><code><span class="n">borrowed</span></code></span>
- references. Keep in mind that references are type checked (yet another safety measure of Rust!) so the following code produces an error at compile time due to trying to reassign an int reference to a float reference.
+ references. 
+</p>
+<p>
+Keep in mind that references are type checked (yet another safety measure of Rust!) so the following code produces an error at compile time due to trying to reassign an int reference to a float reference.
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -165,18 +289,19 @@ Both of these errors refer to mutability issues in the reference
 </pre></div>
 </td></tr></table>
 </div><p>
-<pre><code>tut2.rs:6:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&<VI0>` but found `&<VF0>` (expected integral variable but found floating-point variable)
-tut2.rs:6     borrowed = &val3;
+<pre><code>tut2.rs:4:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&&lt;VI0&gt;` but found `&&lt;VF0&gt;` (expected integral variable but found floating-point variable)
+tut2.rs:4     borrowed = &val3;
 </code></pre>
-<h3 id="Lifetimes:" >Lifetimes:</h3>
-The memory allocated in Rust is automatically freed when something goes out of scope. For both references and owned boxes, this has important consequences for getting code to compile. A pointer can be assumed to go out of scope once the bracket it is defined in. 
+</p>
+<h4 id="Freezing_Objects" >Freezing Objects</h4>
+<p>
+When an object is loaned through a borrowed reference, the lender loses
+the ability to modify that object.  This is especially important for
+multi-tasking (which we'll get to soon), but still relevant with a
+single thread.
 </p>
 <p>
-The following program produces a compiler error. When the reference 
-<span class="src"><code><span class="n">y</span></code></span>
- is created, the value of 
-<span class="src"><code><span class="n">x</span></code></span>
- is frozen to reassignment until the reference to it goes out of scope. Thus, the FIRST reassignment here is invalid, but the 2nd is fine.
+For example, the following program produces a compiler error: 
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -186,15 +311,30 @@ The following program produces a compiler error. When the reference
 6</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">x</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
     <span class="p">{</span>
         <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">;</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="m">11</span><span class="p">;</span> <span class="c1">//This throws the error</span>
-    <span class="p">}</span> <span class="c1">// y is deallocated here</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="m">11</span><span class="p">;</span> <span class="c1">// Error</span>
+    <span class="p">}</span>
     <span class="n">x</span> <span class="o">=</span> <span class="m">12</span><span class="p">;</span> <span class="c1">//This is fine</span>
 </pre></div>
 </td></tr></table>
 </div><p>
-<pre><code>tut2.rs:6:9: 6:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
-tut2.rs:6         x = 11;
+<pre><code>example.rs:4:9: 4:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
+example.rs:4         x = 11;
 </code></pre>
+</p>
+<p>
+When the reference 
+<span class="src"><code><span class="n">y</span></code></span>
+ borrows the value 
+<span class="src"><code><span class="n">x</span></code></span>
+refers to, the value of 
+<span class="src"><code><span class="n">x</span></code></span>
+ is frozen until the reference to it goes out of scope. Thus, the first reassignment here is invalid, but the second (after 
+<span class="src"><code><span class="n">y</span></code></span>
+is out of scope) is fine.
+</p>
+<h3 id="Lifetimes" >Lifetimes</h3>
+<p>
+Memory allocated in Rust is automatically freed when its owner either goes out of scope or is reassigned. This eliminates the need to explicitly free storage (as in C or C++), but guarantees safety without giving up control to a garbage collector.  
 </p>
 <p>
 Owned pointers follow similar rules of deallocation, so borrowing a reference to some box and trying to access it once it has gone out of scope throws a compiler error.
@@ -213,22 +353,31 @@ Owned pointers follow similar rules of deallocation, so borrowing a reference to
 </pre></div>
 </td></tr></table>
 </div><p>
-<pre><code>tut2.rs:6:21: 6:25 <span style="color:red;">error:</span> borrowed value does not live long enough
-tut2.rs:6         reference = &val;
-                              <span style="color:red;">^~~~</span>
-tut2.rs:2:1: 9:2 note: reference must be valid for the block at 2:0...
-	     [full block of code]
-tut2.rs:4:5: 7:6 note: ...but borrowed value is only valid for the block at 4:4
-	     [block within brackets]
+<pre><code>example.rs:4:21: 4:25 <span style="color:red;">error:</span> borrowed value does not live long enough
+example.rs:4         reference = &val;
 </code></pre>
+</p>
+<p>
+TODO: add exercise here
+</p>
 <h2 id="Basic_I/O" >Basic I/O</h2>
-As of Rust 0.9, file and user I/O are handled through the 
+<p>
+Rust handles file and user I/O using the 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/index.html">std::io</a>
- module. The most intuitive way to really work with these is through the use of a 
+ module. 
+</p>
+<p>
+The most intuitive way to work with these is through the use of a 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
-, which will be explained more in depth in the proceeding sections. Take note that many methods in BufferedReader return vectors of bytes, not strings, so appropriate conversion may be necessary.
-<h3 id="Working_with_stdin:" >Working with stdin:</h3>
-stdin is called in Rust through std::io::stdin, and implemented by creating a buffered reader. The following example is from the Rust documentation for printing out a series of lines from stdin, automatically stopping at the end of input. The 
+, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+<span class="src"><code><span class="n">BufferedReader</span></code></span>
+return vectors of bytes, not strings, so appropriate conversions may be necessary.
+</p>
+<h3 id="Working_with_Standard_Input_(stdin)" >Working with Standard Input (stdin)</h3>
+<p>
+Standard input is provided through 
+<span class="src"><code><span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">stdin</span></code></span>
+, and implemented by creating a buffered reader.  The following example (taken from the Rust documentation) prints out a series of lines from standard input, automatically stopping at the end of input. The 
 <span class="src"><code><span class="n">lines</span></code></span>
  method returns an iterator that goes through each line until the end of imput.
 </p>
@@ -239,8 +388,10 @@ stdin is called in Rust through std::io::stdin, and implemented by creating a bu
 5
 6
 7
-8</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">buffered</span><span class="o">::</span><span class="n">BufferedReader</span><span class="p">;</span>
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">buffered</span><span class="o">::</span><span class="n">BufferedReader</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">stdin</span><span class="p">;</span>
+
 <span class="k">fn</span> <span class="n">main</span><span class="p">(){</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">stdin</span> <span class="o">=</span> <span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">stdin</span><span class="p">());</span>
     <span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">stdin</span><span class="p">.</span><span class="n">lines</span><span class="p">()</span> <span class="p">{</span>
