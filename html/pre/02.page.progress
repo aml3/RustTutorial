@@ -189,7 +189,7 @@ scode
 mut
 edoc
 neither assignment would be permitted by the Rust compiler, but the 
-scode 
+scode
 mut
 edoc
 here applies to the reference 
