@@ -577,8 +577,101 @@ In case we want to open a file in a different mode, the
 </div><p>
 Note that this needs to be matched to actually use, just like any other file access operation.
 <h2 id="Strings_and_Vectors" >Strings and Vectors</h2>
-<h3 id="Common_String_Operations:" >Common String Operations:</h3>
 <h3 id="Common_Vector_Operations:" >Common Vector Operations:</h3>
+Vectors and strings in Rust can be a bit finicky to work with at first due to Rust's focus on safety, but they become more intuitive after a bit of use. For starters, a vector is defined by using comma seperated values within brackets. A specific element can be accessed via 
+<span class="src"><code><span class="n">foo</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></code></span>
+. Any vector definition where the elements may change after the initial definition should be as an owned box, so the methods of
+<a href="http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html">std::vec::OwnedVector</a>
+ are accessable, which covers most vector operations you would want to do. Below are some simple vector functions.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
+    <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">//Appends to end; [0, 1, 2, 3]</span>
+    <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> <span class="c1">//Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]</span>
+    <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">//Returns last element, removes from vector; [0, 1, 10, 2]</span>
+    <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> <span class="c1">//Returns element at specified index, removes from vector</span>
+    <span class="c1">//[0, 10, 2]</span>
+
+    <span class="c1">//Two methods of printing out all elements</span>
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> <span class="c1">//An iterator for going through all elements from front</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//len() returns the number of elements in the vector</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="Common_String_Operations:" >Common String Operations:</h3>
+<p>
+A notable construct that is very important for strings is the 
+<span class="src"><code><span class="n">slice</span></code></span>
+. This represents a view into a string, but not a string itself. Methods that produce a slice include 
+<span class="src"><code><span class="n">slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice with first element from index begin, and end element from end-1, 
+<span class="src"><code><span class="n">slice_from</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice with first element from the index provided that continues to the end, and 
+<span class="src"><code><span class="n">slice_to</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice starting at the beginning with final element from index end-1. These slice methods produce an immutable result, so they can be printed out, but not modified. For doing something such as taking a substring, a slice may be converted to an owned string via the
+<span class="src"><code><span class="n">to_owned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span></code></span>
+ method. It is also notable that these slice methods work on any vector, but string manipulation is the main use of slices.
+</p>
+<p>
+Other notable string methods include 
+<span class="src"><code><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;~</span><span class="k">str</span><span class="p">,</span> <span class="o">&amp;~</span><span class="k">str</span><span class="p">)</span></code></span>
+which checks two strings for bytewise equality, and 
+<span class="src"><code><span class="n">split</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span></code></span>
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. For string concatenation, the 
+<span class="src"><code><span class="o">+</span></code></span>
+ operator is used. These methods are used in the below code example.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">subst1</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">16</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">subst2</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice_from</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
+    <span class="k">let</span> <span class="n">doublesub</span> <span class="o">=</span> <span class="n">subst1</span> <span class="o">+</span> <span class="n">subst2</span><span class="p">;</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">doublesub</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span><span class="c1">//Using split iterator to print word by word</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">tempstr</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> <span class="c1">//Another useful function of the split iterator</span>
+    <span class="c1">//collect() Creates a vector that = ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The output of the above is as follows:
+<pre><code>true
+stringstring
+This
+is
+a
+string
+</code></pre>
 <h2 id="Error_Handling" >Error Handling</h2>
 <h2 id="Codebreaker" >Codebreaker</h2>
 <h3 id="The_code:" >The code:</h3>

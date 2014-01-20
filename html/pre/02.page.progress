@@ -585,8 +585,91 @@ let file = File::open_mode(&Path::new("message.txt"), Append, ReadWrite);
 bedoc
 Note that this needs to be matched to actually use, just like any other file access operation.
 phead 2 Strings and Vectors
-phead 3 Common String Operations:
 phead 3 Common Vector Operations:
+Vectors and strings in Rust can be a bit finicky to work with at first due to Rust's focus on safety, but they become more intuitive after a bit of use. For starters, a vector is defined by using comma seperated values within brackets. A specific element can be accessed via 
+scode
+foo[index]
+edoc
+. Any vector definition where the elements may change after the initial definition should be as an owned box, so the methods of
+plink http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html std::vec::OwnedVector
+ are accessable, which covers most vector operations you would want to do. Below are some simple vector functions.
+scode False {'lang': 'rust'}
+codeb
+    let mut vec = ~[0, 1, 2];
+    vec.push(3); //Appends to end; [0, 1, 2, 3]
+    vec.insert(2, 10); //Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]
+    let last = vec.pop(); //Returns last element, removes from vector; [0, 1, 10, 2]
+    let element1 = vec.remove(1); //Returns element at specified index, removes from vector
+    //[0, 10, 2]
+
+    //Two methods of printing out all elements
+    for &x in vec.iter() { //An iterator for going through all elements from front
+        println!("{}", x);
+    }
+
+    for i in range(0, vec.len()) { //len() returns the number of elements in the vector
+        println!("{}", vec[i]);
+    }
+bedoc
+phead 3 Common String Operations:
+A notable construct that is very important for strings is the 
+scode
+slice
+edoc
+. This represents a view into a string, but not a string itself. Methods that produce a slice include 
+scode
+slice(&self, begin: int, end: int)
+edoc
+, which returns a slice with first element from index begin, and end element from end-1, 
+scode
+slice_from(&self, begin: int)
+edoc
+, which returns a slice with first element from the index provided that continues to the end, and 
+scode
+slice_to(&self, end: int)
+edoc
+, which returns a slice starting at the beginning with final element from index end-1. These slice methods produce an immutable result, so they can be printed out, but not modified. For doing something such as taking a substring, a slice may be converted to an owned string via the
+scode
+to_owned(&self)
+edoc
+ method. It is also notable that these slice methods work on any vector, but string manipulation is the main use of slices.
+
+Other notable string methods include 
+scode
+str::eq(&~str, &~str)
+edoc
+which checks two strings for bytewise equality, and 
+scode
+split(&self, char)
+edoc
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. For string concatenation, the 
+scode
++
+edoc
+ operator is used. These methods are used in the below code example.
+scode False {'lang': 'rust'}
+codeb
+    let string = ~"This is a string";
+    let subst1 = string.slice(10, 16).to_owned();
+    let subst2 = string.slice_from(10).to_owned();
+    println!("{}", str::eq(&subst1, &subst2));
+    let doublesub = subst1 + subst2;
+    println!("{}", doublesub);
+
+    for tempstr in string.split(' ') {//Using split iterator to print word by word
+        println!("{}", tempstr);
+    }
+    let wordvec: ~[&str] = string.split(' ').collect(); //Another useful function of the split iterator
+    //collect() Creates a vector that = ~["This", "is", "a", "string"]
+bedoc
+The output of the above is as follows:
+<pre><code>true
+stringstring
+This
+is
+a
+string
+</code></pre>
 phead 2 Error Handling
 phead 2 Codebreaker
 phead 3 The code:
