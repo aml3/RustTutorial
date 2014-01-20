@@ -357,19 +357,83 @@ Owned pointers follow similar rules of deallocation, so borrowing a reference to
 example.rs:4         reference = &val;
 </code></pre>
 </p>
+<h4 id="Exercises" >Exercises</h4>
 <p>
-TODO: add exercise here
+We didn't cover vectors in this tutorial, but you can probably figure
+out most of what you need to solve the next two exercises from the example code.  See <A
+href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
+and Strings</a> from the main Rust tutorial for help with vectors.  Other useful vector methods include 
+<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">len</span><span class="p">()</span></code></span>
+for obtaining the number of elements in the vector
+<span class="src"><code><span class="n">v</span></code></span>
+and
+<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></code></span>
+for pushing the value 
+<span class="src"><code><span class="n">e</span></code></span>
+to the end of the vector
+<span class="src"><code><span class="n">v</span></code></span>
+.
+</p>
+<p>
+<div class="exercise">
+<b>Exercise 2.1.</b>  Implement a function, 
+<span class="src"><code><span class="n">increment</span></code></span>
+that takes as input a vector of integers and returns a new vector of integers that has the values of the original list each incremented by one.  For example:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+   <span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">];</span>
+   <span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="n">increment</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+   <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">q</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d} &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+should print out 2 3 4.
+</div>
+</p>
+<p>
+<div class="exercise">
+<b>Exercise 2.2.</b>  Implement a function, 
+<span class="src"><code><span class="n">incrementMut</span></code></span>
+that takes as input a vector of integers and modifies the values of the original list by incrementing each value by one.  For example:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+   <span class="k">let</span> <span class="k">mut</span> <span class="n">p</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">];</span>
+   <span class="n">incrementMut</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+   <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">p</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d} &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+should print out 2 3 4.  
+</div>
 </p>
 <h2 id="Basic_I/O" >Basic I/O</h2>
 <p>
-Rust handles file and user I/O using the 
+Rust handles file and user input/output using the 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/index.html">std::io</a>
  module. 
 </p>
 <p>
 The most intuitive way to work with these is through the use of a 
-<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
-, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader, </a>
+which will be explained more in depth in the following sections. Take note that many methods in 
 <span class="src"><code><span class="n">BufferedReader</span></code></span>
 return vectors of bytes, not strings, so appropriate conversions may be necessary.
 </p>

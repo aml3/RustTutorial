@@ -377,6 +377,33 @@ bedoc
 example.rs:4         reference = &val;
 </code></pre>
 
+phead 4 Exercises
+
+We didn't cover vectors in this tutorial, but you can probably figure
+out most of what you need to solve the next two exercises from the example code.  See <A
+href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
+and Strings</a> from the main Rust tutorial for help with vectors.  Other useful vector methods include 
+scode
+v.len()
+edoc
+for obtaining the number of elements in the vector
+scode
+v
+edoc
+and
+scode
+v.push(e)
+edoc
+for pushing the value 
+scode
+e
+edoc
+to the end of the vector
+scode
+v
+edoc
+.
+
 <div class="exercise">
 <b>Exercise 2.1.</b>  Implement a function, 
 scode
@@ -394,14 +421,7 @@ fn main() {
 }
 bedoc
 should print out 2 3 4.
-
-We didn't cover vectors in this tutorial, but you can probably figure
-out what you need from the example code.  See <A
-href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
-and Strings</a> from the main Rust tutorial for help with vectors.
-
 </div>
-
 
 <div class="exercise">
 <b>Exercise 2.2.</b>  Implement a function, 
@@ -424,13 +444,13 @@ should print out 2 3 4.
 
 
 phead 2 Basic I/O
-Rust handles file and user I/O using the 
+Rust handles file and user input/output using the 
 plink http://static.rust-lang.org/doc/0.9/std/io/index.html std::io
  module. 
 
 The most intuitive way to work with these is through the use of a 
-plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
-, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader, 
+which will be explained more in depth in the following sections. Take note that many methods in 
 scode
 BufferedReader 
 edoc
