@@ -691,7 +691,55 @@ a
 string
 </code></pre>
 <h2 id="Error_Handling" >Error Handling</h2>
-<h2 id="Codebreaker" >Codebreaker</h2>
+Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
+<span class="src"><code><span class="n">Option</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+ type used for functions which either create an object or fail (represented by 
+<span class="src"><code><span class="n">None</span><span class="p">()</span></code></span>
+). There is another, similar construct to this called a 
+<span class="src"><code><span class="n">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">E</span><span class="o">&gt;</span></code></span>
+ which is like a 
+<span class="src"><code><span class="n">Option</span></code></span>
+, but determined on whether a function succeds as intended on a pre-existing object (as opposed to the creation of a new object with 
+<span class="src"><code><span class="n">Option</span></code></span>
+). A 
+<span class="src"><code><span class="n">Result</span></code></span>
+ requires a match statement to use the values obtained. The 
+<span class="src"><code><span class="n">Ok</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
+ branch represents a successful call, whereas 
+<span class="src"><code><span class="n">Err</span><span class="p">(</span><span class="n">E</span><span class="p">)</span></code></span>
+ is a failed called. The error result may provide specific information about th e failure, depending on the function.
+</p>
+<p>
+If a 
+<span class="src"><code><span class="n">None</span><span class="p">()</span></code></span>
+ or 
+<span class="src"><code><span class="n">Err</span><span class="p">(</span><span class="n">E</span><span class="p">)</span></code></span>
+ branch is reached and the program can no longer continue, a 
+<span class="src"><code><span class="k">fail</span><span class="o">!</span><span class="p">()</span></code></span>
+ macro can be used to terminate a program with an optional message. The following code terminates with a message if "foo.txt" is failed to open, for instance.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;foo.txt&quot;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    	     <span class="cm">/*</span>
+<span class="cm">    	     ...</span>
+<span class="cm">    	     */</span>
+    <span class="p">}</span>
+    <span class="n">None</span> <span class="o">=&gt;</span><span class="p">{</span>
+            <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Creating foo.txt failed!&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Codebreaker" >Codebreaker</h2>
 <h3 id="The_code:" >The code:</h3>
 <h3 id="Stepping_through:" >Stepping through:</h3>
     </body>

@@ -680,6 +680,66 @@ a
 string
 </code></pre>
 phead 2 Error Handling
+Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
+scode
+Option<T>
+edoc
+ type used for functions which either create an object or fail (represented by 
+scode
+None()
+edoc
+). There is another, similar construct to this called a 
+scode
+Result<T,E>
+edoc
+ which is like a 
+scode
+Option
+edoc
+, but determined on whether a function succeds as intended on a pre-existing object (as opposed to the creation of a new object with 
+scode
+Option
+edoc
+). A 
+scode
+Result
+edoc
+ requires a match statement to use the values obtained. The 
+scode
+Ok(T)
+edoc
+ branch represents a successful call, whereas 
+scode
+Err(E)
+edoc
+ is a failed called. The error result may provide specific information about th e failure, depending on the function.
+
+If a 
+scode
+None()
+edoc
+ or 
+scode
+Err(E)
+edoc
+ branch is reached and the program can no longer continue, a 
+scode
+fail!()
+edoc
+ macro can be used to terminate a program with an optional message. The following code terminates with a message if "foo.txt" is failed to open, for instance.
+scode False {'lang': 'rust'}
+codeb
+match File::create(&Path::new("foo.txt")) {
+    Some(mut file) => {
+    	     /*
+    	     ...
+    	     */
+    }
+    None =>{
+            fail!("Creating foo.txt failed!");
+    }
+}
+bedoc
 phead 2 Codebreaker
 phead 3 The code:
 phead 3 Stepping through:
