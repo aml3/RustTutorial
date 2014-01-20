@@ -903,6 +903,7 @@ code
 mut
 edoc
 tells <code>Some(...)</code> that the variables are mutable.
+
 The rest of the code is fairly tame. One last thing to note is that in the 
 scode False {'lang':'rust'}
 code
