@@ -597,17 +597,25 @@ scode False {'lang': 'rust'}
 codeb
     let mut vec = ~[0, 1, 2];
     vec.push(3); //Appends to end; [0, 1, 2, 3]
-    vec.insert(2, 10); //Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]
-    let last = vec.pop(); //Returns last element, removes from vector; [0, 1, 10, 2]
-    let element1 = vec.remove(1); //Returns element at specified index, removes from vector
+
+    vec.insert(2, 10); 
+    //Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]
+
+    let last = vec.pop(); 
+    //Returns last element, removes from vector; [0, 1, 10, 2]
+
+    let element1 = vec.remove(1); 
+    //Returns element at specified index, removes from vector
     //[0, 10, 2]
 
     //Two methods of printing out all elements
-    for &x in vec.iter() { //An iterator for going through all elements from front
+    //An iterator for going through all elements from front
+    for &x in vec.iter() { 
         println!("{}", x);
     }
-
-    for i in range(0, vec.len()) { //len() returns the number of elements in the vector
+    
+    //len() returns the number of elements in the vector
+    for i in range(0, vec.len()) { 
         println!("{}", vec[i]);
     }
 bedoc
@@ -655,12 +663,13 @@ codeb
     println!("{}", str::eq(&subst1, &subst2));
     let doublesub = subst1 + subst2;
     println!("{}", doublesub);
-
-    for tempstr in string.split(' ') {//Using split iterator to print word by word
+    //Using split iterator to print word by word
+    for tempstr in string.split(' ') {
         println!("{}", tempstr);
     }
-    let wordvec: ~[&str] = string.split(' ').collect(); //Another useful function of the split iterator
+    //Another useful function of the split iterator
     //collect() Creates a vector that = ~["This", "is", "a", "string"]
+    let wordvec: ~[&str] = string.split(' ').collect(); 
 bedoc
 The output of the above is as follows:
 <pre><code>true

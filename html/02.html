@@ -598,19 +598,35 @@ Vectors and strings in Rust can be a bit finicky to work with at first due to Ru
 12
 13
 14
-15</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
     <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">//Appends to end; [0, 1, 2, 3]</span>
-    <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> <span class="c1">//Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]</span>
-    <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">//Returns last element, removes from vector; [0, 1, 10, 2]</span>
-    <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> <span class="c1">//Returns element at specified index, removes from vector</span>
+
+    <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> 
+    <span class="c1">//Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]</span>
+
+    <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
+    <span class="c1">//Returns last element, removes from vector; [0, 1, 10, 2]</span>
+
+    <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> 
+    <span class="c1">//Returns element at specified index, removes from vector</span>
     <span class="c1">//[0, 10, 2]</span>
 
     <span class="c1">//Two methods of printing out all elements</span>
-    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> <span class="c1">//An iterator for going through all elements from front</span>
+    <span class="c1">//An iterator for going through all elements from front</span>
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> 
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
     <span class="p">}</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//len() returns the number of elements in the vector</span>
+    
+    <span class="c1">//len() returns the number of elements in the vector</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> 
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
     <span class="p">}</span>
 </pre></div>
@@ -649,18 +665,20 @@ which checks two strings for bytewise equality, and
  9
 10
 11
-12</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
+12
+13</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
     <span class="k">let</span> <span class="n">subst1</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">16</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">subst2</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice_from</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
     <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
     <span class="k">let</span> <span class="n">doublesub</span> <span class="o">=</span> <span class="n">subst1</span> <span class="o">+</span> <span class="n">subst2</span><span class="p">;</span>
     <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">doublesub</span><span class="p">);</span>
-
-    <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span><span class="c1">//Using split iterator to print word by word</span>
+    <span class="c1">//Using split iterator to print word by word</span>
+    <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">tempstr</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> <span class="c1">//Another useful function of the split iterator</span>
+    <span class="c1">//Another useful function of the split iterator</span>
     <span class="c1">//collect() Creates a vector that = ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
+    <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> 
 </pre></div>
 </td></tr></table>
 </div><p>
