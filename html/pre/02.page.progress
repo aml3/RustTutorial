@@ -887,7 +887,12 @@ match
 edoc
 statement contains something a bit new.
 scode False {'loc': 'code/codebreaker.rs', 'lang': 'rust', 'range': True, 'start': 31, 'stop' : 37}
-If we remove that word we get a compile error: 
+If we remove 
+scode False {'lang':'rust'}
+code
+mut
+edoc
+ we get a compile error: 
 <pre><code>
 codebreaker.rs:33:5: 33:8 <span style="color:red;">error</span>: cannot borrow immutable local variable as mutable
 codebreaker.rs:33 				key.write(random_bytes);
@@ -897,12 +902,12 @@ codebreaker.rs:34				encrypted.write(encrypted_bytes);
 						<span style="color:red;">^~~~~~~~~</span>
 </code></pre>
 
-The reason for this goes back to boxes. This issue is that reading from a file requires mutability. Using <code>Some(...)</code> shares a lot of similarities with declaring variables. By only using <code>Some(key)</code> and <code>Some(encrypted)</code>, we borrow the file pointers and put them in immutable boxes. Adding the 
+The reason for this goes back to boxes. The issue is that reading from a file requires mutability. <code>Some(...)</code> shares a lot of similarities with declaring variables. By only using <code>Some(key)</code> and <code>Some(encrypted)</code>, we borrow the file pointers and put them in immutable boxes. Adding the 
 scode False {'lang':'rust'}
 code
 mut
 edoc
-tells <code>Some(...)</code> that the variables are mutable.
+tells the compiler the variables are mutable.
 
 The rest of the code is fairly tame. One last thing to note is that in the 
 scode False {'lang':'rust'}
