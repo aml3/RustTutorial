@@ -145,6 +145,12 @@ td.lines pre {
   font-size: 12px; line-height: 14px; color: #444; margin-left: 20px; margin-right: 20px;
 }
 
+.exercise {
+  display:block;padding:5px;margin-bottom:10px;margin-top:10px;
+  background-color:#FFDAB9;
+  border:1px solid #f55}
+}
+
 @media only screen and (min-width: 480px) {
 body{font-size:14px;}
 }

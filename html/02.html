@@ -10,11 +10,16 @@
     </head>
     <body>
 <title>Starting to Corrode</title>
-<h1 id="Starting_to_Corrode:_Pointers,_Memory,_Strings,_and_I/O" >Starting to Corrode: Pointers, Memory, Strings, and I/O</h1>
+<h1 id="Starting_to_Corrode:<br>Pointers,_Memory,_Strings,_and_I/O" >Starting to Corrode:<br>Pointers, Memory, Strings, and I/O</h1>
 <p>
-This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs all of the new concepts.
+This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
+</p>
+<p>
+Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
+</p>
 <h2 id="Memory_Management" >Memory Management</h2>
 <h3 id="Boxes" >Boxes</h3>
+<p>
 The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
 <span class="src"><code><span class="k">int</span></code></span>
 or a complicated 
@@ -357,6 +362,21 @@ Owned pointers follow similar rules of deallocation, so borrowing a reference to
 example.rs:4         reference = &val;
 </code></pre>
 </p>
+<h4 id="Exercises" >Exercises</h4>
+<p>
+We didn't cover vectors yet, but you can probably figure
+out most of what you need to solve the next two exercises from the example code.  Other useful vector methods include 
+<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">len</span><span class="p">()</span></code></span>
+for obtaining the number of elements in the vector
+<span class="src"><code><span class="n">v</span></code></span>
+and
+<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></code></span>
+for pushing the value 
+<span class="src"><code><span class="n">e</span></code></span>
+to the end of the vector
+<span class="src"><code><span class="n">v</span></code></span>
+.  (See <a href="#vectors">later in this tutorial</a> for more details on vectors.)
+</p>
 <p>
 <div class="exercise">
 <b>Exercise 2.1.</b>  Implement a function, 
@@ -380,14 +400,6 @@ that takes as input a vector of integers and returns a new vector of integers th
 </td></tr></table>
 </div><p>
 should print out 2 3 4.
-</p>
-<p>
-We didn't cover vectors in this tutorial, but you can probably figure
-out what you need from the example code.  See <A
-href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
-and Strings</a> from the main Rust tutorial for help with vectors.
-</p>
-<p>
 </div>
 </p>
 <p>
@@ -417,14 +429,14 @@ should print out 2 3 4.
 </p>
 <h2 id="Basic_I/O" >Basic I/O</h2>
 <p>
-Rust handles file and user I/O using the 
+Rust handles file and user input/output using the 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/index.html">std::io</a>
  module. 
 </p>
 <p>
 The most intuitive way to work with these is through the use of a 
-<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
-, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader, </a>
+which will be explained more in depth in the following sections. Take note that many methods in 
 <span class="src"><code><span class="n">BufferedReader</span></code></span>
 return vectors of bytes, not strings, so appropriate conversions may be necessary.
 </p>
@@ -493,7 +505,7 @@ Reading line by line is a bit more difficult, as the
                 <span class="n">print</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="n">None</span> <span class="o">=&gt;</span> <span class="p">{</span>
-                <span class="n">print</span><span class="p">(</span><span class="s">&quot;End of input!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+                <span class="n">println</span><span class="p">(</span><span class="s">&quot;End of input!&quot;</span><span class="p">);</span>
                 <span class="k">break</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -501,28 +513,39 @@ Reading line by line is a bit more difficult, as the
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h3 id="File_I/O:" >File I/O:</h3>
+</div><h3 id="Files" >Files</h3>
 <p>
 The standard library functions for working with files in Rust are handled via the 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/fs/struct.File.html">std::io::File</a>
- module. This module contains methods for opening and writing to a file. A file is opened through 
+ module. This module contains methods for opening and writing to a file. 
+</p>
+<p>
+A file is opened using
 <span class="src"><code><span class="n">Path</span></code></span>
  objects, which are included in any Rust program by default. Creating a 
 <span class="src"><code><span class="n">Path</span></code></span>
  object is done through 
 <span class="src"><code><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;path/to/file.foo&quot;</span><span class="p">)</span></code></span>
-. To simply open a blank file in write only mode, 
+. 
+</p>
+<p>
+To simply open a new file for writing,
 <span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">)</span></code></span>
  is the simplest call. This returns an 
 edoc
 Option<File>
-<span class="src"><code> <span class="k">type</span><span class="p">,</span> <span class="n">so</span> <span class="n">it</span> <span class="n">must</span> <span class="n">be</span> <span class="n">matched</span> <span class="n">to</span> <span class="n">ensure</span> <span class="n">that</span> <span class="n">a</span> <span class="n">file</span> <span class="n">not</span> <span class="n">opening</span> <span class="n">properly</span> <span class="n">is</span> <span class="n">handled</span><span class="p">.</span> <span class="n">The</span> <span class="n">two</span> <span class="n">most</span> <span class="n">common</span> <span class="n">ways</span> <span class="n">to</span> <span class="n">write</span> <span class="n">to</span> <span class="n">the</span> <span class="n">file</span> <span class="k">once</span> <span class="n">opened</span> <span class="n">are</span> <span class="n">the</span> 
-<span class="n">scode</span>
-<span class="n">File</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span></code></span>
-, which writes a buffer of bytes to a file, and 
-<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">write_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span></code></span>
-, which writes a string to the file.
-The following is an example of opening a file for write, using both of these methods.
+<span class="src"><code> <span class="k">type</span></code></span>
+, so it must be matched to ensure that a file was successfully opened. 
+</p>
+<p>
+The two most common ways to write to the file once opened are: <br>
+<span class="src"><code>   <span class="n">File</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span></code></span>
+which writes a buffer of bytes to a file, and: <br>
+<span class="src"><code>   <span class="n">File</span><span class="o">::</span><span class="n">write_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span></code></span>
+which writes a string to the file.
+</p>
+<p>
+This example demonstrated opening a file for writing using both of these methods:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -556,13 +579,19 @@ The following is an example of opening a file for write, using both of these met
 </div><p>
 Reading a file can be accomplished easily through using the 
 <a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
- module, much like reading from standard in. Opening a file to a 
+ module, much like reading from standard in. 
+</p>
+<p>
+Opening a file to a 
 <span class="src"><code><span class="n">BufferedReader</span></code></span>
  is done using the 
 <span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">)</span></code></span>
  function, which opens the file at a given path in read-only mode, followed by 
 <span class="src"><code><span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">File</span><span class="p">)</span></code></span>
-. Note that the file needs to be matched before converting to a 
+. 
+</p>
+<p>
+Note that the file needs to be matched before converting to a 
 <span class="src"><code><span class="n">BufferedReader</span></code></span>
 , as 
 <span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open</span></code></span>
@@ -573,6 +602,9 @@ returns an
 , a file is read in an identical manner to reading from stdin in the previous example, and all relevant methods are outlined on the
 <a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
  documentation.
+</p>
+<p>
+Here's a simple example of reading a file:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -606,7 +638,7 @@ returns an
 </pre></div>
 </td></tr></table>
 </div><p>
-In case we want to open a file in a different mode, the 
+The 
 <span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open_mode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">,</span> <span class="n">FileAccess</span><span class="p">)</span></code></span>
  method allows specifying the mode in which a file is accessed. 
 <span class="src"><code><span class="n">FileMode</span></code></span>
@@ -630,14 +662,28 @@ In case we want to open a file in a different mode, the
 </pre></div>
 </td></tr></table>
 </div><p>
-Note that this needs to be matched to actually use, just like any other file access operation.
-<h2 id="Strings_and_Vectors" >Strings and Vectors</h2>
-<h3 id="Common_Vector_Operations:" >Common Vector Operations:</h3>
-Vectors and strings in Rust can be a bit finicky to work with at first due to Rust's focus on safety, but they become more intuitive after a bit of use. For starters, a vector is defined by using comma seperated values within brackets. A specific element can be accessed via 
+Like the other file methods, this returns an
+<span class="src"><code><span class="n">Option</span></code></span>
+objects that must be matched to check for opening failures.
+</p>
+<h2 id="Vectors_and_Strings" >Vectors and Strings</h2>
+<p>
+Rust provides built-in vector and string types, consistent with Rust's focus on safety.
+</p>
+<h4 id="Vectors" >Vectors</h4>
+<p>
+<a name="vectors"></a>
+A vector is defined by using comma seperated values within brackets. 
+</p>
+<p>
+A specific element can be accessed via 
 <span class="src"><code><span class="n">foo</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></code></span>
-. Any vector definition where the elements may change after the initial definition should be as an owned box, so the methods of
+. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
 <a href="http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html">std::vec::OwnedVector</a>
- are accessable, which covers most vector operations you would want to do. Below are some simple vector functions.
+ may be used to mutate the vector. 
+</p>
+<p>
+These examples show simple vector functions:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -659,55 +705,76 @@ Vectors and strings in Rust can be a bit finicky to work with at first due to Ru
 18
 19
 20
-21
-22
-23</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
-    <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">//Appends to end; [0, 1, 2, 3]</span>
+21</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
+    <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">// Appends to end: [0, 1, 2, 3]</span>
 
     <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> 
-    <span class="c1">//Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]</span>
+    <span class="c1">// Inserts 10 at position 2: [0, 1, 10, 2, 3]</span>
 
     <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
-    <span class="c1">//Returns last element, removes from vector; [0, 1, 10, 2]</span>
+    <span class="c1">// Returns last element, removing it from the vector: [0, 1, 10, 2]</span>
 
     <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> 
-    <span class="c1">//Returns element at specified index, removes from vector</span>
-    <span class="c1">//[0, 10, 2]</span>
+    <span class="c1">// Returns and removes element at specified index: [0, 10, 2]</span>
 
-    <span class="c1">//Two methods of printing out all elements</span>
-    <span class="c1">//An iterator for going through all elements from front</span>
-    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> 
+    <span class="c1">// An iterator for going through all elements in order: </span>
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// note the use of &amp; for borrowing</span>
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
     <span class="p">}</span>
     
-    <span class="c1">//len() returns the number of elements in the vector</span>
+    <span class="c1">// len() returns the number of elements in the vector</span>
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> 
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
     <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h3 id="Common_String_Operations:" >Common String Operations:</h3>
+</div><h4 id="Strings" >Strings</h4>
+<p>
+Rust supposrts a 
+scdoe
+string
+edoc
+type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
+<span class="src"><code><span class="k">u8</span></code></span>
+type in Rust.
+</p>
 <p>
 A notable construct that is very important for strings is the 
 <span class="src"><code><span class="n">slice</span></code></span>
-. This represents a view into a string, but not a string itself. Methods that produce a slice include 
+. This represents a view into a string, but not a string itself. Its type is
+<span class="src"><code><span class="o">&amp;</span><span class="n">string</span></code></span>
+.  
+ 
+Methods that produce a slice include 
 <span class="src"><code><span class="n">slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
-, which returns a slice with first element from index begin, and end element from end-1, 
+, which returns a slice of characters between begin and end - 1, 
 <span class="src"><code><span class="n">slice_from</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
 , which returns a slice with first element from the index provided that continues to the end, and 
 <span class="src"><code><span class="n">slice_to</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
-, which returns a slice starting at the beginning with final element from index end-1. These slice methods produce an immutable result, so they can be printed out, but not modified. For doing something such as taking a substring, a slice may be converted to an owned string via the
+, which returns a slice starting at the beginning with final element from index end - 1. 
+</p>
+<p>
+These slice methods produce an immutable values, so they cannot be modified. 
+</p>
+<p>
+To do something such as taking a substring, a slice may be converted to an owned string via the
 <span class="src"><code><span class="n">to_owned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span></code></span>
- method. It is also notable that these slice methods work on any vector, but string manipulation is the main use of slices.
+ method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
 </p>
 <p>
 Other notable string methods include 
 <span class="src"><code><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;~</span><span class="k">str</span><span class="p">,</span> <span class="o">&amp;~</span><span class="k">str</span><span class="p">)</span></code></span>
 which checks two strings for bytewise equality, and 
 <span class="src"><code><span class="n">split</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span></code></span>
- which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. For string concatenation, the 
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
+</p>
+<p>
+For string concatenation, the 
 <span class="src"><code><span class="o">+</span></code></span>
- operator is used. These methods are used in the below code example.
+ operator is used. 
+</p>
+<p>
+These methods are used in the example below:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -721,31 +788,29 @@ which checks two strings for bytewise equality, and
 10
 11
 12
-13</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
+13
+14
+15
+16</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
     <span class="k">let</span> <span class="n">subst1</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">16</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">subst2</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice_from</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
-    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
     <span class="k">let</span> <span class="n">doublesub</span> <span class="o">=</span> <span class="n">subst1</span> <span class="o">+</span> <span class="n">subst2</span><span class="p">;</span>
     <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">doublesub</span><span class="p">);</span>
-    <span class="c1">//Using split iterator to print word by word</span>
+    <span class="c1">// Using split iterator to print word by word</span>
     <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">tempstr</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="c1">//Another useful function of the split iterator</span>
-    <span class="c1">//collect() Creates a vector that = ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
+    <span class="c1">// Another useful function of the split iterator</span>
+    <span class="c1">// collect() Creates a vector ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
     <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> 
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">s</span> <span class="n">in</span> <span class="n">wordvec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+    <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><p>
-The output of the above is as follows:
-<pre><code>true
-stringstring
-This
-is
-a
-string
-</code></pre>
-<h2 id="Error_Handling" >Error Handling</h2>
+</div><h2 id="Error_Handling" >Error Handling</h2>
+<p>
 Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
 <span class="src"><code><span class="n">Option</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
  type used for functions which either create an object or fail (represented by 
@@ -756,13 +821,16 @@ Error handling in Rust is done with the intention of catching what can be caught
 <span class="src"><code><span class="n">Option</span></code></span>
 , but determined on whether a function succeds as intended on a pre-existing object (as opposed to the creation of a new object with 
 <span class="src"><code><span class="n">Option</span></code></span>
-). A 
+). 
+</p>
+<p>
+A 
 <span class="src"><code><span class="n">Result</span></code></span>
  requires a match statement to use the values obtained. The 
 <span class="src"><code><span class="n">Ok</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
  branch represents a successful call, whereas 
 <span class="src"><code><span class="n">Err</span><span class="p">(</span><span class="n">E</span><span class="p">)</span></code></span>
- is a failed called. The error result may provide specific information about th e failure, depending on the function.
+ is a failed called. The error result may provide specific information about the failure, depending on the function.
 </p>
 <p>
 If a 
@@ -771,25 +839,20 @@ If a
 <span class="src"><code><span class="n">Err</span><span class="p">(</span><span class="n">E</span><span class="p">)</span></code></span>
  branch is reached and the program can no longer continue, a 
 <span class="src"><code><span class="k">fail</span><span class="o">!</span><span class="p">()</span></code></span>
- macro can be used to terminate a program with an optional message. The following code terminates with a message if "foo.txt" is failed to open, for instance.
+ macro can be used to terminate a program with an optional message. 
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;foo.txt&quot;</span><span class="p">))</span> <span class="p">{</span>
-    <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    	     <span class="cm">/*</span>
-<span class="cm">    	     ...</span>
-<span class="cm">    	     */</span>
-    <span class="p">}</span>
-    <span class="n">None</span> <span class="o">=&gt;</span><span class="p">{</span>
-            <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Creating foo.txt failed!&quot;</span><span class="p">);</span>
+<p>
+The following code terminates with a message if "foo.txt" is failed to open:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">match</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;foo.txt&quot;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+    <span class="n">None</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Creating foo.txt failed!&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1019,5 +1082,10 @@ codebreaker.rs:34				encrypted.write(encrypted_bytes);
 The reason for this goes back to boxes. This issue is that reading from a file requires mutability. Using <code>Some(...)</code> shares a lot of similarities with declaring variables. By only using <code>Some(key)</code> and <code>Some(encrypted)</code>, we borrow the file pointers and put them in immutable boxes. Adding the 
 <span class="src"><code><span class="k">mut</span></code></span>
 tells <code>Some(...)</code> that the variables are mutable.
+The rest of the code is fairly tame. One last thing to note is that in the 
+<span class="src"><code><span class="k">match</span></code></span>
+statement, we could have also used 
+<span class="src"><code><span class="k">ref</span> <span class="k">mut</span></code></span>
+, which tells the compiler that we want a mutable reference.
     </body>
                 </html>

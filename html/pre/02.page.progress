@@ -1,6 +1,9 @@
 ptitle Starting to Corrode
-phead 1 Starting to Corrode: Pointers, Memory, Strings, and I/O
-This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs all of the new concepts.
+phead 1 Starting to Corrode:<br>Pointers, Memory, Strings, and I/O
+This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
+
+Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
+
 phead 2 Memory Management
 phead 3 Boxes
 The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
@@ -377,6 +380,31 @@ bedoc
 example.rs:4         reference = &val;
 </code></pre>
 
+phead 4 Exercises
+
+We didn't cover vectors yet, but you can probably figure
+out most of what you need to solve the next two exercises from the example code.  Other useful vector methods include 
+scode
+v.len()
+edoc
+for obtaining the number of elements in the vector
+scode
+v
+edoc
+and
+scode
+v.push(e)
+edoc
+for pushing the value 
+scode
+e
+edoc
+to the end of the vector
+scode
+v
+edoc
+.  (See <a href="#vectors">later in this tutorial</a> for more details on vectors.)
+
 <div class="exercise">
 <b>Exercise 2.1.</b>  Implement a function, 
 scode
@@ -394,14 +422,7 @@ fn main() {
 }
 bedoc
 should print out 2 3 4.
-
-We didn't cover vectors in this tutorial, but you can probably figure
-out what you need from the example code.  See <A
-href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
-and Strings</a> from the main Rust tutorial for help with vectors.
-
 </div>
-
 
 <div class="exercise">
 <b>Exercise 2.2.</b>  Implement a function, 
@@ -424,13 +445,13 @@ should print out 2 3 4.
 
 
 phead 2 Basic I/O
-Rust handles file and user I/O using the 
+Rust handles file and user input/output using the 
 plink http://static.rust-lang.org/doc/0.9/std/io/index.html std::io
  module. 
 
 The most intuitive way to work with these is through the use of a 
-plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
-, which will be explained more in depth in the proceeding sections. Take note that many methods in 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader, 
+which will be explained more in depth in the following sections. Take note that many methods in 
 scode
 BufferedReader 
 edoc
@@ -492,17 +513,19 @@ fn main(){
                 print(line);
             }
             None => {
-                print("End of input!\n");
+                println("End of input!");
                 break;
             }
         }
     }
 }
 bedoc
-phead 3 File I/O:
+phead 3 Files
 The standard library functions for working with files in Rust are handled via the 
 plink http://static.rust-lang.org/doc/0.9/std/io/fs/struct.File.html std::io::File
- module. This module contains methods for opening and writing to a file. A file is opened through 
+ module. This module contains methods for opening and writing to a file. 
+
+A file is opened using
 scode
 Path
 edoc
@@ -514,7 +537,9 @@ edoc
 scode
 Path::new("path/to/file.foo")
 edoc
-. To simply open a blank file in write only mode, 
+. 
+
+To simply open a new file for writing,
 scode
 File::create(&Path)
 edoc
@@ -522,16 +547,21 @@ edoc
 edoc
 Option<File>
 scode
- type, so it must be matched to ensure that a file not opening properly is handled. The two most common ways to write to the file once opened are the 
-scode
-File::write(&mut self, &[u8])
+ type
 edoc
-, which writes a buffer of bytes to a file, and 
+, so it must be matched to ensure that a file was successfully opened. 
+
+The two most common ways to write to the file once opened are: <br>
 scode
-File::write_str(&mut self, &str)
+   File::write(&mut self, &[u8])
 edoc
-, which writes a string to the file.
-The following is an example of opening a file for write, using both of these methods.
+which writes a buffer of bytes to a file, and: <br>
+scode
+   File::write_str(&mut self, &str)
+edoc
+which writes a string to the file.
+
+This example demonstrated opening a file for writing using both of these methods:
 scode False {'lang': 'rust'}
 codeb
 use std::io::File;
@@ -551,7 +581,9 @@ fn main()
 bedoc
 Reading a file can be accomplished easily through using the 
 plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
- module, much like reading from standard in. Opening a file to a 
+ module, much like reading from standard in. 
+
+Opening a file to a 
 scode
 BufferedReader
 edoc
@@ -563,7 +595,9 @@ edoc
 scode
 BufferedReader::new(File)
 edoc
-. Note that the file needs to be matched before converting to a 
+. 
+
+Note that the file needs to be matched before converting to a 
 scode
 BufferedReader
 edoc
@@ -582,6 +616,9 @@ edoc
 , a file is read in an identical manner to reading from stdin in the previous example, and all relevant methods are outlined on the
 plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
  documentation.
+
+Here's a simple example of reading a file:
+
 scode False {'lang': 'rust'}
 codeb
 use std::io::buffered::BufferedReader;
@@ -601,7 +638,7 @@ fn main()
 }
 bedoc
 
-In case we want to open a file in a different mode, the 
+The 
 scode
 File::open_mode(&Path, FileMode, FileAccess)
 edoc
@@ -626,52 +663,82 @@ use std::io::{File, Append, ReadWrite};
 */
 let file = File::open_mode(&Path::new("message.txt"), Append, ReadWrite);
 bedoc
-Note that this needs to be matched to actually use, just like any other file access operation.
-phead 2 Strings and Vectors
-phead 3 Common Vector Operations:
-Vectors and strings in Rust can be a bit finicky to work with at first due to Rust's focus on safety, but they become more intuitive after a bit of use. For starters, a vector is defined by using comma seperated values within brackets. A specific element can be accessed via 
+Like the other file methods, this returns an
+scode
+Option
+edoc
+objects that must be matched to check for opening failures.
+
+phead 2 Vectors and Strings
+
+Rust provides built-in vector and string types, consistent with Rust's focus on safety.
+
+phead 4 Vectors
+
+<a name="vectors"></a>
+A vector is defined by using comma seperated values within brackets. 
+
+A specific element can be accessed via 
 scode
 foo[index]
 edoc
-. Any vector definition where the elements may change after the initial definition should be as an owned box, so the methods of
+. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
 plink http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html std::vec::OwnedVector
- are accessable, which covers most vector operations you would want to do. Below are some simple vector functions.
+ may be used to mutate the vector. 
+
+These examples show simple vector functions:
+
 scode False {'lang': 'rust'}
 codeb
     let mut vec = ~[0, 1, 2];
-    vec.push(3); //Appends to end; [0, 1, 2, 3]
+    vec.push(3); // Appends to end: [0, 1, 2, 3]
 
     vec.insert(2, 10); 
-    //Inserts 10 at index 2, shifts other values to right; [0, 1, 10, 2, 3]
+    // Inserts 10 at position 2: [0, 1, 10, 2, 3]
 
     let last = vec.pop(); 
-    //Returns last element, removes from vector; [0, 1, 10, 2]
+    // Returns last element, removing it from the vector: [0, 1, 10, 2]
 
     let element1 = vec.remove(1); 
-    //Returns element at specified index, removes from vector
-    //[0, 10, 2]
+    // Returns and removes element at specified index: [0, 10, 2]
 
-    //Two methods of printing out all elements
-    //An iterator for going through all elements from front
-    for &x in vec.iter() { 
+    // An iterator for going through all elements in order: 
+    for &x in vec.iter() { // note the use of & for borrowing
         println!("{}", x);
     }
     
-    //len() returns the number of elements in the vector
+    // len() returns the number of elements in the vector
     for i in range(0, vec.len()) { 
         println!("{}", vec[i]);
     }
 bedoc
-phead 3 Common String Operations:
+phead 4 Strings
+
+Rust supposrts a 
+scdoe
+string
+edoc
+type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
+scode
+u8
+edoc
+type in Rust.
+
 A notable construct that is very important for strings is the 
 scode
 slice
 edoc
-. This represents a view into a string, but not a string itself. Methods that produce a slice include 
+. This represents a view into a string, but not a string itself. Its type is
+scode
+&string
+edoc
+.  
+ 
+Methods that produce a slice include 
 scode
 slice(&self, begin: int, end: int)
 edoc
-, which returns a slice with first element from index begin, and end element from end-1, 
+, which returns a slice of characters between begin and end - 1, 
 scode
 slice_from(&self, begin: int)
 edoc
@@ -679,11 +746,15 @@ edoc
 scode
 slice_to(&self, end: int)
 edoc
-, which returns a slice starting at the beginning with final element from index end-1. These slice methods produce an immutable result, so they can be printed out, but not modified. For doing something such as taking a substring, a slice may be converted to an owned string via the
+, which returns a slice starting at the beginning with final element from index end - 1. 
+
+These slice methods produce an immutable values, so they cannot be modified. 
+
+To do something such as taking a substring, a slice may be converted to an owned string via the
 scode
 to_owned(&self)
 edoc
- method. It is also notable that these slice methods work on any vector, but string manipulation is the main use of slices.
+ method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
 
 Other notable string methods include 
 scode
@@ -693,36 +764,37 @@ which checks two strings for bytewise equality, and
 scode
 split(&self, char)
 edoc
- which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. For string concatenation, the 
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
+
+For string concatenation, the 
 scode
 +
 edoc
- operator is used. These methods are used in the below code example.
+ operator is used. 
+
+These methods are used in the example below:
 scode False {'lang': 'rust'}
 codeb
     let string = ~"This is a string";
     let subst1 = string.slice(10, 16).to_owned();
     let subst2 = string.slice_from(10).to_owned();
-    println!("{}", str::eq(&subst1, &subst2));
+    println!("{}", std::str::eq(&subst1, &subst2));
     let doublesub = subst1 + subst2;
     println!("{}", doublesub);
-    //Using split iterator to print word by word
+    // Using split iterator to print word by word
     for tempstr in string.split(' ') {
         println!("{}", tempstr);
     }
-    //Another useful function of the split iterator
-    //collect() Creates a vector that = ~["This", "is", "a", "string"]
+    // Another useful function of the split iterator
+    // collect() Creates a vector ~["This", "is", "a", "string"]
     let wordvec: ~[&str] = string.split(' ').collect(); 
+    for &s in wordvec.iter() {
+        println!("{}", s);
+    }
 bedoc
-The output of the above is as follows:
-<pre><code>true
-stringstring
-This
-is
-a
-string
-</code></pre>
+
 phead 2 Error Handling
+
 Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
 scode
 Option<T>
@@ -743,7 +815,9 @@ edoc
 scode
 Option
 edoc
-). A 
+). 
+
+A 
 scode
 Result
 edoc
@@ -755,7 +829,7 @@ edoc
 scode
 Err(E)
 edoc
- is a failed called. The error result may provide specific information about th e failure, depending on the function.
+ is a failed called. The error result may provide specific information about the failure, depending on the function.
 
 If a 
 scode
@@ -769,17 +843,15 @@ edoc
 scode
 fail!()
 edoc
- macro can be used to terminate a program with an optional message. The following code terminates with a message if "foo.txt" is failed to open, for instance.
+ macro can be used to terminate a program with an optional message. 
+
+The following code terminates with a message if "foo.txt" is failed to open:
 scode False {'lang': 'rust'}
 codeb
 match File::create(&Path::new("foo.txt")) {
-    Some(mut file) => {
-    	     /*
-    	     ...
-    	     */
-    }
-    None =>{
-            fail!("Creating foo.txt failed!");
+    Some(mut file) => { /* ... */ }
+    None => {
+      fail!("Creating foo.txt failed!");
     }
 }
 bedoc
