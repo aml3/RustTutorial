@@ -377,7 +377,50 @@ bedoc
 example.rs:4         reference = &val;
 </code></pre>
 
-TODO: add exercise here
+<div class="exercise">
+<b>Exercise 2.1.</b>  Implement a function, 
+scode
+increment
+edoc
+that takes as input a vector of integers and returns a new vector of integers that has the values of the original list each incremented by one.  For example:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+   let p = ~[1, 2, 3];
+   let q = increment(p);
+   for &x in q.iter() {
+      print!("{:d} ", x);
+   }
+}
+bedoc
+should print out 2 3 4.
+
+We didn't cover vectors in this tutorial, but you can probably figure
+out what you need from the example code.  See <A
+href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
+and Strings</a> from the main Rust tutorial for help with vectors.
+
+</div>
+
+
+<div class="exercise">
+<b>Exercise 2.2.</b>  Implement a function, 
+scode
+incrementMut
+edoc
+that takes as input a vector of integers and modifies the values of the original list by incrementing each value by one.  For example:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+   let mut p = ~[1, 2, 3];
+   incrementMut(p);
+   for &x in p.iter() {
+      print!("{:d} ", x);
+   }
+}
+bedoc
+should print out 2 3 4.  
+</div>
 
 
 phead 2 Basic I/O
