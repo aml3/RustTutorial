@@ -358,7 +358,62 @@ example.rs:4         reference = &val;
 </code></pre>
 </p>
 <p>
-TODO: add exercise here
+<div class="exercise">
+<b>Exercise 2.1.</b>  Implement a function, 
+<span class="src"><code><span class="n">increment</span></code></span>
+that takes as input a vector of integers and returns a new vector of integers that has the values of the original list each incremented by one.  For example:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+   <span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">];</span>
+   <span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="n">increment</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+   <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">q</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d} &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+should print out 2 3 4.
+</p>
+<p>
+We didn't cover vectors in this tutorial, but you can probably figure
+out what you need from the example code.  See <A
+href="http://static.rust-lang.org/doc/0.9/tutorial.html#vectors-and-strings">Vectors
+and Strings</a> from the main Rust tutorial for help with vectors.
+</p>
+<p>
+</div>
+</p>
+<p>
+<div class="exercise">
+<b>Exercise 2.2.</b>  Implement a function, 
+<span class="src"><code><span class="n">incrementMut</span></code></span>
+that takes as input a vector of integers and modifies the values of the original list by incrementing each value by one.  For example:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+   <span class="k">let</span> <span class="k">mut</span> <span class="n">p</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">];</span>
+   <span class="n">incrementMut</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+   <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">p</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">print</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d} &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+should print out 2 3 4.  
+</div>
 </p>
 <h2 id="Basic_I/O" >Basic I/O</h2>
 <p>
@@ -740,7 +795,229 @@ If a
 </pre></div>
 </td></tr></table>
 </div><h2 id="Codebreaker" >Codebreaker</h2>
+<p>
+XOR encryption is a basic but effective method for hiding meaning. It's derived from the identity <code>A = (A ^ B) ^ B</code>.
+</p>
+<p>
+It works by taking in a message and creating a random bit sequence -- called the key -- of equal length. Each bit in the message is XORed with its corresponding bit in the key to produce a second, encrypted message. The original message can then be recovered by applying the XOR process to the key and the encrypted message.
+</p>
+<p>
+So, given a message, pseudocode for the encryption looks like this:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="n">key</span> <span class="o">=</span> <span class="n">make_key</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">len</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">message</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+	<span class="n">message</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The following bit of Rust code implenents a basic XOR encryption scheme. It encrypts by reading a message from <code>stdin</code> and spliting it between two files, a key and an encrypted message. Decryption is very similar, except it combines two files to produce the original message.
 <h3 id="The_code:" >The code:</h3>
-<h3 id="Stepping_through:" >Stepping through:</h3>
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">buffered</span><span class="o">::</span><span class="n">BufferedReader</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="p">{</span><span class="n">stdin</span><span class="p">,</span><span class="n">File</span><span class="p">};</span>
+<span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">rand</span><span class="o">::</span><span class="n">random</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">(){</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">stdin</span> <span class="o">=</span> <span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">stdin</span><span class="p">());</span>
+	<span class="k">let</span> <span class="n">lines</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">~</span><span class="k">str</span><span class="p">]</span><span class="o">=</span> <span class="n">stdin</span><span class="p">.</span><span class="n">lines</span><span class="p">().</span><span class="n">collect</span><span class="p">();</span>
+	<span class="n">encrypt</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="s">&quot;key&quot;</span><span class="p">,</span> <span class="s">&quot;encrypted&quot;</span><span class="p">);</span>
+	<span class="n">decrypt</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span> <span class="s">&quot;encrypted&quot;</span><span class="p">,</span> <span class="s">&quot;decrypted&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">lines</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="o">~</span><span class="k">str</span><span class="p">],</span> <span class="n">key_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">encrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">input_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
+	<span class="k">for</span> <span class="n">str_ptr</span> <span class="n">in</span> <span class="n">lines</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="n">byte</span> <span class="n">in</span> <span class="p">(</span><span class="o">*</span><span class="n">str_ptr</span><span class="p">).</span><span class="n">bytes</span><span class="p">()</span> <span class="p">{</span>
+			<span class="n">input_bytes</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">byte</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	
+	<span class="k">let</span> <span class="n">key_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">key_name</span><span class="p">));</span>
+	<span class="k">let</span> <span class="n">encrypted_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">encrypted_name</span><span class="p">));</span>
+
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">random_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
+	<span class="k">for</span> <span class="n">_</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">input_bytes</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+		<span class="k">let</span> <span class="n">random_byte</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
+		<span class="n">random_bytes</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">random_byte</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">let</span> <span class="n">encrypted_bytes</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">input_bytes</span><span class="p">,</span> <span class="n">random_bytes</span><span class="p">);</span>
+
+	<span class="k">match</span> <span class="p">(</span><span class="n">key_file</span><span class="p">,</span> <span class="n">encrypted_file</span><span class="p">)</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">key</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">encrypted</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span>
+				<span class="n">key</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">random_bytes</span><span class="p">);</span>
+				<span class="n">encrypted</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">encrypted_bytes</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(1) creating files.&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">key_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">encrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">decrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">key_name</span><span class="p">);</span>
+	<span class="k">let</span> <span class="n">key_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
+	
+	<span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">encrypted_name</span><span class="p">);</span>
+	<span class="k">let</span> <span class="n">encrypted_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
+	
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">key_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">];</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">encrypted_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">];</span>
+
+	<span class="k">match</span> <span class="p">(</span><span class="n">key_file</span><span class="p">,</span> <span class="n">encrypted_file</span><span class="p">)</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">key</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">encrypted</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span>
+			<span class="n">key_bytes</span> <span class="o">=</span> <span class="n">key</span><span class="p">.</span><span class="n">read_to_end</span><span class="p">();</span>
+			<span class="n">encrypted_bytes</span> <span class="o">=</span> <span class="n">encrypted</span><span class="p">.</span><span class="n">read_to_end</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(2) opening files.&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">let</span> <span class="n">decrypted_bytes</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">,</span> <span class="n">encrypted_bytes</span><span class="p">);</span>
+
+	<span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">decrypted_name</span><span class="p">);</span>
+	<span class="k">let</span> <span class="n">decrypted_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
+	<span class="k">match</span> <span class="n">decrypted_file</span> <span class="p">{</span>
+		<span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">file</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">decrypted_bytes</span><span class="p">),</span>
+		<span class="n">None</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(3) opening file.&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">xor</span><span class="p">(</span><span class="n">a</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">],</span> <span class="n">b</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="p">{</span>
+	<span class="k">let</span> <span class="k">mut</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+		<span class="n">ret</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+	<span class="p">}</span>
+	<span class="n">ret</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="Stepping_through:" >Stepping through:</h3>
+<p>
+The <code>main</code> function should look familiar. As in the above examples, we use a <code>BufferedReader</code> to read the input and collect the lines into a vector.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="src"><pre>	<span class="k">let</span> <span class="k">mut</span> <span class="n">stdin</span> <span class="o">=</span> <span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">stdin</span><span class="p">());</span>
+	<span class="k">let</span> <span class="n">lines</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">~</span><span class="k">str</span><span class="p">]</span><span class="o">=</span> <span class="n">stdin</span><span class="p">.</span><span class="n">lines</span><span class="p">().</span><span class="n">collect</span><span class="p">();</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+<code>encrypt</code> takes a vector of strings and splits its bytes between two files, one for the encrypted message and one containing a key. Both of these files will look like gibberish.
+</p>
+<p>
+This function doesn't need to modify its input, so we can pass in borrowed pointers.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">lines</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="o">~</span><span class="k">str</span><span class="p">],</span> <span class="n">key_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">encrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The
+<span class="src"><code><span class="k">match</span></code></span>
+statement contains something a bit new.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre>	<span class="k">match</span> <span class="p">(</span><span class="n">key_file</span><span class="p">,</span> <span class="n">encrypted_file</span><span class="p">)</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">key</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">encrypted</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span>
+				<span class="n">key</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">random_bytes</span><span class="p">);</span>
+				<span class="n">encrypted</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">encrypted_bytes</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(1) creating files.&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+If we remove that word we get a compile error: 
+<pre><code>
+codebreaker.rs:33:5: 33:8 <span style="color:red;">error</span>: cannot borrow immutable local variable as mutable
+codebreaker.rs:33 				key.write(random_bytes);
+						<span style="color:red;">^~~</span>
+codebreaker.rs:34:5: 34:14 <span style="color:red;">error</span>: cannot borrow immutable local variable as mutable
+codebreaker.rs:34				encrypted.write(encrypted_bytes);
+						<span style="color:red;">^~~~~~~~~</span>
+</code></pre>
+</p>
+<p>
+The reason for this goes back to boxes. This issue is that reading from a file requires mutability. Using <code>Some(...)</code> shares a lot of similarities with declaring variables. By only using <code>Some(key)</code> and <code>Some(encrypted)</code>, we borrow the file pointers and put them in immutable boxes. Adding the 
+<span class="src"><code><span class="k">mut</span></code></span>
+tells <code>Some(...)</code> that the variables are mutable.
     </body>
                 </html>

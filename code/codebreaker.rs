@@ -29,11 +29,11 @@ fn encrypt(lines: &[~str], key_name: &str, encrypted_name: &str) {
 	let encrypted_bytes = xor(input_bytes, random_bytes);
 
 	match (key_file, encrypted_file) {
-		(Some(ref mut key), Some(ref mut encrypted)) => {
+		(Some(mut key), Some(mut encrypted)) => {
 				key.write(random_bytes);
 				encrypted.write(encrypted_bytes);
 			}
-		(_, _) => { print("Error creating files."); return; }
+		(_, _) => fail!("Error(1) creating files.")
 	}
 }
 
@@ -48,22 +48,20 @@ fn decrypt(key_name: &str, encrypted_name: &str, decrypted_name: &str) {
 	let mut encrypted_bytes: ~[u8];
 
 	match (key_file, encrypted_file) {
-		(Some(ref mut key), Some(ref mut encrypted)) => {
+		(Some(mut key), Some(mut encrypted)) => {
 			key_bytes = key.read_to_end();
 			encrypted_bytes = encrypted.read_to_end();
 		}
-		(_, _) => { print("Error(2) opening files."); return; }
+		(_, _) => fail!("Error(2) opening files.")
 	}
 	
 	let decrypted_bytes = xor(key_bytes, encrypted_bytes);
 
 	path = Path::new(decrypted_name);
-	let mut decrypted_file = File::create(&path);
+	let decrypted_file = File::create(&path);
 	match decrypted_file {
-		Some(ref mut file) => {
-			file.write(decrypted_bytes);
-		}
-		None => { print("Error(3) opening file."); return; }
+		Some(mut file) => file.write(decrypted_bytes),
+		None => fail!("Error(3) opening file.")
 	}
 }
 
