@@ -447,13 +447,136 @@ Reading line by line is a bit more difficult, as the
 </pre></div>
 </td></tr></table>
 </div><h3 id="File_I/O:" >File I/O:</h3>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre>
+<p>
+The standard library functions for working with files in Rust are handled via the 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/fs/struct.File.html">std::io::File</a>
+ module. This module contains methods for opening and writing to a file. A file is opened through 
+<span class="src"><code><span class="n">Path</span></code></span>
+ objects, which are included in any Rust program by default. Creating a 
+<span class="src"><code><span class="n">Path</span></code></span>
+ object is done through 
+<span class="src"><code><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;path/to/file.foo&quot;</span><span class="p">)</span></code></span>
+. To simply open a blank file in write only mode, 
+<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">)</span></code></span>
+ is the simplest call. This returns an 
+edoc
+Option<File>
+<span class="src"><code> <span class="k">type</span><span class="p">,</span> <span class="n">so</span> <span class="n">it</span> <span class="n">must</span> <span class="n">be</span> <span class="n">matched</span> <span class="n">to</span> <span class="n">ensure</span> <span class="n">that</span> <span class="n">a</span> <span class="n">file</span> <span class="n">not</span> <span class="n">opening</span> <span class="n">properly</span> <span class="n">is</span> <span class="n">handled</span><span class="p">.</span> <span class="n">The</span> <span class="n">two</span> <span class="n">most</span> <span class="n">common</span> <span class="n">ways</span> <span class="n">to</span> <span class="n">write</span> <span class="n">to</span> <span class="n">the</span> <span class="n">file</span> <span class="k">once</span> <span class="n">opened</span> <span class="n">are</span> <span class="n">the</span> 
+<span class="n">scode</span>
+<span class="n">File</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span></code></span>
+, which writes a buffer of bytes to a file, and 
+<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">write_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span></code></span>
+, which writes a string to the file.
+The following is an example of opening a file for write, using both of these methods.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">File</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">match</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;message.txt&quot;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">file</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">bytes</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;line one</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">));</span>
+            <span class="n">file</span><span class="p">.</span><span class="n">write_str</span><span class="p">(</span><span class="s">&quot;line two</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">None</span> <span class="o">=&gt;</span><span class="p">{</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Opening message.txt failed!&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre>
+</div><p>
+Reading a file can be accomplished easily through using the 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
+ module, much like reading from standard in. Opening a file to a 
+<span class="src"><code><span class="n">BufferedReader</span></code></span>
+ is done using the 
+<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">)</span></code></span>
+ function, which opens the file at a given path in read-only mode, followed by 
+<span class="src"><code><span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">File</span><span class="p">)</span></code></span>
+. Note that the file needs to be matched before converting to a 
+<span class="src"><code><span class="n">BufferedReader</span></code></span>
+, as 
+<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open</span></code></span>
+returns an 
+<span class="src"><code><span class="n">Option</span><span class="o">&lt;</span><span class="n">File</span><span class="o">&gt;</span></code></span>
+ type. Once converted to a 
+<span class="src"><code><span class="n">BufferedReader</span></code></span>
+, a file is read in an identical manner to reading from stdin in the previous example, and all relevant methods are outlined on the
+<a href="http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html">BufferedReader</a>
+ documentation.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">buffered</span><span class="o">::</span><span class="n">BufferedReader</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">File</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">match</span> <span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;message.txt&quot;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">Some</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="n">BufferedReader</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+            <span class="c1">//reading from file</span>
+        <span class="p">}</span>
+        <span class="n">None</span> <span class="o">=&gt;</span><span class="p">{</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Opening message.txt failed!&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h2 id="Strings_and_Vectors" >Strings and Vectors</h2>
+</div><p>
+In case we want to open a file in a different mode, the 
+<span class="src"><code><span class="n">File</span><span class="o">::</span><span class="n">open_mode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">,</span> <span class="n">FileAccess</span><span class="p">)</span></code></span>
+ method allows specifying the mode in which a file is accessed. 
+<span class="src"><code><span class="n">FileMode</span></code></span>
+ and 
+<span class="src"><code><span class="n">FileAccess</span></code></span>
+ are enumerable types imported from 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/enum.FileMode.html">std::io::FileMode</a>
+ and 
+<a href="http://static.rust-lang.org/doc/0.9/std/io/enum.FileAccess.html">std::io::FileAccess</a>
+ respectively. For example, to open a file with read and write access, positioned to append to the end of the file, the following must be included, and then called as so.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="p">{</span><span class="n">File</span><span class="p">,</span> <span class="n">Append</span><span class="p">,</span> <span class="n">ReadWrite</span><span class="p">};</span>
+<span class="cm">/*</span>
+<span class="cm">...</span>
+<span class="cm">*/</span>
+<span class="k">let</span> <span class="n">file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">open_mode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;message.txt&quot;</span><span class="p">),</span> <span class="n">Append</span><span class="p">,</span> <span class="n">ReadWrite</span><span class="p">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Note that this needs to be matched to actually use, just like any other file access operation.
+<h2 id="Strings_and_Vectors" >Strings and Vectors</h2>
 <h3 id="Common_String_Operations:" >Common String Operations:</h3>
 <h3 id="Common_Vector_Operations:" >Common Vector Operations:</h3>
 <h2 id="Error_Handling" >Error Handling</h2>

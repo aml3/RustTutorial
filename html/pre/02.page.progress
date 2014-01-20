@@ -457,14 +457,133 @@ fn main(){
 }
 bedoc
 phead 3 File I/O:
+The standard library functions for working with files in Rust are handled via the 
+plink http://static.rust-lang.org/doc/0.9/std/io/fs/struct.File.html std::io::File
+ module. This module contains methods for opening and writing to a file. A file is opened through 
+scode
+Path
+edoc
+ objects, which are included in any Rust program by default. Creating a 
+scode
+Path
+edoc
+ object is done through 
+scode
+Path::new("path/to/file.foo")
+edoc
+. To simply open a blank file in write only mode, 
+scode
+File::create(&Path)
+edoc
+ is the simplest call. This returns an 
+edoc
+Option<File>
+scode
+ type, so it must be matched to ensure that a file not opening properly is handled. The two most common ways to write to the file once opened are the 
+scode
+File::write(&mut self, &[u8])
+edoc
+, which writes a buffer of bytes to a file, and 
+scode
+File::write_str(&mut self, &str)
+edoc
+, which writes a string to the file.
+The following is an example of opening a file for write, using both of these methods.
 scode False {'lang': 'rust'}
 codeb
+use std::io::File;
 
+fn main()
+{
+    match File::create(&Path::new("message.txt")) {
+        Some(mut file) => {
+            file.write(bytes!("line one\n"));
+            file.write_str("line two\n");
+        }
+        None =>{
+            println("Opening message.txt failed!");
+        }
+    }
+}
 bedoc
+Reading a file can be accomplished easily through using the 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
+ module, much like reading from standard in. Opening a file to a 
+scode
+BufferedReader
+edoc
+ is done using the 
+scode
+File::open(&Path)
+edoc
+ function, which opens the file at a given path in read-only mode, followed by 
+scode
+BufferedReader::new(File)
+edoc
+. Note that the file needs to be matched before converting to a 
+scode
+BufferedReader
+edoc
+, as 
+scode
+File::open
+edoc
+returns an 
+scode
+Option<File>
+edoc
+ type. Once converted to a 
+scode
+BufferedReader
+edoc
+, a file is read in an identical manner to reading from stdin in the previous example, and all relevant methods are outlined on the
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
+ documentation.
 scode False {'lang': 'rust'}
 codeb
+use std::io::buffered::BufferedReader;
+use std::io::File;
 
+fn main()
+{
+    match File::open(&Path::new("message.txt")) {
+        Some(file) => {
+            let reader = BufferedReader::new(file);
+            //reading from file
+        }
+        None =>{
+            println("Opening message.txt failed!");
+        }
+    }
+}
 bedoc
+
+In case we want to open a file in a different mode, the 
+scode
+File::open_mode(&Path, FileMode, FileAccess)
+edoc
+ method allows specifying the mode in which a file is accessed. 
+scode
+FileMode
+edoc
+ and 
+scode
+FileAccess
+edoc
+ are enumerable types imported from 
+plink http://static.rust-lang.org/doc/0.9/std/io/enum.FileMode.html std::io::FileMode
+ and 
+plink http://static.rust-lang.org/doc/0.9/std/io/enum.FileAccess.html std::io::FileAccess
+ respectively. For example, to open a file with read and write access, positioned to append to the end of the file, the following must be included, and then called as so.
+scode False {'lang': 'rust'}
+codeb
+use std::io::{File, Append, ReadWrite};
+/*
+...
+*/
+let file = File::open_mode(&Path::new("message.txt"), Append, ReadWrite);
+bedoc
+Note that this needs to be matched to actually use, just like any other file access operation.
 phead 2 Strings and Vectors
 phead 3 Common String Operations:
 phead 3 Common Vector Operations:
