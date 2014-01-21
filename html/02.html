@@ -887,7 +887,12 @@ services but not both of them, it would not be enough to learn the
 contents of the file.
 </p>
 <p>
-We'll provide and explain the code to do the splitting, and leave it as
+Note that our implementation uses 
+<span class="src"><code><span class="n">std</span><span class="o">::</span><span class="n">rand</span><span class="o">::</span><span class="n">random</span></code></span>
+to generate the random key.  This is not cryptographically strong randomness, so should be used for entertainment purposes only!  (If you are interested in better random numbers, see <a href="https://github.com/wbkostan/cs4414-ps4">tRustees: True Random Number Generation</a>.)
+</p>
+<p>
+We'll provide the code to do the splitting, and leave it as
 an exercise for you to write the joining code.
 </p>
 <h3 id="Splitter" >Splitter</h3>
@@ -948,31 +953,7 @@ name of a file, and writes out two share files.
 51
 52
 53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">rand</span><span class="o">::</span><span class="n">random</span><span class="p">;</span>
+54</pre></div></td><td class="code"><div class="src"><pre><span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">rand</span><span class="o">::</span><span class="n">random</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">os</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">std</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">File</span><span class="p">;</span>
 
@@ -988,11 +969,15 @@ name of a file, and writes out two share files.
         <span class="k">match</span> <span class="p">(</span><span class="n">msg_file</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">msg</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
                 <span class="k">let</span> <span class="n">msg_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="p">.</span><span class="n">read_to_end</span><span class="p">();</span>
-                <span class="k">let</span> <span class="n">share1_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">fname</span> <span class="o">+</span> <span class="s">&quot;.share1&quot;</span><span class="p">));</span>
-                <span class="k">let</span> <span class="n">share2_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">fname</span> <span class="o">+</span> <span class="s">&quot;.share2&quot;</span><span class="p">));</span>
+                <span class="k">let</span> <span class="n">share1_file</span> 
+                       <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">fname</span> <span class="o">+</span> <span class="s">&quot;.share1&quot;</span><span class="p">));</span>
+                <span class="k">let</span> <span class="n">share2_file</span> 
+                       <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">fname</span> <span class="o">+</span> <span class="s">&quot;.share2&quot;</span><span class="p">));</span>
                 
                 <span class="k">match</span> <span class="p">(</span><span class="n">share1_file</span><span class="p">,</span> <span class="n">share2_file</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="n">share1</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="n">share2</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">split</span><span class="p">(</span><span class="n">msg_bytes</span><span class="p">,</span> <span class="n">share1</span><span class="p">,</span> <span class="n">share2</span><span class="p">);</span> <span class="p">}</span> <span class="p">,</span>
+                    <span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="n">share1</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="n">share2</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span> 
+                        <span class="n">split</span><span class="p">(</span><span class="n">msg_bytes</span><span class="p">,</span> <span class="n">share1</span><span class="p">,</span> <span class="n">share2</span><span class="p">);</span> 
+                        <span class="p">}</span> <span class="p">,</span>
                     <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error opening output files!&quot;</span><span class="p">),</span>
                 <span class="p">}</span>
             <span class="p">}</span> <span class="p">,</span>
@@ -1001,9 +986,18 @@ name of a file, and writes out two share files.
     <span class="p">}</span>
 <span class="p">}</span>
 
+<span class="k">fn</span> <span class="n">xor</span><span class="p">(</span><span class="n">a</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">],</span> <span class="n">b</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+	<span class="n">ret</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">ret</span>
+<span class="p">}</span>
+
 <span class="k">fn</span> <span class="n">split</span><span class="p">(</span><span class="n">msg_bytes</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">],</span> <span class="k">mut</span> <span class="n">share1</span><span class="o">:</span> <span class="n">File</span><span class="p">,</span> <span class="k">mut</span> <span class="n">share2</span><span class="o">:</span> <span class="n">File</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">random_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
-    <span class="c1">// This is not cryptographically strong randomness!  For entertainment purposes only!</span>
+    <span class="c1">// This is not cryptographically strong randomness! </span>
+    <span class="c1">// (For entertainment purposes only.)</span>
     <span class="k">for</span> <span class="n">_</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">msg_bytes</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
 	<span class="k">let</span> <span class="n">random_byte</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
 	<span class="n">random_bytes</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">random_byte</span><span class="p">);</span>
@@ -1012,43 +1006,6 @@ name of a file, and writes out two share files.
     <span class="k">let</span> <span class="n">encrypted_bytes</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">msg_bytes</span><span class="p">,</span> <span class="n">random_bytes</span><span class="p">);</span>
     <span class="n">share1</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">random_bytes</span><span class="p">);</span>
     <span class="n">share2</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">encrypted_bytes</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="cp">#[allow(dead_code)]</span>  <span class="c1">// Thanks Kiet!</span>
-<span class="k">fn</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">key_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">encrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">,</span> <span class="n">decrypted_name</span><span class="o">:</span> <span class="o">&amp;</span><span class="k">str</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">let</span> <span class="k">mut</span> <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">key_name</span><span class="p">);</span>
-	<span class="k">let</span> <span class="n">key_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
-	
-	<span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">encrypted_name</span><span class="p">);</span>
-	<span class="k">let</span> <span class="n">encrypted_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
-	
-	<span class="k">let</span> <span class="k">mut</span> <span class="n">key_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">];</span>
-	<span class="k">let</span> <span class="k">mut</span> <span class="n">encrypted_bytes</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">];</span>
-
-	<span class="k">match</span> <span class="p">(</span><span class="n">key_file</span><span class="p">,</span> <span class="n">encrypted_file</span><span class="p">)</span> <span class="p">{</span>
-		<span class="p">(</span><span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">key</span><span class="p">),</span> <span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">encrypted</span><span class="p">))</span> <span class="o">=&gt;</span> <span class="p">{</span>
-			<span class="n">key_bytes</span> <span class="o">=</span> <span class="n">key</span><span class="p">.</span><span class="n">read_to_end</span><span class="p">();</span>
-			<span class="n">encrypted_bytes</span> <span class="o">=</span> <span class="n">encrypted</span><span class="p">.</span><span class="n">read_to_end</span><span class="p">();</span>
-		<span class="p">}</span>
-		<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(2) opening files.&quot;</span><span class="p">)</span>
-	<span class="p">}</span>
-	
-	<span class="k">let</span> <span class="n">decrypted_bytes</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">,</span> <span class="n">encrypted_bytes</span><span class="p">);</span>
-
-	<span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">decrypted_name</span><span class="p">);</span>
-	<span class="k">let</span> <span class="n">decrypted_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">path</span><span class="p">);</span>
-	<span class="k">match</span> <span class="n">decrypted_file</span> <span class="p">{</span>
-		<span class="n">Some</span><span class="p">(</span><span class="k">mut</span> <span class="n">file</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">file</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">decrypted_bytes</span><span class="p">),</span>
-		<span class="n">None</span> <span class="o">=&gt;</span> <span class="k">fail</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Error(3) opening file.&quot;</span><span class="p">)</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-
-<span class="k">fn</span> <span class="n">xor</span><span class="p">(</span><span class="n">a</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">],</span> <span class="n">b</span><span class="o">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="k">u8</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="o">~</span><span class="p">[</span><span class="k">u8</span><span class="p">]</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">~</span><span class="p">[];</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
-	<span class="n">ret</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-    <span class="p">}</span>
-    <span class="n">ret</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>

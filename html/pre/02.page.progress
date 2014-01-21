@@ -855,68 +855,68 @@ match File::create(&Path::new("foo.txt")) {
     }
 }
 bedoc
-phead 2 Codebreaker
-XOR encryption is a basic but effective method for hiding meaning. It's derived from the identity <code>A = (A ^ B) ^ B</code>.
+phead 2 Secret Sharing
 
-It works by taking in a message and creating a random bit sequence -- called the key -- of equal length. Each bit in the message is XORed with its corresponding bit in the key to produce a second, encrypted message. The original message can then be recovered by applying the XOR process to the key and the encrypted message.
+The XOR operation is a simple, but effective method for hiding meaning.
+It's derived from the identity <code>A = (A ^ B) ^ B</code>.  XOR-ing a
+message with a random key provides <em>perfect</em> encryption, known as
+a <em>one-time pad</em>. It is essentially the only form of encryption
+that is information-theoretically secure, but is impractical for most
+purposes since it requires a perfectly-random key as long as the
+message and that key can never be reused.
 
-So, given a message, pseudocode for the encryption looks like this:
-scode False { 'lang' : 'rust' }
-codeb
-key = make_key(message.len())
-for i in range(0, message.len()) {
-	message[i] = message[i] ^ key[i];
-}
-bedoc
+It works by taking in a message and a random bit sequence (key) of equal
+length. Each bit in the message is XORed with the corresponding bit in
+the key to produce the encrypted message. The original message can then
+be recovered by applying the XOR process to the key and the encrypted
+message.
 
-The following bit of Rust code implenents a basic XOR encryption scheme. It encrypts by reading a message from <code>stdin</code> and spliting it between two files, a key and an encrypted message. Decryption is very similar, except it combines two files to produce the original message.
-phead 3 The code:
-scode False {'loc': 'code/codebreaker.rs', 'lang': 'rust', 'range': False}
-phead 3 Stepping through:
-The <code>main</code> function should look familiar. As in the above examples, we use a <code>BufferedReader</code> to read the input and collect the lines into a vector.
-scode False {'loc': 'code/codebreaker.rs', 'lang': 'rust', 'range': True, 'start': 6, 'stop' : 7}
-<code>encrypt</code> takes a vector of strings and splits its bytes between two files, one for the encrypted message and one containing a key. Both of these files will look like gibberish.
+For this exercise, we will use this strategy to convert a plaintext file
+into two secret shares, each of which discloses no information about the
+original file (other than its length), but if someone has both shares
+they can put them together to produce the original file.  A paranoid
+individual might use such an approach to store a file in the cloud by
+storing one share using Dropbox and the other share using Google Docs.
+The user could acquire both shares to obtain the file, and if the NSA
+can hypothetically (of course) obtain all of the data from one of the
+services but not both of them, it would not be enough to learn the
+contents of the file.
 
-This function doesn't need to modify its input, so we can pass in borrowed pointers.
-scode False {'loc': 'code/codebreaker.rs', 'lang': 'rust', 'range': True, 'start': 12, 'stop' : 12}
-
-The
-scode False {'lang':'rust'}
-code
-match
+Note that our implementation uses 
+scode
+std::rand::random
 edoc
-statement contains something a bit new.
-scode False {'loc': 'code/codebreaker.rs', 'lang': 'rust', 'range': True, 'start': 31, 'stop' : 37}
-If we remove 
-scode False {'lang':'rust'}
-code
-mut
-edoc
- we get a compile error: 
+to generate the random key.  This is not cryptographically strong randomness, so should be used for entertainment purposes only!  (If you are interested in better random numbers, see <a href="https://github.com/wbkostan/cs4414-ps4">tRustees: True Random Number Generation</a>.)
+
+We'll provide the code to do the splitting, and leave it as
+an exercise for you to write the joining code.
+
+phead 3 Splitter
+
+The following Rust code implements the splitter.  It takes as input the
+name of a file, and writes out two share files.
+
+scode False {'loc': 'code/splitter.rs', 'lang': 'rust', 'range': False}
+
+phead 4 Joiner
+
+<div class="exercise"> 
+
+<b>Exercise 2.3.</b> Implement the joiner.  It
+should take two file names as its inputs, and output to standard output
+the result of XOR-ing the bytes in those files.  The inputs files must be the same length.
+
+</div>
+
+Your joiner should be able to produce the plaintext from the example
+files: <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share1</a> and <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share2</a>.  You should download these files (look
+at them to confirm they appear to be random bytes).  
+
+Then, try executing:
 <pre><code>
-codebreaker.rs:33:5: 33:8 <span style="color:red;">error</span>: cannot borrow immutable local variable as mutable
-codebreaker.rs:33 				key.write(random_bytes);
-						<span style="color:red;">^~~</span>
-codebreaker.rs:34:5: 34:14 <span style="color:red;">error</span>: cannot borrow immutable local variable as mutable
-codebreaker.rs:34				encrypted.write(encrypted_bytes);
-						<span style="color:red;">^~~~~~~~~</span>
-</code></pre>
+joiner msg.share1 msg.share2
+</code>
+</pre>
 
-The reason for this goes back to boxes. The issue is that reading from a file requires mutability. <code>Some(...)</code> shares a lot of similarities with declaring variables. By only using <code>Some(key)</code> and <code>Some(encrypted)</code>, we borrow the file pointers and put them in immutable boxes. Adding the 
-scode False {'lang':'rust'}
-code
-mut
-edoc
-tells the compiler the variables are mutable.
-
-The rest of the code is fairly tame. One last thing to note is that in the 
-scode False {'lang':'rust'}
-code
-match
-edoc
-statement, we could have also used 
-scode False {'lang':'rust'}
-code
-ref mut
-edoc
-, which tells the compiler that we want a mutable reference.
+If you implemented the joiner correctly, you should see a (somewhat)
+<a href="http://www.gutenberg.org/cache/epub/1518/pg1518.html">meaningful message</a>.
