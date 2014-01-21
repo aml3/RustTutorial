@@ -877,6 +877,8 @@ scode False {'loc': 'code/splitter.rs', 'lang': 'rust', 'range': False}
 
 phead 4 Joiner
 
+The joiner reverses the splitting process, taking the two shares and combining them to produce the original message.
+
 <div class="exercise"> 
 
 <b>Exercise 2.3.</b> Implement the joiner.  It
