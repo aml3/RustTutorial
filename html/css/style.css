@@ -175,3 +175,5 @@ body{font-size:16px;}
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }
+
+.credits{display:block;padding:5px;margin-bottom:10px;margin-top:10px;font-size:"-1";color:#777;margin-left:0px;margin-right:0px;padding-left:50px;padding-right:0px;align:right;border:0px}
