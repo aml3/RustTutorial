@@ -15,7 +15,7 @@
 This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
 </p>
 <p>
-Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
+Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover strings and vectors, file and user I/O, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
 </p>
 <h2 id="Memory_Management" >Memory Management</h2>
 <h3 id="Boxes" >Boxes</h3>
@@ -362,21 +362,150 @@ Owned pointers follow similar rules of deallocation, so borrowing a reference to
 example.rs:4         reference = &val;
 </code></pre>
 </p>
-<h4 id="Exercises" >Exercises</h4>
+<h2 id="Vectors_and_Strings" >Vectors and Strings</h2>
 <p>
-We didn't cover vectors yet, but you can probably figure
-out most of what you need to solve the next two exercises from the example code.  Other useful vector methods include 
-<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">len</span><span class="p">()</span></code></span>
-for obtaining the number of elements in the vector
-<span class="src"><code><span class="n">v</span></code></span>
-and
-<span class="src"><code><span class="n">v</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></code></span>
-for pushing the value 
-<span class="src"><code><span class="n">e</span></code></span>
-to the end of the vector
-<span class="src"><code><span class="n">v</span></code></span>
-.  (See <a href="#vectors">later in this tutorial</a> for more details on vectors.)
+Rust provides built-in vector and string types, consistent with Rust's focus on safety.
 </p>
+<h4 id="Vectors" >Vectors</h4>
+<p>
+<a name="vectors"></a>
+A vector is defined by using comma seperated values within brackets. 
+</p>
+<p>
+A specific element can be accessed via 
+<span class="src"><code><span class="n">foo</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></code></span>
+. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
+<a href="http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html">std::vec::OwnedVector</a>
+ may be used to mutate the vector. 
+</p>
+<p>
+These examples show simple vector functions:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
+    <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">// Appends to end: [0, 1, 2, 3]</span>
+
+    <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> 
+    <span class="c1">// Inserts 10 at position 2: [0, 1, 10, 2, 3]</span>
+
+    <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
+    <span class="c1">// Returns last element, removing it from the vector: [0, 1, 10, 2]</span>
+
+    <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> 
+    <span class="c1">// Returns and removes element at specified index: [0, 10, 2]</span>
+
+    <span class="c1">// An iterator for going through all elements in order: </span>
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// note the use of &amp; for borrowing</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// len() returns the number of elements in the vector</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> 
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="Strings" >Strings</h4>
+<p>
+Rust supposrts a 
+scdoe
+string
+edoc
+type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
+<span class="src"><code><span class="k">u8</span></code></span>
+type in Rust.
+</p>
+<p>
+A notable construct that is very important for strings is the 
+<span class="src"><code><span class="n">slice</span></code></span>
+. This represents a view into a string, but not a string itself. Its type is
+<span class="src"><code><span class="o">&amp;</span><span class="n">string</span></code></span>
+.  
+ 
+Methods that produce a slice include 
+<span class="src"><code><span class="n">slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice of characters between begin and end - 1, 
+<span class="src"><code><span class="n">slice_from</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice with first element from the index provided that continues to the end, and 
+<span class="src"><code><span class="n">slice_to</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
+, which returns a slice starting at the beginning with final element from index end - 1. 
+</p>
+<p>
+These slice methods produce an immutable values, so they cannot be modified. 
+</p>
+<p>
+To do something such as taking a substring, a slice may be converted to an owned string via the
+<span class="src"><code><span class="n">to_owned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span></code></span>
+ method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
+</p>
+<p>
+Other notable string methods include 
+<span class="src"><code><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;~</span><span class="k">str</span><span class="p">,</span> <span class="o">&amp;~</span><span class="k">str</span><span class="p">)</span></code></span>
+which checks two strings for bytewise equality, and 
+<span class="src"><code><span class="n">split</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span></code></span>
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
+</p>
+<p>
+For string concatenation, the 
+<span class="src"><code><span class="o">+</span></code></span>
+ operator is used. 
+</p>
+<p>
+These methods are used in the example below:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">subst1</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">16</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">subst2</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice_from</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
+    <span class="k">let</span> <span class="n">doublesub</span> <span class="o">=</span> <span class="n">subst1</span> <span class="o">+</span> <span class="n">subst2</span><span class="p">;</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">doublesub</span><span class="p">);</span>
+    <span class="c1">// Using split iterator to print word by word</span>
+    <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">tempstr</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// Another useful function of the split iterator</span>
+    <span class="c1">// collect() Creates a vector ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
+    <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> 
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">s</span> <span class="n">in</span> <span class="n">wordvec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="Exercises" >Exercises</h4>
 <p>
 <div class="exercise">
 <b>Exercise 2.1.</b>  Implement a function, 
@@ -666,150 +795,7 @@ Like the other file methods, this returns an
 <span class="src"><code><span class="n">Option</span></code></span>
 objects that must be matched to check for opening failures.
 </p>
-<h2 id="Vectors_and_Strings" >Vectors and Strings</h2>
-<p>
-Rust provides built-in vector and string types, consistent with Rust's focus on safety.
-</p>
-<h4 id="Vectors" >Vectors</h4>
-<p>
-<a name="vectors"></a>
-A vector is defined by using comma seperated values within brackets. 
-</p>
-<p>
-A specific element can be accessed via 
-<span class="src"><code><span class="n">foo</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></code></span>
-. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
-<a href="http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html">std::vec::OwnedVector</a>
- may be used to mutate the vector. 
-</p>
-<p>
-These examples show simple vector functions:
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="k">mut</span> <span class="n">vec</span> <span class="o">=</span> <span class="o">~</span><span class="p">[</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">];</span>
-    <span class="n">vec</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="m">3</span><span class="p">);</span> <span class="c1">// Appends to end: [0, 1, 2, 3]</span>
-
-    <span class="n">vec</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span> 
-    <span class="c1">// Inserts 10 at position 2: [0, 1, 10, 2, 3]</span>
-
-    <span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
-    <span class="c1">// Returns last element, removing it from the vector: [0, 1, 10, 2]</span>
-
-    <span class="k">let</span> <span class="n">element1</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="m">1</span><span class="p">);</span> 
-    <span class="c1">// Returns and removes element at specified index: [0, 10, 2]</span>
-
-    <span class="c1">// An iterator for going through all elements in order: </span>
-    <span class="k">for</span> <span class="o">&amp;</span><span class="n">x</span> <span class="n">in</span> <span class="n">vec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// note the use of &amp; for borrowing</span>
-        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-    <span class="p">}</span>
-    
-    <span class="c1">// len() returns the number of elements in the vector</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">vec</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span> 
-        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-    <span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><h4 id="Strings" >Strings</h4>
-<p>
-Rust supposrts a 
-scdoe
-string
-edoc
-type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
-<span class="src"><code><span class="k">u8</span></code></span>
-type in Rust.
-</p>
-<p>
-A notable construct that is very important for strings is the 
-<span class="src"><code><span class="n">slice</span></code></span>
-. This represents a view into a string, but not a string itself. Its type is
-<span class="src"><code><span class="o">&amp;</span><span class="n">string</span></code></span>
-.  
- 
-Methods that produce a slice include 
-<span class="src"><code><span class="n">slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
-, which returns a slice of characters between begin and end - 1, 
-<span class="src"><code><span class="n">slice_from</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
-, which returns a slice with first element from the index provided that continues to the end, and 
-<span class="src"><code><span class="n">slice_to</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">end</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span></code></span>
-, which returns a slice starting at the beginning with final element from index end - 1. 
-</p>
-<p>
-These slice methods produce an immutable values, so they cannot be modified. 
-</p>
-<p>
-To do something such as taking a substring, a slice may be converted to an owned string via the
-<span class="src"><code><span class="n">to_owned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span></code></span>
- method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
-</p>
-<p>
-Other notable string methods include 
-<span class="src"><code><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;~</span><span class="k">str</span><span class="p">,</span> <span class="o">&amp;~</span><span class="k">str</span><span class="p">)</span></code></span>
-which checks two strings for bytewise equality, and 
-<span class="src"><code><span class="n">split</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span></code></span>
- which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
-</p>
-<p>
-For string concatenation, the 
-<span class="src"><code><span class="o">+</span></code></span>
- operator is used. 
-</p>
-<p>
-These methods are used in the example below:
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">string</span> <span class="o">=</span> <span class="o">~</span><span class="s">&quot;This is a string&quot;</span><span class="p">;</span>
-    <span class="k">let</span> <span class="n">subst1</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">16</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
-    <span class="k">let</span> <span class="n">subst2</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">slice_from</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="n">to_owned</span><span class="p">();</span>
-    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="k">str</span><span class="o">::</span><span class="n">eq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">subst1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">subst2</span><span class="p">));</span>
-    <span class="k">let</span> <span class="n">doublesub</span> <span class="o">=</span> <span class="n">subst1</span> <span class="o">+</span> <span class="n">subst2</span><span class="p">;</span>
-    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">doublesub</span><span class="p">);</span>
-    <span class="c1">// Using split iterator to print word by word</span>
-    <span class="k">for</span> <span class="n">tempstr</span> <span class="n">in</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">tempstr</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="c1">// Another useful function of the split iterator</span>
-    <span class="c1">// collect() Creates a vector ~[&quot;This&quot;, &quot;is&quot;, &quot;a&quot;, &quot;string&quot;]</span>
-    <span class="k">let</span> <span class="n">wordvec</span><span class="o">:</span> <span class="o">~</span><span class="p">[</span><span class="o">&amp;</span><span class="k">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">).</span><span class="n">collect</span><span class="p">();</span> 
-    <span class="k">for</span> <span class="o">&amp;</span><span class="n">s</span> <span class="n">in</span> <span class="n">wordvec</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-    <span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><h2 id="Error_Handling" >Error Handling</h2>
+<h2 id="Error_Handling" >Error Handling</h2>
 <p>
 Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
 <span class="src"><code><span class="n">Option</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
@@ -857,7 +843,7 @@ The following code terminates with a message if "foo.txt" is failed to open:
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h2 id="Secret_Sharing" >Secret Sharing</h2>
+</div><h2 id="Example:_Secret_Sharing" >Example: Secret Sharing</h2>
 <p>
 The XOR operation is a simple, but effective method for hiding meaning.
 It's derived from the identity <code>A = (A ^ B) ^ B</code>.  XOR-ing a

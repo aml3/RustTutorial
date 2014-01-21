@@ -2,7 +2,7 @@ ptitle Starting to Corrode
 phead 1 Starting to Corrode:<br>Pointers, Memory, Strings, and I/O
 This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
 
-Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover file and user I/O, using strings and vectors, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
+Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover strings and vectors, file and user I/O, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
 
 phead 2 Memory Management
 phead 3 Boxes
@@ -380,30 +380,131 @@ bedoc
 example.rs:4         reference = &val;
 </code></pre>
 
-phead 4 Exercises
+phead 2 Vectors and Strings
 
-We didn't cover vectors yet, but you can probably figure
-out most of what you need to solve the next two exercises from the example code.  Other useful vector methods include 
+Rust provides built-in vector and string types, consistent with Rust's focus on safety.
+
+phead 4 Vectors
+
+<a name="vectors"></a>
+A vector is defined by using comma seperated values within brackets. 
+
+A specific element can be accessed via 
 scode
-v.len()
+foo[index]
 edoc
-for obtaining the number of elements in the vector
+. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
+plink http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html std::vec::OwnedVector
+ may be used to mutate the vector. 
+
+These examples show simple vector functions:
+
+scode False {'lang': 'rust'}
+codeb
+    let mut vec = ~[0, 1, 2];
+    vec.push(3); // Appends to end: [0, 1, 2, 3]
+
+    vec.insert(2, 10); 
+    // Inserts 10 at position 2: [0, 1, 10, 2, 3]
+
+    let last = vec.pop(); 
+    // Returns last element, removing it from the vector: [0, 1, 10, 2]
+
+    let element1 = vec.remove(1); 
+    // Returns and removes element at specified index: [0, 10, 2]
+
+    // An iterator for going through all elements in order: 
+    for &x in vec.iter() { // note the use of & for borrowing
+        println!("{}", x);
+    }
+    
+    // len() returns the number of elements in the vector
+    for i in range(0, vec.len()) { 
+        println!("{}", vec[i]);
+    }
+bedoc
+phead 4 Strings
+
+Rust supposrts a 
+scdoe
+string
+edoc
+type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
 scode
-v
+u8
 edoc
-and
+type in Rust.
+
+A notable construct that is very important for strings is the 
 scode
-v.push(e)
+slice
 edoc
-for pushing the value 
+. This represents a view into a string, but not a string itself. Its type is
 scode
-e
+&string
 edoc
-to the end of the vector
+.  
+ 
+Methods that produce a slice include 
 scode
-v
+slice(&self, begin: int, end: int)
 edoc
-.  (See <a href="#vectors">later in this tutorial</a> for more details on vectors.)
+, which returns a slice of characters between begin and end - 1, 
+scode
+slice_from(&self, begin: int)
+edoc
+, which returns a slice with first element from the index provided that continues to the end, and 
+scode
+slice_to(&self, end: int)
+edoc
+, which returns a slice starting at the beginning with final element from index end - 1. 
+
+These slice methods produce an immutable values, so they cannot be modified. 
+
+To do something such as taking a substring, a slice may be converted to an owned string via the
+scode
+to_owned(&self)
+edoc
+ method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
+
+Other notable string methods include 
+scode
+str::eq(&~str, &~str)
+edoc
+which checks two strings for bytewise equality, and 
+scode
+split(&self, char)
+edoc
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
+
+For string concatenation, the 
+scode
++
+edoc
+ operator is used. 
+
+These methods are used in the example below:
+scode False {'lang': 'rust'}
+codeb
+    let string = ~"This is a string";
+    let subst1 = string.slice(10, 16).to_owned();
+    let subst2 = string.slice_from(10).to_owned();
+    println!("{}", std::str::eq(&subst1, &subst2));
+    let doublesub = subst1 + subst2;
+    println!("{}", doublesub);
+    // Using split iterator to print word by word
+    for tempstr in string.split(' ') {
+        println!("{}", tempstr);
+    }
+    // Another useful function of the split iterator
+    // collect() Creates a vector ~["This", "is", "a", "string"]
+    let wordvec: ~[&str] = string.split(' ').collect(); 
+    for &s in wordvec.iter() {
+        println!("{}", s);
+    }
+bedoc
+
+phead 4 Exercises
 
 <div class="exercise">
 <b>Exercise 2.1.</b>  Implement a function, 
@@ -669,130 +770,6 @@ Option
 edoc
 objects that must be matched to check for opening failures.
 
-phead 2 Vectors and Strings
-
-Rust provides built-in vector and string types, consistent with Rust's focus on safety.
-
-phead 4 Vectors
-
-<a name="vectors"></a>
-A vector is defined by using comma seperated values within brackets. 
-
-A specific element can be accessed via 
-scode
-foo[index]
-edoc
-. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
-plink http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html std::vec::OwnedVector
- may be used to mutate the vector. 
-
-These examples show simple vector functions:
-
-scode False {'lang': 'rust'}
-codeb
-    let mut vec = ~[0, 1, 2];
-    vec.push(3); // Appends to end: [0, 1, 2, 3]
-
-    vec.insert(2, 10); 
-    // Inserts 10 at position 2: [0, 1, 10, 2, 3]
-
-    let last = vec.pop(); 
-    // Returns last element, removing it from the vector: [0, 1, 10, 2]
-
-    let element1 = vec.remove(1); 
-    // Returns and removes element at specified index: [0, 10, 2]
-
-    // An iterator for going through all elements in order: 
-    for &x in vec.iter() { // note the use of & for borrowing
-        println!("{}", x);
-    }
-    
-    // len() returns the number of elements in the vector
-    for i in range(0, vec.len()) { 
-        println!("{}", vec[i]);
-    }
-bedoc
-phead 4 Strings
-
-Rust supposrts a 
-scdoe
-string
-edoc
-type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
-scode
-u8
-edoc
-type in Rust.
-
-A notable construct that is very important for strings is the 
-scode
-slice
-edoc
-. This represents a view into a string, but not a string itself. Its type is
-scode
-&string
-edoc
-.  
- 
-Methods that produce a slice include 
-scode
-slice(&self, begin: int, end: int)
-edoc
-, which returns a slice of characters between begin and end - 1, 
-scode
-slice_from(&self, begin: int)
-edoc
-, which returns a slice with first element from the index provided that continues to the end, and 
-scode
-slice_to(&self, end: int)
-edoc
-, which returns a slice starting at the beginning with final element from index end - 1. 
-
-These slice methods produce an immutable values, so they cannot be modified. 
-
-To do something such as taking a substring, a slice may be converted to an owned string via the
-scode
-to_owned(&self)
-edoc
- method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
-
-Other notable string methods include 
-scode
-str::eq(&~str, &~str)
-edoc
-which checks two strings for bytewise equality, and 
-scode
-split(&self, char)
-edoc
- which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
-
-For string concatenation, the 
-scode
-+
-edoc
- operator is used. 
-
-These methods are used in the example below:
-scode False {'lang': 'rust'}
-codeb
-    let string = ~"This is a string";
-    let subst1 = string.slice(10, 16).to_owned();
-    let subst2 = string.slice_from(10).to_owned();
-    println!("{}", std::str::eq(&subst1, &subst2));
-    let doublesub = subst1 + subst2;
-    println!("{}", doublesub);
-    // Using split iterator to print word by word
-    for tempstr in string.split(' ') {
-        println!("{}", tempstr);
-    }
-    // Another useful function of the split iterator
-    // collect() Creates a vector ~["This", "is", "a", "string"]
-    let wordvec: ~[&str] = string.split(' ').collect(); 
-    for &s in wordvec.iter() {
-        println!("{}", s);
-    }
-bedoc
-
 phead 2 Error Handling
 
 Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
@@ -855,7 +832,7 @@ match File::create(&Path::new("foo.txt")) {
     }
 }
 bedoc
-phead 2 Secret Sharing
+phead 2 Example: Secret Sharing
 
 The XOR operation is a simple, but effective method for hiding meaning.
 It's derived from the identity <code>A = (A ^ B) ^ B</code>.  XOR-ing a
