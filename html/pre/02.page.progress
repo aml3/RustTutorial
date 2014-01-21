@@ -920,3 +920,7 @@ joiner msg.share1 msg.share2
 
 If you implemented the joiner correctly, you should see a (somewhat)
 <a href="http://www.gutenberg.org/cache/epub/1518/pg1518.html">meaningful message</a>.
+
+<div class="credits">
+This tutorial was created by Alex&nbsp;Lamana, Rob&nbsp;Michaels, Wil&nbsp;Thomason, and David&nbsp;Evans for <a href="http://rust-class.org">University of Virginia cs4414 Spring 2014</a>.
+</div>
