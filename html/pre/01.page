@@ -1,6 +1,6 @@
 ptitle Getting Started with Rust
 phead 1 Getting Started: Variables, Functions, and Syntax
-pnav toc.html incomplete.html
+pnav toc.html 02.html
 In this section, we'll be going over the basic syntax of Rust. You'll learn about
 variable declarations and mutability, how to work with functions, and some basic
 control structures including loops, conditionals, and matching. Finally, we will analyze
@@ -615,4 +615,4 @@ edoc
  will result in a stack overflow, as the Collatz sequence is only defined for positive integers.
 
 Ready for more Rust? Head to the next section.
-pnav toc.html incomplete.html
+pnav toc.html 02.html
