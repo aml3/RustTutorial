@@ -889,7 +889,7 @@ the result of XOR-ing the bytes in those files.  The inputs files must be the sa
 </div>
 
 Your joiner should be able to produce the plaintext from the example
-files: <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share1</a> and <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share2</a>.  You should download these files (look
+files: <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share1</a> and <a href="http://aml3.github.io/RustTutorial/code/msg.share2">msg.share2</a>.  You should download these files (look
 at them to confirm they appear to be random bytes).  
 
 Then, try executing:
