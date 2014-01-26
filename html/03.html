@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+        <link href="css/tabs.css" rel="stylesheet" type="text/css">
+        <link href="css/code.css" rel="stylesheet" type="text/css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="js/tabs.js"></script>
+    </head>
+    <body>
+<title>Witty Title Here</title>
+<h1 id="Structures,_Higher_Order_Functions,_and_Tasks" >Structures, Higher Order Functions, and Tasks</h1>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
+The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
+</p>
+<h2 id="Structs_in_Rust" >Structs in Rust</h2>
+<p>
+A 
+<span class="src"><code><span class="k">struct</span></code></span>
+ is Rust's way of creating a structure. These function nearly identically to a 
+<span class="src"><code><span class="k">struct</span></code></span>
+ in C. A 
+<span class="src"><code><span class="k">struct</span></code></span>
+is defined before its construction by using the syntax 
+<span class="src"><code><span class="k">struct</span> <span class="n">Name</span> <span class="p">{</span> <span class="n">field1</span><span class="o">:</span> <span class="n">T1</span><span class="p">,</span> <span class="n">field2</span><span class="o">:</span> <span class="n">T2</span> <span class="p">[,</span> <span class="p">...]</span> <span class="p">}</span></code></span>
+where
+<span class="src"><code><span class="n">T1</span></code></span>
+ and 
+<span class="src"><code><span class="n">T2</span></code></span>
+ are the type of the preceding fields. Note that mutability is not specified when the 
+<span class="src"><code><span class="k">struct</span></code></span>
+ definition. A 
+<span class="src"><code><span class="k">struct</span></code></span>
+ is declared mutable upon creation, and mutability applied to all fields within. 
+</p>
+<p>
+The following code defines a 
+<span class="src"><code><span class="n">Node</span></code></span>
+ for a linked list. The field 
+<span class="src"><code><span class="n">val</span></code></span>
+ is an integer, and the 
+<span class="src"><code><span class="n">tail</span></code></span>
+ field is either a pointer to the next 
+<span class="src"><code><span class="n">Node</span></code></span>
+, or 
+<span class="src"><code><span class="n">None</span></code></span>
+ for the last 
+<span class="src"><code><span class="n">Node</span></code></span>
+ in the list.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
+    <span class="n">tail</span><span class="o">:</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+A 
+<span class="src"><code><span class="k">struct</span></code></span>
+ is constructeded in a similar syntax to how it was defined, with the name of the 
+<span class="src"><code><span class="k">struct</span></code></span>
+ followed by braces with the fields defined through the syntax of 
+<span class="src"><code><span class="n">fieldName</span><span class="o">:</span><span class="n">value</span></code></span>
+. The following code defines one immutable and one mutable 
+<span class="src"><code><span class="n">Node</span></code></span>
+. Note that trying to change a field of 
+<span class="src"><code><span class="n">node2</span></code></span>
+ would result in a compiler error.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span> <span class="p">{</span><span class="n">val</span><span class="o">:</span><span class="m">10</span><span class="p">,</span>  <span class="n">tail</span><span class="o">:</span> <span class="n">None</span><span class="p">};</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span> <span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="m">10</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">None</span><span class="p">};</span>
+    <span class="n">node2</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="m">15</span><span class="p">;</span> 
+</pre></div>
+</td></tr></table>
+</div><h2 id="Higher_Order_Functions" >Higher Order Functions</h2>
+<h3 id="Traits" >Traits</h3>
+<h3 id="Implementing_A_High_Order_Function" >Implementing A High Order Function</h3>
+<h2 id="Rust_Tasks" >Rust Tasks</h2>
+<h3 id="Task_Properties" >Task Properties</h3>
+<h3 id="Spawning_a_Task" >Spawning a Task</h3>
+<h3 id="Task_Communication" >Task Communication</h3>
+    </body>
+                </html>

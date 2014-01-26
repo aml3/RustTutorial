@@ -1,0 +1,108 @@
+ptitle Witty Title Here
+phead 1 Structures, Higher Order Functions, and Tasks
+pnav 02.html incomplete.html
+The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
+
+phead 2 Structs in Rust
+A 
+scode
+struct
+edoc
+ is Rust's way of creating a structure. These function nearly identically to a 
+scode
+struct
+edoc
+ in C. A 
+scode
+struct
+edoc
+is defined before its construction by using the syntax 
+scode
+struct Name { field1: T1, field2: T2 [, ...] }
+edoc
+where
+scode
+T1
+edoc
+ and 
+scode
+T2
+edoc
+ are the type of the preceding fields. Note that mutability is not specified when the 
+scode
+struct
+edoc
+ definition. A 
+scode
+struct 
+edoc
+ is declared mutable upon creation, and mutability applied to all fields within. 
+
+The following code defines a 
+scode
+Node
+edoc
+ for a linked list. The field 
+scode
+val
+edoc
+ is an integer, and the 
+scode
+tail
+edoc
+ field is either a pointer to the next 
+scode
+Node
+edoc
+, or 
+scode
+None
+edoc
+ for the last 
+scode
+Node
+edoc
+ in the list.
+scode False {'lang': 'rust'}
+codeb
+struct Node {
+    val: int,
+    tail: Option<~Node>
+}
+bedoc
+
+A 
+scode
+struct
+edoc
+ is constructeded in a similar syntax to how it was defined, with the name of the 
+scode
+struct
+edoc
+ followed by braces with the fields defined through the syntax of 
+scode
+fieldName:value
+edoc
+. The following code defines one immutable and one mutable 
+scode
+Node
+edoc
+. Note that trying to change a field of 
+scode
+node2
+edoc
+ would result in a compiler error.
+
+scode False {'lang': 'rust'}
+codeb
+    let node1 = Node {val:10,  tail: None};
+    let mut node2 = Node {val: 10, tail: None};
+    node2.val = 15; 
+bedoc
+phead 2 Higher Order Functions
+phead 3 Traits
+phead 3 Implementing A High Order Function
+phead 2 Rust Tasks
+phead 3 Task Properties
+phead 3 Spawning a Task
+phead 3 Task Communication
