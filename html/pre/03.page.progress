@@ -467,3 +467,38 @@ Port.recv()
 edoc
  is called at an improper time. 
 phead 2 Putting It All Together
+The code we have in the previous section for a list mapping function works correctly and will successfully map every element in a list to a given function. You may note, however, that this is done strictly sequentially, and thus has a run time of O(n), where n is the number of elements in the list. This can be done more efficently through paralellizing with tasks. Recall that a call to 
+scode
+port.recv()
+edoc
+ will not progress until the corresponding 
+scode
+chan.send(result)
+edoc
+ has finished. Because of this, the ordering of the lines after the task has spawned is very important. If 
+scode
+port.recv()
+edoc
+ is called prior to calling
+scode
+mapr
+edoc
+ on the remainder of the list, 
+scode
+mapr
+edoc
+ will not actually be called until the task has completed and sent its result. This would be a serialized runtime, the same as the function without spawning tasks. With proper implementation of multitasking, the runtime of this function is reduced to O(1).
+
+Below is the full implementation of a Rust program with a 
+scode
+List
+edoc
+ type created, and a 
+scode
+map
+edoc
+ function which will apply a given function to all elements of a given list.
+
+<pre><code>
+//Code goes here, will be up soon!
+</code></pre>
