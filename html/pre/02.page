@@ -500,7 +500,7 @@ bedoc
 phead 4 Exercises
 
 <div class="exercise">
-<b>Exercise 2.1.</b>  Implement a function, 
+<b>Exercise 2.1.</b> Implement a function, 
 scode
 increment
 edoc

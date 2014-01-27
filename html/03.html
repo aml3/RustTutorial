@@ -24,7 +24,11 @@ A
 <span class="src"><code><span class="k">struct</span></code></span>
  is Rust's way of packaging data into a structure. It is similar to 
 <span class="src"><code><span class="k">struct</span></code></span>
- in C. A 
+ in C. 
+</p>
+<h4 id="Defining_Structs" >Defining Structs</h4>
+<p>
+A 
 <span class="src"><code><span class="k">struct</span></code></span>
 type is defined using:
 </p>
@@ -92,15 +96,11 @@ The
 The 
 <span class="src"><code><span class="k">type</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">Type</span><span class="p">;</span></code></span>
 construct provides a way to define a new name for a type.  Note that this is just for convenience &mdash; the 
-<span class="src"><code><span class="n">Name</span>
-<span class="n">edoce</span>
-<span class="n">defined</span> <span class="n">by</span> <span class="n">the</span> 
-<span class="n">scode</span>
-<span class="k">type</span>
-<span class="n">ecod</span>
-<span class="n">definition</span> <span class="n">means</span> <span class="n">exactly</span> <span class="n">the</span> <span class="n">same</span> <span class="n">thing</span> <span class="n">to</span> <span class="n">the</span> <span class="k">type</span> <span class="n">checker</span> <span class="k">as</span> <span class="n">the</span>
-<span class="n">scode</span>
-<span class="n">Type</span></code></span>
+<span class="src"><code><span class="n">Name</span></code></span>
+defined by the 
+<span class="src"><code><span class="k">type</span></code></span>
+definition means exactly the same thing to the type checker as the
+<span class="src"><code><span class="n">Type</span></code></span>
 it is defined to.  
 </p>
 <p>
@@ -123,18 +123,20 @@ For example, we can define the
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><p>
+</div><h4 id="Constructing_Structs" >Constructing Structs</h4>
+<p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
  is constructed in a similar syntax to how it was defined, with the name of the 
 <span class="src"><code><span class="k">struct</span></code></span>
- followed by braces with the fields defined through the syntax of 
+ followed by braces with the fields defined using
 <span class="src"><code><span class="n">fieldName</span><span class="o">:</span><span class="n">value</span></code></span>
-. The following code defines one immutable and one mutable 
+. 
+</p>
+<p>
+The following code defines one immutable and one mutable 
 <span class="src"><code><span class="n">Node</span></code></span>
-. Note that trying to change a field of 
-<span class="src"><code><span class="n">node2</span></code></span>
- would result in a compiler error.
+: 
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -144,76 +146,179 @@ A
 </pre></div>
 </td></tr></table>
 </div><p>
-For an example of how to create a 
-<span class="src"><code><span class="n">List</span></code></span>
- based on our specification, the below code creates a list of 
-<span class="src"><code><span class="n">n</span></code></span>
- length, where the first 
-<span class="src"><code><span class="n">Node</span></code></span>
- has a 
-<span class="src"><code><span class="n">val</span></code></span>
- of 
-<span class="src"><code><span class="n">x</span></code></span>
-, and each subsequent
-<span class="src"><code><span class="n">Node</span></code></span>
- increases this value by one.
-code False {'lang': 'rust'}
-codeb
-fn test_list(n: int, x: int) -> List {
-    if n == 0 {
-        None
-    } else {
-        Some(~Node{val: x, tail: test_list(n - 1, x + 1)})
-    }
-}
-bedoc
-<h2 id="Higher_Order_Functions" >Higher Order Functions</h2>
-A higher order function is a function which takes a function as an input. This has a lot of power for applying an arbitrary function in a consistent manner to some other input. We will see this completed in a 
-<span class="src"><code><span class="n">map</span></code></span>
- function, which will apply a given function to every element in a given 
-<span class="src"><code><span class="n">List</span></code></span>
-.
-<h3 id="Implementing_A_High_Order_Function" >Implementing A High Order Function</h3>
-The declaration of a higher level function in Rust is similar in syntax to that of a standard function. One of the function paramaters can be another function, though. This input function must have its input and output types defined in the declaration. To use another defined function as the input, the 
-<span class="src"><code><span class="k">extern</span></code></span>
- keyword must precede this. The following code defines a higher level function, 
-<span class="src"><code><span class="n">math</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span></code></span>
-, which takes an arbitrary function that takes an int input and returns an int, and applies it to a given int, 
-<span class="src"><code><span class="n">n</span></code></span>
-. We then show how this is called.
+The mutability qualifier applies all the fields in the struct.  Trying to change a field of 
+<span class="src"><code><span class="n">node1</span></code></span>
+ would result in a compiler error.
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">math</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-    <span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="k">fn</span> <span class="n">plustwo</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-    <span class="n">n</span> <span class="o">+</span> <span class="m">2</span>
-<span class="p">}</span>
-<span class="k">fn</span> <span class="n">timestwo</span><span class="p">(</span><span class="n">n</span><span class="o">:</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
-    <span class="n">n</span><span class="o">*</span><span class="m">2</span>
-<span class="p">}</span>
-<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
-    <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">math</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">plustwo</span><span class="p">);</span> <span class="c1">//y == 12</span>
-    <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">math</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">timestwo</span><span class="p">);</span> <span class="c1">//z == 20</span>
+<p>
+For an example, the code below creates a list of 
+<span class="src"><code><span class="n">n</span></code></span>
+ elements:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="n">None</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h3 id="List_Mapping" >List Mapping</h3>
+</div><p>
+<div class="exercise">
+<b>Exercise 3.1.</b> Define a 
+<span class="src"><code><span class="n">Tree</span></code></span>
+type that can be used to represent a tree where each node has an 
+<span class="src"><code><span class="k">int</span></code></span>
+value and a vector of children nodes.
+</div>
+</p>
+<p>
+<div class="exercise">
+</p>
+<p>
+<b>Exercise 3.2.</b> Define a function that prints out all the elements in a 
+<span class="src"><code><span class="n">Tree</span></code></span>
+ (as you defined it in the previous exercise).
+</div>
+</p>
+<h2 id="Higher-Order_Functions" >Higher-Order Functions</h2>
+<p>
+A higher-order function is a function which operates on other functions.
+We can have functions that take other functions as inputs, as well as
+functions that create and return new functions as their output.
+Higher-order functions provide a lot of power for concisely and very
+generally describe computations.  By the end of this section, you'll be
+able to write a single function that can do all of the things in the
+previous set of exercises!
+</p>
+<h4 id="Functions_as_Parameters" >Functions as Parameters</h4>
+<p>
+A parameter can have function type, just like any other type.  The type
+of a function includes the types of its inputs and the type of its output.  
+</p>
+<p>
+For example, 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">twice</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="o">|</span><span class="k">int</span><span class="o">|</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+defines a function that takes two inputs, the second of which is a function.  The syntax, 
+<span class="src"><code><span class="o">|</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="p">...</span><span class="o">|</span> <span class="o">-&gt;</span> <span class="n">res</span></code></span>
+(with vertical bars around a list of parameter types) specifies a function that takes the 
+<span class="src"><code><span class="n">argn</span></code></span>
+types as inputs and returns a value of type
+<span class="src"><code><span class="n">res</span></code></span>
+.
+</p>
+<p>
+Here's an example using 
+<span class="src"><code><span class="n">twice</span></code></span>
+:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">successor</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span> <span class="n">n</span> <span class="o">+</span> <span class="m">1</span> <span class="p">}</span>
+<span class="k">fn</span> <span class="n">double</span><span class="p">(</span><span class="n">n</span><span class="o">:</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span> <span class="n">n</span> <span class="o">*</span> <span class="m">2</span> <span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Result: {:d}&quot;</span><span class="p">,</span> <span class="n">twice</span><span class="p">(</span><span class="n">twice</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">successor</span><span class="p">),</span> <span class="n">double</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The result is (((1 + 1) + 1) * 2) * 2 = 12.
+</p>
+<h4 id="Functions_as_Results" >Functions as Results</h4>
+<p>
+It would be a lot more useful if 
+<span class="src"><code><span class="n">twice</span></code></span>
+didn't take the integer as one of its inputs, but instead returned a function.  For example, we would like to be able to do:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">square</span> <span class="o">=</span> <span class="n">twice</span><span class="p">(</span><span class="n">double</span><span class="p">);</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+to define a squaring function.  
+</p>
+<p>
+We can do this by defining a function that returns a function:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">twice</span><span class="p">(</span><span class="n">f</span><span class="o">:</span> <span class="n">proc</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">proc</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">proc</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Now, 
+<span class="src"><code><span class="n">twice</span></code></span>
+is a function that take a function as its input (we use 
+<span class="src"><code><span class="n">proc</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span></code></span>
+here to describe the input function, and need to use 
+<span class="src"><code><span class="n">proc</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span><span class="k">int</span></code></span>
+instead of
+<span class="src"><code><span class="o">|</span><span class="k">int</span><span class="o">|</span> <span class="o">-&gt;</span> <span class="k">int</span></code></span>
+because of Rust's lifetime rules.   (Note that the way we defined this, we can only use the returned function once.)  
+</p>
+<p>
+We can use
+<span class="src"><code><span class="n">twice</span></code></span>
+like this:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">let</span> <span class="n">hexaple</span> <span class="o">=</span> <span class="n">twice</span><span class="p">(</span><span class="n">twice</span><span class="p">(</span><span class="n">double</span><span class="p">));</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Result: {:d}&quot;</span><span class="p">,</span> <span class="n">hexaple</span><span class="p">(</span><span class="m">2</span><span class="p">));</span> <span class="c1">// 32</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+<div class="exercise">
+<b>Exercise 3.3.</b>  Define a 
+<span class="src"><code><span class="n">compose</span></code></span>
+function that takes as inputs two functions and outputs a function that composes the two input functions.  Both of the input functions and the returned function should have type
+<span class="src"><code><span class="n">proc</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span></code></span>
+.  You should be able to use your
+<span class="src"><code><span class="n">compose</span></code></span>
+function to define
+<span class="src"><code>   <span class="k">let</span> <span class="n">sixthpower</span> <span class="o">=</span> <span class="n">compose</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">square</span><span class="p">)</span></code></span>
+where 
+<span class="src"><code><span class="n">cube</span></code></span>
+and
+<span class="src"><code><span class="n">square</span></code></span>
+are functions that compute the cube and square of an int input respectively.
+</div>
+</p>
+<p>
+<div class="exercise">
+<b>Exercise 3.4.</b>
+</p>
+<p>
+</div>
+</p>
+<h3 id="List_Mapping" >List Mapping</h3>
 <p>
 The above example above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
 <h4 id="Traits" >Traits</h4>
