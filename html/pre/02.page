@@ -1,6 +1,6 @@
 ptitle Starting to Corrode
 phead 1 Starting to Corrode:<br>Pointers, Memory, Strings, and I/O
-pnav 01.html incomplete.html
+pnav 01.html 03.html
 This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
 
 Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover strings and vectors, file and user I/O, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
