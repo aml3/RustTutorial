@@ -291,16 +291,146 @@ edoc
  variable to be bound by reference rather than by value.
 scode False {'lang': 'rust'}
 codeb
-fn test_list(n: int, x: int) -> List {
-    if n == 0 {
-        None
-    } else {
-        Some(~Node{val: x, tail: test_list(n - 1, x + 1)})
-    }
+impl Map for List {
+    fn mapr(&self, f: fn(int) -> int) -> List {
+         match(*self) {
+            None => None,
+            Some(ref current) => { Some(~Node{ val: f(current.val), 
+                                               tail: current.tail.mapr(f) }) },
+        } 
+    } 
 }
 bedoc
 phead 2 Rust Tasks
 phead 3 Task Properties
+Rust is described by the developers as a language that concentrates on, amoung other things, safety and concurrency. In order to ensure safe, cocurrent computation, Rust makes use of 
+scode
+tasks
+edoc
+. Tasks function like a sort of hybrid of a conventional process and thread. A Rust task is given the abstraction of having its own memory space and registers, like a process, but doesn't have a processes' associated operating system cost. Tasks split computation like threads, however do not share memory, thus preventing race conditions and other such inconsistencies. 
 phead 3 Spawning a Task
+Tasks are created using the 
+scode
+spawn(fn())
+edoc
+ function, which proceeds to create a new task, run the given function, 
+scode
+fn()
+edoc
+ within the task, and then close the task. Another way to create a task is throught the 
+scode
+do
+edoc
+ keyword. Proceeding a block with 
+scode
+do spawn
+edoc
+ will create a new task, run the contents of the block within the task, and then close the task. The following example demonstrates these two methods of task creation.
+scode False {'lang': 'rust'}
+codeb
+fn print_task()
+{
+    println("Hello, from a task!");
+}
+fn main()
+{
+    spawn(print_task);
+    do spawn {
+        println("Hello, from another task!");
+    }
+}
+bedoc
+
 phead 3 Task Communication
+As said earlier, tasks do not share memory, and each task has its own individual memory space. Spawning a task and then trying to access variables from outside the scope of the task itself will result in a compiler error. How does one access outside memory then? This is accomplished through the use of 
+scode
+Port<T>
+edoc
+ and 
+scode
+Chan<T>
+edoc
+ objects. These can be thought of as a link between a spawned task and its parent (the task which spawned it). These are created as a tuple, demonstrated in the code below. The type of 
+scode
+<T>
+edoc
+ is unrestricted, however the 
+scode
+Port
+edoc
+ and 
+scode
+Chan
+edoc
+ must have matching types, otherwise a compiler error is thrown.
+
+The transfer of values between tasks is accomplished with the 
+scode
+Chan.send(T)
+edoc
+ function, which puts a value into the 
+scode
+(Port<T>, Chan<T>)
+edoc
+ pair, and the 
+scode
+Port.recv()
+edoc
+ function, which returns the value that had been sent by the 
+scode
+Chan
+edoc
+. The following spawns a very simple task to call our 
+scode
+plustwo
+edoc
+ function, and then send the result back to the parent thread.
+scode False {'lang': 'rust'}
+codeb
+   let (port, chan): (Port<int>, Chan<int>) = Chan::new();
+    do spawn {
+        let x = 10;
+        chan.send(plustwo(x));
+    }
+    let new_x = port.recv(); //new_x == 12
+bedoc
+
+It should be noted that a 
+scode
+(Port<T>, Chan<T>)
+edoc
+ pair can only be sent to from a single task. Once 
+scode
+Chan.send(T)
+edoc
+ has been called from a specific task, that task owns the channel. Trying to call 
+scode
+Chan.send(T)
+edoc
+ from multiple tasks will result in a compile time error. Thus, to send objects back and forth between tasks, two different channels are necessary. The following example does the same as the previous, but receives the value for 
+scode
+plustwo
+edoc
+ from the parent task, instead of creating it within the spawned task.
+scode False {'lang': 'rust'}
+codeb
+    let (port1, chan1): (Port<int>, Chan<int>) = Chan::new();
+    let (port2, chan2): (Port<int>, Chan<int>) = Chan::new();
+    do spawn {
+        let x = port2.recv();
+        chan1.send(plustwo(x));
+    }
+    chan2.send(10);
+    let new_x = port1.recv(); //new_x == 12
+bedoc
+
+Keep in mind that once 
+scode
+Port.recv()
+edoc
+ has been called, the task which called it will not continue until a value is sent. This can lead to deadlocking programs if a 
+scode
+Port.recv()
+edoc
+ is called at an improper time. 
 phead 2 Putting It All Together

@@ -224,19 +224,133 @@ Now, we will implement the
 4
 5
 6
-7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
-        <span class="n">None</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span>
-    <span class="p">}</span>
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">List</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
+         <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">None</span> <span class="o">=&gt;</span> <span class="n">None</span><span class="p">,</span>
+            <span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="n">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span> <span class="n">val</span><span class="o">:</span> <span class="n">f</span><span class="p">(</span><span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">),</span> 
+                                               <span class="n">tail</span><span class="o">:</span> <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="p">})</span> <span class="p">},</span>
+        <span class="p">}</span> 
+    <span class="p">}</span> 
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
 </div><h2 id="Rust_Tasks" >Rust Tasks</h2>
 <h3 id="Task_Properties" >Task Properties</h3>
+<p>
+Rust is described by the developers as a language that concentrates on, amoung other things, safety and concurrency. In order to ensure safe, cocurrent computation, Rust makes use of 
+<span class="src"><code><span class="n">tasks</span></code></span>
+. Tasks function like a sort of hybrid of a conventional process and thread. A Rust task is given the abstraction of having its own memory space and registers, like a process, but doesn't have a processes' associated operating system cost. Tasks split computation like threads, however do not share memory, thus preventing race conditions and other such inconsistencies. 
 <h3 id="Spawning_a_Task" >Spawning a Task</h3>
-<h3 id="Task_Communication" >Task Communication</h3>
+Tasks are created using the 
+<span class="src"><code><span class="n">spawn</span><span class="p">(</span><span class="k">fn</span><span class="p">())</span></code></span>
+ function, which proceeds to create a new task, run the given function, 
+<span class="src"><code><span class="k">fn</span><span class="p">()</span></code></span>
+ within the task, and then close the task. Another way to create a task is throught the 
+<span class="src"><code><span class="k">do</span></code></span>
+ keyword. Proceeding a block with 
+<span class="src"><code><span class="k">do</span> <span class="n">spawn</span></code></span>
+ will create a new task, run the contents of the block within the task, and then close the task. The following example demonstrates these two methods of task creation.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">print_task</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, from a task!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="n">print_task</span><span class="p">);</span>
+    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, from another task!&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="Task_Communication" >Task Communication</h3>
+<p>
+As said earlier, tasks do not share memory, and each task has its own individual memory space. Spawning a task and then trying to access variables from outside the scope of the task itself will result in a compiler error. How does one access outside memory then? This is accomplished through the use of 
+<span class="src"><code><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+ and 
+<span class="src"><code><span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+ objects. These can be thought of as a link between a spawned task and its parent (the task which spawned it). These are created as a tuple, demonstrated in the code below. The type of 
+<span class="src"><code><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+ is unrestricted, however the 
+<span class="src"><code><span class="n">Port</span></code></span>
+ and 
+<span class="src"><code><span class="n">Chan</span></code></span>
+ must have matching types, otherwise a compiler error is thrown.
+</p>
+<p>
+The transfer of values between tasks is accomplished with the 
+<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
+ function, which puts a value into the 
+<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span></code></span>
+ pair, and the 
+<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
+ function, which returns the value that had been sent by the 
+<span class="src"><code><span class="n">Chan</span></code></span>
+. The following spawns a very simple task to call our 
+<span class="src"><code><span class="n">plustwo</span></code></span>
+ function, and then send the result back to the parent thread.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="src"><pre>   <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
+        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">plustwo</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">let</span> <span class="n">new_x</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span> <span class="c1">//new_x == 12</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+It should be noted that a 
+<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span></code></span>
+ pair can only be sent to from a single task. Once 
+<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
+ has been called from a specific task, that task owns the channel. Trying to call 
+<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
+ from multiple tasks will result in a compile time error. Thus, to send objects back and forth between tasks, two different channels are necessary. The following example does the same as the previous, but receives the value for 
+<span class="src"><code><span class="n">plustwo</span></code></span>
+ from the parent task, instead of creating it within the spawned task.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="p">(</span><span class="n">port1</span><span class="p">,</span> <span class="n">chan1</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+    <span class="k">let</span> <span class="p">(</span><span class="n">port2</span><span class="p">,</span> <span class="n">chan2</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">port2</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
+        <span class="n">chan1</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">plustwo</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="n">chan2</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="m">10</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">new_x</span> <span class="o">=</span> <span class="n">port1</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span> <span class="c1">//new_x == 12</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Keep in mind that once 
+<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
+ has been called, the task which called it will not continue until a value is sent. This can lead to deadlocking programs if a 
+<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
+ is called at an improper time. 
 <h2 id="Putting_It_All_Together" >Putting It All Together</h2>
     </body>
                 </html>
