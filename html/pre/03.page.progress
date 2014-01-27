@@ -350,9 +350,24 @@ are functions that compute the cube and square of an int input respectively.
 
 </div>
 
-phead 3 List Mapping
-The above example above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
-phead 4 Traits
+phead 2 Traits
+
+The above examples hopefully give you a sense of the power of
+higher-order functions, but perhaps not how they would be useful in
+typical code.  Next, we'll see how higher-order functions can be used to
+provide generic functions for manipulating our 
+scode
+List 
+edoc
+type.
+
+First, we introduce <em>traits</em> which provide a way of defining a
+set of methods.
+
+TODO
+
+ above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
+
 First, we will apply a 
 scode
 Map trait
