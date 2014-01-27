@@ -20,11 +20,7 @@ Rust provides memory references in a way that is quite different from other lang
 <h2 id="Memory_Management" >Memory Management</h2>
 <h3 id="Boxes" >Boxes</h3>
 <p>
-The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
-<span class="src"><code><span class="k">int</span></code></span>
-or a complicated 
-<span class="src"><code><span class="k">struct</span></code></span>
-will be a pointer to a box. Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
+The <em>box</em> in Rust is the fundamental abstraction of memory. References in Rust can point to boxes.  Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
 <h3 id="Pointer_Types" >Pointer Types</h3>
 Rust provides two main pointer types: the <em>owned</em> pointer (indicated by the tilde:
 <span class="src"><code><span class="o">~</span></code></span>

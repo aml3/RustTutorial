@@ -7,15 +7,7 @@ Rust provides memory references in a way that is quite different from other lang
 
 phead 2 Memory Management
 phead 3 Boxes
-The <em>box</em> in Rust is the fundamental abstraction of memory. Any pointer or reference in Rust, be it to an 
-scode
-int
-edoc
-or a complicated 
-scode
-struct
-edoc
-will be a pointer to a box. Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
+The <em>box</em> in Rust is the fundamental abstraction of memory. References in Rust can point to boxes.  Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
 phead 3 Pointer Types
 Rust provides two main pointer types: the <em>owned</em> pointer (indicated by the tilde:
 scode

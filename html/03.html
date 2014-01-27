@@ -10,28 +10,46 @@
     </head>
     <body>
 <title>Multi-Tasking Maps</title>
-<h1 id="Multi-Tasking_Maps:_Structures,_Higher_Order_Functions,_and_Tasks" >Multi-Tasking Maps: Structures, Higher Order Functions, and Tasks</h1>
+<h1 id="Multi-Tasking_Maps:<br>Structures,_Higher-Order_Functions,_and_Tasks" >Multi-Tasking Maps:<br>Structures, Higher-Order Functions, and Tasks</h1>
 <br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
-The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
+This section covers creating and using structs in Rust, making use of higher order functions and traits to create generic functions.  We also introduce tasks, Rust's way of handling multiprocessing, and a simple mechanism for communicating between tasks.  In the following section, we'll cover some of the richer cross-task communication abstractions provided by Rust. 
+</p>
+<p>
+As a running example, we will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to make our simple map execute in parallel.
 </p>
 <h2 id="Structs_and_Traits_in_Rust" >Structs and Traits in Rust</h2>
 <h3 id="Rust_Structs" >Rust Structs</h3>
 <p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
- is Rust's way of creating a structure. These function nearly identically to a 
+ is Rust's way of packaging data into a structure. It is similar to 
 <span class="src"><code><span class="k">struct</span></code></span>
  in C. A 
 <span class="src"><code><span class="k">struct</span></code></span>
-is defined before its construction by using the syntax 
-<span class="src"><code><span class="k">struct</span> <span class="n">Name</span> <span class="p">{</span> <span class="n">field1</span><span class="o">:</span> <span class="n">T1</span><span class="p">,</span> <span class="n">field2</span><span class="o">:</span> <span class="n">T2</span> <span class="p">[,</span> <span class="p">...]</span> <span class="p">}</span></code></span>
+type is defined using:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Name</span> <span class="p">{</span> 
+   <span class="n">field1</span><span class="o">:</span> <span class="n">T1</span><span class="p">,</span> 
+   <span class="n">field2</span><span class="o">:</span> <span class="n">T2</span><span class="p">,</span> 
+   <span class="p">...</span> 
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
 where
 <span class="src"><code><span class="n">T1</span></code></span>
  and 
 <span class="src"><code><span class="n">T2</span></code></span>
- are the type of the preceding fields. Note that mutability is not specified when the 
+ are the types of the preceding fields. 
+</p>
+<p>
+Note that mutability is not specified in the 
 <span class="src"><code><span class="k">struct</span></code></span>
- definition. A 
+ type definition. A 
 <span class="src"><code><span class="k">struct</span></code></span>
  is declared mutable upon creation, and mutability applied to all fields within. 
 </p>
@@ -48,33 +66,61 @@ The following code defines a
 <span class="src"><code><span class="n">None</span></code></span>
  for the last 
 <span class="src"><code><span class="n">Node</span></code></span>
- in the list. We also define the 
-<span class="src"><code><span class="n">List</span> <span class="k">type</span></code></span>
- using the 
-<span class="src"><code><span class="k">type</span></code></span>
- keyword. This 
-<span class="src"><code><span class="n">List</span></code></span>
+ in the list. 
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
+    <span class="n">tail</span><span class="o">:</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The
+<span class="src"><code><span class="n">tail</span></code></span>
  is an 
 <span class="src"><code><span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span></code></span>
-, so a 
-<span class="src"><code><span class="n">List</span></code></span>
- either points to a 
+, so it either points to an owned 
 <span class="src"><code><span class="n">Node</span></code></span>
- pointer (the head of the list), or 
+, or is
 <span class="src"><code><span class="n">None</span></code></span>
- (an empty List);
+ (an empty List).
+</p>
+<p>
+The 
+<span class="src"><code><span class="k">type</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">Type</span><span class="p">;</span></code></span>
+construct provides a way to define a new name for a type.  Note that this is just for convenience &mdash; the 
+<span class="src"><code><span class="n">Name</span>
+<span class="n">edoce</span>
+<span class="n">defined</span> <span class="n">by</span> <span class="n">the</span> 
+<span class="n">scode</span>
+<span class="k">type</span>
+<span class="n">ecod</span>
+<span class="n">definition</span> <span class="n">means</span> <span class="n">exactly</span> <span class="n">the</span> <span class="n">same</span> <span class="n">thing</span> <span class="n">to</span> <span class="n">the</span> <span class="k">type</span> <span class="n">checker</span> <span class="k">as</span> <span class="n">the</span>
+<span class="n">scode</span>
+<span class="n">Type</span></code></span>
+it is defined to.  
+</p>
+<p>
+For example, we can define the
+<span class="src"><code><span class="n">List</span></code></span>
+ type using:
+<span class="src"><code><span class="k">type</span></code></span>
+ keyword. 
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5
-6</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
-    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
-    <span class="n">tail</span><span class="o">:</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span>
-<span class="p">}</span>
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">type</span> <span class="n">List</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
 
-<span class="k">type</span> <span class="n">List</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+   <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
+   <span class="n">tail</span><span class="o">:</span> <span class="n">List</span>
+<span class="p">}</span>
 </pre></div>
 </td></tr></table>
 </div><p>

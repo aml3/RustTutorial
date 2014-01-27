@@ -1,7 +1,9 @@
 ptitle Multi-Tasking Maps
-phead 1 Multi-Tasking Maps: Structures, Higher Order Functions, and Tasks
+phead 1 Multi-Tasking Maps:<br>Structures, Higher-Order Functions, and Tasks
 pnav 02.html incomplete.html
-The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
+This section covers creating and using structs in Rust, making use of higher order functions and traits to create generic functions.  We also introduce tasks, Rust's way of handling multiprocessing, and a simple mechanism for communicating between tasks.  In the following section, we'll cover some of the richer cross-task communication abstractions provided by Rust. 
+
+As a running example, we will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to make our simple map execute in parallel.
 
 phead 2 Structs and Traits in Rust
 phead 3 Rust Structs
@@ -9,7 +11,7 @@ A
 scode
 struct
 edoc
- is Rust's way of creating a structure. These function nearly identically to a 
+ is Rust's way of packaging data into a structure. It is similar to 
 scode
 struct
 edoc
@@ -17,10 +19,15 @@ edoc
 scode
 struct
 edoc
-is defined before its construction by using the syntax 
-scode
-struct Name { field1: T1, field2: T2 [, ...] }
-edoc
+type is defined using:
+scode False {'lang': 'rust'}
+codeb
+struct Name { 
+   field1: T1, 
+   field2: T2, 
+   ... 
+}
+bedoc
 where
 scode
 T1
@@ -29,11 +36,13 @@ edoc
 scode
 T2
 edoc
- are the type of the preceding fields. Note that mutability is not specified when the 
+ are the types of the preceding fields. 
+
+Note that mutability is not specified in the 
 scode
 struct
 edoc
- definition. A 
+ type definition. A 
 scode
 struct 
 edoc
@@ -63,43 +72,67 @@ edoc
 scode
 Node
 edoc
- in the list. We also define the 
-scode
-List type
-edoc
- using the 
-scode
-type
-edoc
- keyword. This 
-scode
-List
-edoc
- is an 
-scode
-Option<~Node>
-edoc
-, so a 
-scode
-List
-edoc
- either points to a 
-scode
-Node
-edoc
- pointer (the head of the list), or 
-scode
-None
-edoc
- (an empty List);
+ in the list. 
 scode False {'lang': 'rust'}
 codeb
 struct Node {
     val: int,
     tail: Option<~Node>
 }
+bedoc
+The
+scode
+tail
+edoc
+ is an 
+scode
+Option<~Node>
+edoc
+, so it either points to an owned 
+scode
+Node
+edoc
+, or is
+scode
+None
+edoc
+ (an empty List).
 
+The 
+scode
+type Name = Type;
+edoc
+construct provides a way to define a new name for a type.  Note that this is just for convenience &mdash; the 
+scode
+Name
+edoce
+defined by the 
+scode
+type
+ecod
+definition means exactly the same thing to the type checker as the
+scode
+Type
+edoc
+it is defined to.  
+
+For example, we can define the
+scode
+List 
+edoc
+ type using:
+scode
+type
+edoc
+ keyword. 
+scode False {'lang': 'rust'}
+codeb
 type List = Option<~Node>;
+
+struct Node {
+   val: int,
+   tail: List
+}
 bedoc
 
 A 
