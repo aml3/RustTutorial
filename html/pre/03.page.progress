@@ -1,9 +1,10 @@
-ptitle Witty Title Here
-phead 1 Structures, Higher Order Functions, and Tasks
+ptitle Multi-Tasking Maps
+phead 1 Multi-Tasking Maps: Structures, Higher Order Functions, and Tasks
 pnav 02.html incomplete.html
 The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
 
-phead 2 Structs in Rust
+phead 2 Structs and Traits in Rust
+phead 3 Rust Structs
 A 
 scode
 struct
@@ -62,20 +63,50 @@ edoc
 scode
 Node
 edoc
- in the list.
+ in the list. We also define the 
+scode
+List type
+edoc
+ using the 
+scode
+type
+edoc
+ keyword. This 
+scode
+List
+edoc
+ is an 
+scode
+Option<~Node>
+edoc
+, so a 
+scode
+List
+edoc
+ either points to a 
+scode
+Node
+edoc
+ pointer (the head of the list), or 
+scode
+None
+edoc
+ (an empty List);
 scode False {'lang': 'rust'}
 codeb
 struct Node {
     val: int,
     tail: Option<~Node>
 }
+
+type List = Option<~Node>;
 bedoc
 
 A 
 scode
 struct
 edoc
- is constructeded in a similar syntax to how it was defined, with the name of the 
+ is constructed in a similar syntax to how it was defined, with the name of the 
 scode
 struct
 edoc
@@ -99,10 +130,177 @@ codeb
     let mut node2 = Node {val: 10, tail: None};
     node2.val = 15; 
 bedoc
+
+For an example of how to create a 
+scode
+List
+edoc
+ based on our specification, the below code creates a list of 
+scode
+n
+edoc
+ length, where the first 
+scode
+Node
+edoc
+ has a 
+scode
+val
+edoc
+ of 
+scode
+x
+edoc
+, and each subsequent
+scode
+Node
+edoc
+ increases this value by one.
+code False {'lang': 'rust'}
+codeb
+fn test_list(n: int, x: int) -> List {
+    if n == 0 {
+        None
+    } else {
+        Some(~Node{val: x, tail: test_list(n - 1, x + 1)})
+    }
+}
+bedoc
 phead 2 Higher Order Functions
-phead 3 Traits
+A higher order function is a function which takes a function as an input. This has a lot of power for applying an arbitrary function in a consistent manner to some other input. We will see this completed in a 
+scode
+map
+edoc
+ function, which will apply a given function to every element in a given 
+scode
+List
+edoc
+.
 phead 3 Implementing A High Order Function
+The declaration of a higher level function in Rust is similar in syntax to that of a standard function. One of the function paramaters can be another function, though. This input function must have its input and output types defined in the declaration. To use another defined function as the input, the 
+scode
+extern
+edoc
+ keyword must precede this. The following code defines a higher level function, 
+scode
+math(n: int, f: extern fn(int) -> int) -> int
+edoc
+, which takes an arbitrary function that takes an int input and returns an int, and applies it to a given int, 
+scode
+n
+edoc
+. We then show how this is called.
+
+scode False {'lang': 'rust'}
+codeb
+fn math(n: int, f: extern fn(int) -> int) -> int {
+    f(n)
+}
+fn plustwo(n: int) -> int {
+    n + 2
+}
+fn timestwo(n:int) -> int {
+    n*2
+}
+fn main()
+{
+    let x = 10;
+    let y = math(x, plustwo); //y == 12
+    let z = math(x, timestwo); //z == 20
+}
+bedoc
+phead 3 List Mapping
+The above example above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
+phead 4 Traits
+First, we will apply a 
+scode
+Map trait
+edoc
+ to our List. A 
+scode
+trait
+edoc
+ in Rust is a way of assuring that an object type employs certain functions. If you are familiar with a Java 
+scode
+Interface
+edoc
+, traits are similarly used. A declaration declares the names, inputs, and outputs of all functions that an object must define to make use of a 
+scode
+trait
+edoc
+ implementation. Implementing a 
+scode
+trait
+edoc
+ is defining these functions within the object implementing the 
+scode
+trait
+edoc
+, and is done with the 
+scode
+impl
+edoc
+ keyword. We'll see this in the next section. Immediately below is the declaration of a 
+scode
+Map trait
+edoc
+. The
+scode
+mapr
+edoc
+ function takes in a function and will apply that to all items in a List (that implements this 
+scode
+trait
+edoc
+ first), and returns this modified list. This is not defined yet, but will will define it next section.
+scode False {'lang': 'rust'}
+codeb
+trait Map {
+    fn mapr(&self, extern fn(int) -> int) -> List;
+}
+bedoc
+phead 4 A List Mapping Function
+Now, we will implement the 
+scode
+Map trait
+edoc
+ to our 
+scode
+List type
+edoc
+. This is done with a block preceded by 
+scode
+impl Map for List
+edoc
+. Within this block, we define the 
+scode
+mapr
+edoc
+ function in relation to a list. The following implementation should be a nice review of concepts from the first two parts of the tutorial. The only thing we haven't seen thus far is the 
+scode
+ref
+edoc
+ keyword. This sets the 
+scode
+current
+edoc
+ 
+scode
+Node
+edoc
+ variable to be bound by reference rather than by value.
+scode False {'lang': 'rust'}
+codeb
+fn test_list(n: int, x: int) -> List {
+    if n == 0 {
+        None
+    } else {
+        Some(~Node{val: x, tail: test_list(n - 1, x + 1)})
+    }
+}
+bedoc
 phead 2 Rust Tasks
 phead 3 Task Properties
 phead 3 Spawning a Task
 phead 3 Task Communication
+phead 2 Putting It All Together

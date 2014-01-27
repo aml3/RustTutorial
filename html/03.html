@@ -9,12 +9,13 @@
         <script src="js/tabs.js"></script>
     </head>
     <body>
-<title>Witty Title Here</title>
-<h1 id="Structures,_Higher_Order_Functions,_and_Tasks" >Structures, Higher Order Functions, and Tasks</h1>
+<title>Multi-Tasking Maps</title>
+<h1 id="Multi-Tasking_Maps:_Structures,_Higher_Order_Functions,_and_Tasks" >Multi-Tasking Maps: Structures, Higher Order Functions, and Tasks</h1>
 <br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
 The third section of this tutorial involves creating and using structs in Rust, making use of higher order functions and traits to create generic functions, and tasks, Rust's way of handling multiprocessing. We will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to run this mapping in parallel.
 </p>
-<h2 id="Structs_in_Rust" >Structs in Rust</h2>
+<h2 id="Structs_and_Traits_in_Rust" >Structs and Traits in Rust</h2>
+<h3 id="Rust_Structs" >Rust Structs</h3>
 <p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
@@ -47,21 +48,39 @@ The following code defines a
 <span class="src"><code><span class="n">None</span></code></span>
  for the last 
 <span class="src"><code><span class="n">Node</span></code></span>
- in the list.
+ in the list. We also define the 
+<span class="src"><code><span class="n">List</span> <span class="k">type</span></code></span>
+ using the 
+<span class="src"><code><span class="k">type</span></code></span>
+ keyword. This 
+<span class="src"><code><span class="n">List</span></code></span>
+ is an 
+<span class="src"><code><span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span></code></span>
+, so a 
+<span class="src"><code><span class="n">List</span></code></span>
+ either points to a 
+<span class="src"><code><span class="n">Node</span></code></span>
+ pointer (the head of the list), or 
+<span class="src"><code><span class="n">None</span></code></span>
+ (an empty List);
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+4
+5
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
     <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
     <span class="n">tail</span><span class="o">:</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span>
 <span class="p">}</span>
+
+<span class="k">type</span> <span class="n">List</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
 </pre></div>
 </td></tr></table>
 </div><p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
- is constructeded in a similar syntax to how it was defined, with the name of the 
+ is constructed in a similar syntax to how it was defined, with the name of the 
 <span class="src"><code><span class="k">struct</span></code></span>
  followed by braces with the fields defined through the syntax of 
 <span class="src"><code><span class="n">fieldName</span><span class="o">:</span><span class="n">value</span></code></span>
@@ -78,12 +97,146 @@ A
     <span class="n">node2</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="m">15</span><span class="p">;</span> 
 </pre></div>
 </td></tr></table>
-</div><h2 id="Higher_Order_Functions" >Higher Order Functions</h2>
-<h3 id="Traits" >Traits</h3>
+</div><p>
+For an example of how to create a 
+<span class="src"><code><span class="n">List</span></code></span>
+ based on our specification, the below code creates a list of 
+<span class="src"><code><span class="n">n</span></code></span>
+ length, where the first 
+<span class="src"><code><span class="n">Node</span></code></span>
+ has a 
+<span class="src"><code><span class="n">val</span></code></span>
+ of 
+<span class="src"><code><span class="n">x</span></code></span>
+, and each subsequent
+<span class="src"><code><span class="n">Node</span></code></span>
+ increases this value by one.
+code False {'lang': 'rust'}
+codeb
+fn test_list(n: int, x: int) -> List {
+    if n == 0 {
+        None
+    } else {
+        Some(~Node{val: x, tail: test_list(n - 1, x + 1)})
+    }
+}
+bedoc
+<h2 id="Higher_Order_Functions" >Higher Order Functions</h2>
+A higher order function is a function which takes a function as an input. This has a lot of power for applying an arbitrary function in a consistent manner to some other input. We will see this completed in a 
+<span class="src"><code><span class="n">map</span></code></span>
+ function, which will apply a given function to every element in a given 
+<span class="src"><code><span class="n">List</span></code></span>
+.
 <h3 id="Implementing_A_High_Order_Function" >Implementing A High Order Function</h3>
-<h2 id="Rust_Tasks" >Rust Tasks</h2>
+The declaration of a higher level function in Rust is similar in syntax to that of a standard function. One of the function paramaters can be another function, though. This input function must have its input and output types defined in the declaration. To use another defined function as the input, the 
+<span class="src"><code><span class="k">extern</span></code></span>
+ keyword must precede this. The following code defines a higher level function, 
+<span class="src"><code><span class="n">math</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span></code></span>
+, which takes an arbitrary function that takes an int input and returns an int, and applies it to a given int, 
+<span class="src"><code><span class="n">n</span></code></span>
+. We then show how this is called.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">math</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="n">plustwo</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="n">n</span> <span class="o">+</span> <span class="m">2</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="n">timestwo</span><span class="p">(</span><span class="n">n</span><span class="o">:</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="n">n</span><span class="o">*</span><span class="m">2</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">math</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">plustwo</span><span class="p">);</span> <span class="c1">//y == 12</span>
+    <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">math</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">timestwo</span><span class="p">);</span> <span class="c1">//z == 20</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h3 id="List_Mapping" >List Mapping</h3>
+<p>
+The above example above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
+<h4 id="Traits" >Traits</h4>
+First, we will apply a 
+<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
+ to our List. A 
+<span class="src"><code><span class="k">trait</span></code></span>
+ in Rust is a way of assuring that an object type employs certain functions. If you are familiar with a Java 
+<span class="src"><code><span class="n">Interface</span></code></span>
+, traits are similarly used. A declaration declares the names, inputs, and outputs of all functions that an object must define to make use of a 
+<span class="src"><code><span class="k">trait</span></code></span>
+ implementation. Implementing a 
+<span class="src"><code><span class="k">trait</span></code></span>
+ is defining these functions within the object implementing the 
+<span class="src"><code><span class="k">trait</span></code></span>
+, and is done with the 
+<span class="src"><code><span class="k">impl</span></code></span>
+ keyword. We'll see this in the next section. Immediately below is the declaration of a 
+<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
+. The
+<span class="src"><code><span class="n">mapr</span></code></span>
+ function takes in a function and will apply that to all items in a List (that implements this 
+<span class="src"><code><span class="k">trait</span></code></span>
+ first), and returns this modified list. This is not defined yet, but will will define it next section.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">trait</span> <span class="n">Map</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="A_List_Mapping_Function" >A List Mapping Function</h4>
+<p>
+Now, we will implement the 
+<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
+ to our 
+<span class="src"><code><span class="n">List</span> <span class="k">type</span></code></span>
+. This is done with a block preceded by 
+<span class="src"><code><span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">List</span></code></span>
+. Within this block, we define the 
+<span class="src"><code><span class="n">mapr</span></code></span>
+ function in relation to a list. The following implementation should be a nice review of concepts from the first two parts of the tutorial. The only thing we haven't seen thus far is the 
+<span class="src"><code><span class="k">ref</span></code></span>
+ keyword. This sets the 
+<span class="src"><code><span class="n">current</span></code></span>
+ 
+<span class="src"><code><span class="n">Node</span></code></span>
+ variable to be bound by reference rather than by value.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="n">None</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h2 id="Rust_Tasks" >Rust Tasks</h2>
 <h3 id="Task_Properties" >Task Properties</h3>
 <h3 id="Spawning_a_Task" >Spawning a Task</h3>
 <h3 id="Task_Communication" >Task Communication</h3>
+<h2 id="Putting_It_All_Together" >Putting It All Together</h2>
     </body>
                 </html>
