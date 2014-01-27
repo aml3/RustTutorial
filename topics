@@ -14,6 +14,8 @@ strings
 vectors
 
 (Program: ???)
+- closures, higher order functions
+
 structs
 enums (they're new!)
 tuples
