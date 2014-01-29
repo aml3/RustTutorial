@@ -16,7 +16,6 @@ def build(direc):
         <link href="css/style.css" rel="stylesheet" type="text/css">
         <link href="css/tabs.css" rel="stylesheet" type="text/css">
         <link href="css/code.css" rel="stylesheet" type="text/css">
-        <link rel="icon" type="image/png" href="http://www.rust-class.org/static/images/logo.png" />  
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="js/tabs.js"></script>
         <title> Table of Contents </title>
@@ -65,6 +64,6 @@ def build(direc):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: build [dir]") 
+        print("exiting") 
         sys.exit()
     build(sys.argv[1])

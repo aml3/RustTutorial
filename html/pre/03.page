@@ -498,10 +498,19 @@ fn inc(n: int) -> int { n + 1 }
 fn double(n: int) -> int { n * 2 }
 
 fn main() {
-    let mut l10 : LinkedList = construct_list(5, 10);
+    let mut l10: LinkedList = construct_list(4, 10);
     l10.mapr(inc);
     l10.mapr(double);
-    println!("List: {:s}", print_list(l10.clone())); // 22, 24, 26, 28, 30,
+    println!("List: {:s}", print_list(l10.clone())); // 22, 24, 26, 28,
 }
 bedoc
 
+<div class="exercise">
+<b>Exercise 3.5.</b> 
+
+</div>
+
+<div class="exercise">
+<b>Exercise 3.6.</b> 
+
+</div>

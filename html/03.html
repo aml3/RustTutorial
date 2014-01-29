@@ -5,6 +5,7 @@
         <link href="css/style.css" rel="stylesheet" type="text/css">
         <link href="css/tabs.css" rel="stylesheet" type="text/css">
         <link href="css/code.css" rel="stylesheet" type="text/css">
+        <link rel="icon" type="image/png" href="http://www.rust-class.org/static/images/logo.png" />  
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="js/tabs.js"></script>
     </head>
@@ -473,12 +474,25 @@ Here are some examples using map:
 <span class="k">fn</span> <span class="n">double</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span> <span class="n">n</span> <span class="o">*</span> <span class="m">2</span> <span class="p">}</span>
 
 <span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">l10</span> <span class="o">:</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">construct_list</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">l10</span><span class="o">:</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">construct_list</span><span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span>
     <span class="n">l10</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">inc</span><span class="p">);</span>
     <span class="n">l10</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">double</span><span class="p">);</span>
-    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;List: {:s}&quot;</span><span class="p">,</span> <span class="n">print_list</span><span class="p">(</span><span class="n">l10</span><span class="p">.</span><span class="n">clone</span><span class="p">()));</span> <span class="c1">// 22, 24, 26, 28, 30,</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;List: {:s}&quot;</span><span class="p">,</span> <span class="n">print_list</span><span class="p">(</span><span class="n">l10</span><span class="p">.</span><span class="n">clone</span><span class="p">()));</span> <span class="c1">// 22, 24, 26, 28,</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div>    </body>
+</div><p>
+<div class="exercise">
+<b>Exercise 3.5.</b> 
+</p>
+<p>
+</div>
+</p>
+<p>
+<div class="exercise">
+<b>Exercise 3.6.</b> 
+</p>
+<p>
+</div>
+    </body>
                 </html>
