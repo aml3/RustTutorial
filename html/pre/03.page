@@ -469,9 +469,9 @@ bedoc
 
 Now, we will implement the 
 scode
-Map trait
+Map 
 edoc
- for our 
+ trait for our 
 scode
 LinkedList
 edoc
@@ -503,12 +503,5 @@ fn main() {
     l10.mapr(double);
     println!("List: {:s}", print_list(l10.clone())); // 22, 24, 26, 28, 30,
 }
-edoc
+bedoc
 
-<div class="exercise">
-
-</div>
-
-<div class="exercise">
-
-</div>

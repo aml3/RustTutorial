@@ -430,6 +430,55 @@ We define the Map trait as:
 </td></tr></table>
 </div><p>
 Now, we will implement the 
-<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
- for our 
+<span class="src"><code><span class="n">Map</span></code></span>
+ trait for our 
+<span class="src"><code><span class="n">LinkedList</span></code></span>
+type:
 </p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="src"><pre><span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">LinkedList</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">None</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="k">mut</span> <span class="n">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> 
+               <span class="n">current</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">);</span>
+               <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> 
+            <span class="p">}</span>
+        <span class="p">}</span> 
+    <span class="p">}</span> 
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Here are some examples using map:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">inc</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span> <span class="n">n</span> <span class="o">+</span> <span class="m">1</span> <span class="p">}</span>
+<span class="k">fn</span> <span class="n">double</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span> <span class="n">n</span> <span class="o">*</span> <span class="m">2</span> <span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">l10</span> <span class="o">:</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">construct_list</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">10</span><span class="p">);</span>
+    <span class="n">l10</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">inc</span><span class="p">);</span>
+    <span class="n">l10</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">double</span><span class="p">);</span>
+    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;List: {:s}&quot;</span><span class="p">,</span> <span class="n">print_list</span><span class="p">(</span><span class="n">l10</span><span class="p">.</span><span class="n">clone</span><span class="p">()));</span> <span class="c1">// 22, 24, 26, 28, 30,</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div>    </body>
+                </html>
