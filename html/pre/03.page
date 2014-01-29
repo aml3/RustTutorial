@@ -1,5 +1,5 @@
-ptitle Multi-Tasking Maps
-phead 1 Multi-Tasking Maps:<br>Structures, Traits, and Higher-Order Functions
+ptitle Multi-Purpose Maps
+phead 1 Multi-Purpose Maps:<br>Structures, Traits, and Higher-Order Functions
 pnav 02.html incomplete.html
 This section covers creating and using structs in Rust, making use of higher order functions and traits to create generic functions.  We also introduce tasks, Rust's way of handling multiprocessing, and a simple mechanism for communicating between tasks.  In the following section, we'll cover some of the richer cross-task communication abstractions provided by Rust. 
 

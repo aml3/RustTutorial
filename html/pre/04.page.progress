@@ -1,20 +1,29 @@
-phead 2 Rust Tasks
-phead 3 Task Properties
-Rust is described by the developers as a language that concentrates on, amoung other things, safety and concurrency. In order to ensure safe, cocurrent computation, Rust makes use of 
-scode
-tasks
-edoc
-. Tasks function like a sort of hybrid of a conventional process and thread. A Rust task is given the abstraction of having its own memory space and registers, like a process, but doesn't have a processes' associated operating system cost. Tasks split computation like threads, however do not share memory, thus preventing race conditions and other such inconsistencies. 
+ptitle Tasks
+phead 1 Tasks and Communication
+
+phead 2 Task Properties
+
+Rust is described by the developers as a language that concentrates on, amoung other things, safety and concurrency. In order to ensure safe, cocurrent computation, Rust makes use of <em>tasks</em>. 
+
+A Rust task is an abstraction that has its own memory space and
+registers, like a process, but doesn't have a processes' associated
+operating system cost. Tasks split computation like threads, however do
+not share memory, thus preventing implicit data races and other
+perplexing bugs that occur when multiple threads access and modify the
+same data.
+
 phead 3 Spawning a Task
 Tasks are created using the 
 scode
 spawn(fn())
 edoc
- function, which proceeds to create a new task, run the given function, 
+ function, which creates a new task and executs the input function, 
 scode
 fn()
 edoc
- within the task, and then close the task. Another way to create a task is throught the 
+ in that task.  After the function completes, the task is terminated. 
+
+Another way to create a task is throught the 
 scode
 do
 edoc
