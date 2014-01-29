@@ -17,8 +17,8 @@ This section covers creating and using structs in Rust, making use of higher ord
 <p>
 As a running example, we will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to make our simple map execute in parallel.
 </p>
-<h2 id="Structs_and_Traits_in_Rust" >Structs and Traits in Rust</h2>
-<h3 id="Rust_Structs" >Rust Structs</h3>
+<h2 id="Structs_and_Traits" >Structs and Traits</h2>
+<h3 id="Structures" >Structures</h3>
 <p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
@@ -90,7 +90,7 @@ The
 <span class="src"><code><span class="n">Node</span></code></span>
 , or is
 <span class="src"><code><span class="n">None</span></code></span>
- (an empty List).
+ (an empty LinkedList).
 </p>
 <p>
 The 
@@ -105,7 +105,7 @@ it is defined to.
 </p>
 <p>
 For example, we can define the
-<span class="src"><code><span class="n">List</span></code></span>
+<span class="src"><code><span class="n">LinkedList</span></code></span>
  type using:
 <span class="src"><code><span class="k">type</span></code></span>
  keyword. 
@@ -115,11 +115,11 @@ For example, we can define the
 3
 4
 5
-6</pre></div></td><td class="code"><div class="src"><pre><span class="k">type</span> <span class="n">List</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">type</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
-   <span class="n">tail</span><span class="o">:</span> <span class="n">List</span>
+   <span class="n">tail</span><span class="o">:</span> <span class="n">LinkedList</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -160,17 +160,96 @@ For an example, the code below creates a list of
 3
 4
 5
-6
-7</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
-        <span class="n">None</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span>
+6</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinkedList</span> <span class="p">{</span>
+    <span class="k">match</span> <span class="n">n</span> <span class="p">{</span>
+        <span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">None</span> <span class="p">}</span>
+        <span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">construct_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span> <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
 </div><p>
+(See the <a href="http://static.rust-lang.org/doc/master/tutorial.html#implementing-a-linked-list">official Rust tutorial</a> for a more elegant way to implement a linked list in Rust using an 
+<span class="src"><code><span class="k">enum</span></code></span>
+, which we don't cover in this tutorial.)
+</p>
+<h2 id="Traits" >Traits</h2>
+<p>
+<em>Traits</em> provide a way of defining a set of methods.  The thing
+in Java they most closely resemble is interfaces, but traits in Rust can
+also include implementations of methods.
+</p>
+<h4 id="Defining_Traits" >Defining Traits</h4>
+<p>
+The syntax for defining a trait is similar to that for a struct:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="src"><pre><span class="k">trait</span> <span class="n">Name</span> <span class="p">{</span>
+   <span class="n">method1</span><span class="p">;</span>
+   <span class="n">method2</span><span class="p">;</span>
+   <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+Each method is a function type declaration.  
+</p>
+<p>
+For example, we can define a Length trait like this:
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="src"><pre><span class="k">trait</span> <span class="n">Length</span> <span class="p">{</span>
+   <span class="k">fn</span> <span class="n">length</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+The function declaration uses
+<span class="src"><code><span class="o">&amp;</span><span class="n">self</span></code></span>
+as the parameter to indicate the object on which length is invoked (similar to how <tt>this</tt> is used in Java).  Note that it does not have a type yet, since we can implement a trait for different types.
+</p>
+<h4 id="Implementing_Traits" >Implementing Traits</h4>
+<p>
+The 
+<span class="src"><code><span class="k">impl</span></code></span>
+construct is used to implement a trait for a type.  For example,
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="src"><pre><span class="k">impl</span> <span class="n">Length</span> <span class="k">for</span> <span class="n">LinkedList</span> <span class="p">{</span>
+   <span class="k">fn</span> <span class="n">length</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+      <span class="k">match</span> <span class="n">self</span> <span class="p">{</span>
+        <span class="o">&amp;</span><span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="n">node</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="m">1</span> <span class="o">+</span> <span class="n">node</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="p">}</span>
+        <span class="o">&amp;</span><span class="n">None</span> <span class="o">=&gt;</span> <span class="m">0</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+implements the 
+<span class="src"><code><span class="n">Length</span></code></span>
+trait for our
+<span class="src"><code><span class="n">LinkedList</span></code></span>
+type by providing an implementation of the
+<span class="src"><code><span class="n">length</span></code></span>
+method.  We need the
+<span class="src"><code><span class="k">ref</span></code></span>
+ qualified for the matched variable. This indicated that is it bound by reference rather than by value. 
+</p>
+<p>
+We'll see a more interesting example of implementing a trait for the linked list type at the end of this part of the tutorial.
+</p>
+<p>
 <div class="exercise">
 <b>Exercise 3.1.</b> Define a 
 <span class="src"><code><span class="n">Tree</span></code></span>
@@ -181,11 +260,23 @@ value and a vector of children nodes.
 </p>
 <p>
 <div class="exercise">
-</p>
-<p>
-<b>Exercise 3.2.</b> Define a function that prints out all the elements in a 
+<b>Exercise 3.2.</b> Define a 
+<span class="src"><code><span class="n">ToString</span></code></span>
+trait that provides a method,
+<span class="src"><code><span class="k">fn</span> <span class="n">to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">~</span><span class="k">str</span></code></span>
+for producing a string representation of an object.  Implement the
+<span class="src"><code><span class="n">ToString</span></code></span>
+trait for both the example
+<span class="src"><code><span class="n">LinkedList</span></code></span>
+type and your 
 <span class="src"><code><span class="n">Tree</span></code></span>
- (as you defined it in the previous exercise).
+type from the previous exercise.  (Note that Rust already defines a 
+<span class="src"><code><span class="n">ToStr</span>
+<span class="n">edoc</span> 
+<span class="k">trait</span> <span class="n">similar</span> <span class="n">to</span> <span class="n">the</span> 
+<span class="n">scode</span>
+<span class="n">ToString</span></code></span>
+trait here.)
 </div>
 </p>
 <h2 id="Higher-Order_Functions" >Higher-Order Functions</h2>
@@ -318,291 +409,27 @@ are functions that compute the cube and square of an int input respectively.
 <p>
 </div>
 </p>
-<h2 id="Traits" >Traits</h2>
+<h3 id="Mapping_a_List" >Mapping a List</h3>
 <p>
 The above examples hopefully give you a sense of the power of
 higher-order functions, but perhaps not how they would be useful in
 typical code.  Next, we'll see how higher-order functions can be used to
 provide generic functions for manipulating our 
-<span class="src"><code><span class="n">List</span></code></span>
-type.
+<span class="src"><code><span class="n">LinkedList</span></code></span>
+type.  We'll implement a mapping function that applies a function to each element of a list.
 </p>
 <p>
-First, we introduce <em>traits</em> which provide a way of defining a
-set of methods.
-</p>
-<p>
-TODO
-</p>
-<p>
- above seems like a more complicated way of simply calling a single function. There are some very useful ways of using higher order functions. One can be used for applying a function to every element in a linked list, for instance, as will be shown in this section.
-</p>
-<p>
-First, we will apply a 
-<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
- to our List. A 
-<span class="src"><code><span class="k">trait</span></code></span>
- in Rust is a way of assuring that an object type employs certain functions. If you are familiar with a Java 
-<span class="src"><code><span class="n">Interface</span></code></span>
-, traits are similarly used. A declaration declares the names, inputs, and outputs of all functions that an object must define to make use of a 
-<span class="src"><code><span class="k">trait</span></code></span>
- implementation. Implementing a 
-<span class="src"><code><span class="k">trait</span></code></span>
- is defining these functions within the object implementing the 
-<span class="src"><code><span class="k">trait</span></code></span>
-, and is done with the 
-<span class="src"><code><span class="k">impl</span></code></span>
- keyword. We'll see this in the next section. Immediately below is the declaration of a 
-<span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
-. The
-<span class="src"><code><span class="n">mapr</span></code></span>
- function takes in a function and will apply that to all items in a List (that implements this 
-<span class="src"><code><span class="k">trait</span></code></span>
- first), and returns this modified list. This is not defined yet, but will will define it next section.
+We define the Map trait as:
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="src"><pre><span class="k">trait</span> <span class="n">Map</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">;</span>
+   <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">self</span><span class="p">,</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
-</div><h4 id="A_List_Mapping_Function" >A List Mapping Function</h4>
-<p>
+</div><p>
 Now, we will implement the 
 <span class="src"><code><span class="n">Map</span> <span class="k">trait</span></code></span>
- to our 
-<span class="src"><code><span class="n">List</span> <span class="k">type</span></code></span>
-. This is done with a block preceded by 
-<span class="src"><code><span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">List</span></code></span>
-. Within this block, we define the 
-<span class="src"><code><span class="n">mapr</span></code></span>
- function in relation to a list. The following implementation should be a nice review of concepts from the first two parts of the tutorial. The only thing we haven't seen thus far is the 
-<span class="src"><code><span class="k">ref</span></code></span>
- keyword. This sets the 
-<span class="src"><code><span class="n">current</span></code></span>
- 
-<span class="src"><code><span class="n">Node</span></code></span>
- variable to be bound by reference rather than by value.
+ for our 
 </p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="src"><pre><span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">List</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
-         <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">None</span> <span class="o">=&gt;</span> <span class="n">None</span><span class="p">,</span>
-            <span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="n">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span> <span class="n">val</span><span class="o">:</span> <span class="n">f</span><span class="p">(</span><span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">),</span> 
-                                               <span class="n">tail</span><span class="o">:</span> <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="p">})</span> <span class="p">},</span>
-        <span class="p">}</span> 
-    <span class="p">}</span> 
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><h2 id="Rust_Tasks" >Rust Tasks</h2>
-<h3 id="Task_Properties" >Task Properties</h3>
-<p>
-Rust is described by the developers as a language that concentrates on, amoung other things, safety and concurrency. In order to ensure safe, cocurrent computation, Rust makes use of 
-<span class="src"><code><span class="n">tasks</span></code></span>
-. Tasks function like a sort of hybrid of a conventional process and thread. A Rust task is given the abstraction of having its own memory space and registers, like a process, but doesn't have a processes' associated operating system cost. Tasks split computation like threads, however do not share memory, thus preventing race conditions and other such inconsistencies. 
-<h3 id="Spawning_a_Task" >Spawning a Task</h3>
-Tasks are created using the 
-<span class="src"><code><span class="n">spawn</span><span class="p">(</span><span class="k">fn</span><span class="p">())</span></code></span>
- function, which proceeds to create a new task, run the given function, 
-<span class="src"><code><span class="k">fn</span><span class="p">()</span></code></span>
- within the task, and then close the task. Another way to create a task is throught the 
-<span class="src"><code><span class="k">do</span></code></span>
- keyword. Proceeding a block with 
-<span class="src"><code><span class="k">do</span> <span class="n">spawn</span></code></span>
- will create a new task, run the contents of the block within the task, and then close the task. The following example demonstrates these two methods of task creation.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td><td class="code"><div class="src"><pre><span class="k">fn</span> <span class="n">print_task</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, from a task!&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">fn</span> <span class="n">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">spawn</span><span class="p">(</span><span class="n">print_task</span><span class="p">);</span>
-    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
-        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, from another task!&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><h3 id="Task_Communication" >Task Communication</h3>
-<p>
-As said earlier, tasks do not share memory, and each task has its own individual memory space. Spawning a task and then trying to access variables from outside the scope of the task itself will result in a compiler error. How does one access outside memory then? This is accomplished through the use of 
-<span class="src"><code><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
- and 
-<span class="src"><code><span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
- objects. These can be thought of as a link between a spawned task and its parent (the task which spawned it). These are created as a tuple, demonstrated in the code below. The type of 
-<span class="src"><code><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
- is unrestricted, however the 
-<span class="src"><code><span class="n">Port</span></code></span>
- and 
-<span class="src"><code><span class="n">Chan</span></code></span>
- must have matching types, otherwise a compiler error is thrown.
-</p>
-<p>
-The transfer of values between tasks is accomplished with the 
-<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
- function, which puts a value into the 
-<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span></code></span>
- pair, and the 
-<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
- function, which returns the value that had been sent by the 
-<span class="src"><code><span class="n">Chan</span></code></span>
-. The following spawns a very simple task to call our 
-<span class="src"><code><span class="n">plustwo</span></code></span>
- function, and then send the result back to the parent thread.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="src"><pre>   <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
-    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
-        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">plustwo</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="k">let</span> <span class="n">new_x</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span> <span class="c1">//new_x == 12</span>
-</pre></div>
-</td></tr></table>
-</div><p>
-It should be noted that a 
-<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span></code></span>
- pair can only be sent to from a single task. Once 
-<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
- has been called from a specific task, that task owns the channel. Trying to call 
-<span class="src"><code><span class="n">Chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">T</span><span class="p">)</span></code></span>
- from multiple tasks will result in a compile time error. Thus, to send objects back and forth between tasks, two different channels are necessary. The following example does the same as the previous, but receives the value for 
-<span class="src"><code><span class="n">plustwo</span></code></span>
- from the parent task, instead of creating it within the spawned task.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="p">(</span><span class="n">port1</span><span class="p">,</span> <span class="n">chan1</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
-    <span class="k">let</span> <span class="p">(</span><span class="n">port2</span><span class="p">,</span> <span class="n">chan2</span><span class="p">)</span><span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
-    <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">port2</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
-        <span class="n">chan1</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">plustwo</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="n">chan2</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="m">10</span><span class="p">);</span>
-    <span class="k">let</span> <span class="n">new_x</span> <span class="o">=</span> <span class="n">port1</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span> <span class="c1">//new_x == 12</span>
-</pre></div>
-</td></tr></table>
-</div><p>
-Keep in mind that once 
-<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
- has been called, the task which called it will not continue until a value is sent. This can lead to deadlocking programs if a 
-<span class="src"><code><span class="n">Port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
- is called at an improper time. 
-<h2 id="Putting_It_All_Together" >Putting It All Together</h2>
-The code we have in the previous section for a list mapping function works correctly and will successfully map every element in a list to a given function. You may note, however, that this is done strictly sequentially, and thus has a run time of O(n), where n is the number of elements in the list. This can be done more efficently through paralellizing with tasks. Recall that a call to 
-<span class="src"><code><span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
- will not progress until the corresponding 
-<span class="src"><code><span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></code></span>
- has finished. Because of this, the ordering of the lines after the task has spawned is very important. If 
-<span class="src"><code><span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span></code></span>
- is called prior to calling
-<span class="src"><code><span class="n">mapr</span></code></span>
- on the remainder of the list, 
-<span class="src"><code><span class="n">mapr</span></code></span>
- will not actually be called until the task has completed and sent its result. This would be a serialized runtime, the same as the function without spawning tasks. With proper implementation of multitasking, the runtime of this function is reduced to O(1).
-</p>
-<p>
-Below is the full implementation of a Rust program with a 
-<span class="src"><code><span class="n">List</span></code></span>
- type created, and a 
-<span class="src"><code><span class="n">map</span></code></span>
- function which will apply a given function to all elements of a given list.
-</p>
-<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32</pre></div></td><td class="code"><div class="src"><pre><span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
-    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
-    <span class="n">tail</span><span class="o">:</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span>
-<span class="p">}</span>
-<span class="k">type</span> <span class="n">List</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">fn</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span> <span class="n">x</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
-        <span class="n">None</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span><span class="n">val</span><span class="o">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">test_list</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="m">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="m">1</span><span class="p">)})</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="k">trait</span> <span class="n">Map</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="k">extern</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="k">impl</span> <span class="n">Map</span> <span class="k">for</span> <span class="n">List</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="n">mapr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">self</span><span class="p">,</span> <span class="n">f</span><span class="o">:</span> <span class="k">fn</span><span class="p">(</span><span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span> <span class="p">{</span>
-         <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">None</span> <span class="o">=&gt;</span> <span class="n">None</span><span class="p">,</span>
-            <span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="n">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> 
-                <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
-                <span class="k">let</span> <span class="n">currentval</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">;</span>
-                <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
-                    <span class="k">let</span> <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">currentval</span><span class="p">);</span>
-                    <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="k">let</span> <span class="n">newtail</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
-                <span class="k">let</span> <span class="n">newval</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
-                <span class="n">Some</span><span class="p">(</span><span class="o">~</span><span class="n">Node</span><span class="p">{</span> <span class="n">val</span><span class="o">:</span> <span class="n">newval</span><span class="p">,</span> <span class="n">tail</span><span class="o">:</span> <span class="n">newtail</span> <span class="p">})</span> <span class="p">},</span>
-        <span class="p">}</span> 
-    <span class="p">}</span> 
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-</div><p>
-     </body>
-                </html>
