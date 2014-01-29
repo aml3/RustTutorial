@@ -11,15 +11,14 @@
     </head>
     <body>
 <title>Multi-Tasking Maps</title>
-<h1 id="Multi-Tasking_Maps:<br>Structures,_Higher-Order_Functions,_and_Tasks" >Multi-Tasking Maps:<br>Structures, Higher-Order Functions, and Tasks</h1>
+<h1 id="Multi-Tasking_Maps:<br>Structures,_Traits,_and_Higher-Order_Functions" >Multi-Tasking Maps:<br>Structures, Traits, and Higher-Order Functions</h1>
 <br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
 This section covers creating and using structs in Rust, making use of higher order functions and traits to create generic functions.  We also introduce tasks, Rust's way of handling multiprocessing, and a simple mechanism for communicating between tasks.  In the following section, we'll cover some of the richer cross-task communication abstractions provided by Rust. 
 </p>
 <p>
 As a running example, we will use these concepts to build a structure for a simple linked list, a map function which will apply a given function to all elements in the list, and finally use of tasks to make our simple map execute in parallel.
 </p>
-<h2 id="Structs_and_Traits" >Structs and Traits</h2>
-<h3 id="Structures" >Structures</h3>
+<h2 id="Structures" >Structures</h2>
 <p>
 A 
 <span class="src"><code><span class="k">struct</span></code></span>
@@ -410,7 +409,7 @@ are functions that compute the cube and square of an int input respectively.
 <p>
 </div>
 </p>
-<h3 id="Mapping_a_List" >Mapping a List</h3>
+<h3 id="Example:_Mapping_a_List" >Example: Mapping a List</h3>
 <p>
 The above examples hopefully give you a sense of the power of
 higher-order functions, but perhaps not how they would be useful in
