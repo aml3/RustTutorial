@@ -317,13 +317,8 @@ of the statements in the mapr function matters.
 56
 57
 58
-59
-60
-61</pre></div></td><td class="code"><div class="src"><pre><span class="cp">#[deriving(Clone)]</span>
-<span class="cp">#[deriving(ToStr)]</span>
-<span class="k">type</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
+59</pre></div></td><td class="code"><div class="src"><pre><span class="k">type</span> <span class="n">LinkedList</span> <span class="o">=</span> <span class="n">Option</span><span class="o">&lt;~</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">;</span>
 
-<span class="cp">#[deriving(Clone)]</span>
 <span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
    <span class="n">val</span><span class="o">:</span> <span class="k">int</span><span class="p">,</span>
    <span class="n">tail</span><span class="o">:</span> <span class="n">LinkedList</span>
@@ -339,7 +334,8 @@ of the statements in the mapr function matters.
 <span class="k">fn</span> <span class="n">print_list</span><span class="p">(</span><span class="n">p</span><span class="o">:</span> <span class="n">LinkedList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">~</span><span class="k">str</span> <span class="p">{</span>
     <span class="k">match</span> <span class="n">p</span> <span class="p">{</span>
         <span class="n">None</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="o">~</span><span class="s">&quot;&quot;</span> <span class="p">}</span>
-        <span class="n">Some</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">.</span><span class="n">to_str</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="n">print_list</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">Some</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">.</span><span class="n">to_str</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> 
+                        <span class="o">+</span> <span class="n">print_list</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span> <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -353,9 +349,9 @@ of the statements in the mapr function matters.
             <span class="n">None</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">}</span>
             <span class="n">Some</span><span class="p">(</span><span class="k">ref</span> <span class="k">mut</span> <span class="n">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> 
                <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
-               <span class="k">let</span> <span class="n">val</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">;</span> <span class="c1">// Can&#39;t use current inside task!</span>
+               <span class="k">let</span> <span class="n">val</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="n">val</span><span class="p">;</span> <span class="c1">// Can&#39;t capture current</span>
                <span class="n">spawn</span><span class="p">(</span><span class="n">proc</span><span class="p">()</span> <span class="p">{</span> <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">val</span><span class="p">));</span> <span class="p">});</span>
-               <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> <span class="c1">// Make sure to do this first, so we&#39;re not waiting for recv!</span>
+               <span class="n">current</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">mapr</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> <span class="c1">// why here?</span>
                <span class="n">current</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span> 

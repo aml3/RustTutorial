@@ -244,11 +244,8 @@ of the statements in the mapr function matters.
 
 scode False {'lang': 'rust'}
 codeb
-#[deriving(Clone)]
-#[deriving(ToStr)]
 type LinkedList = Option<~Node>;
 
-#[deriving(Clone)]
 struct Node {
    val: int,
    tail: LinkedList
@@ -264,7 +261,8 @@ fn construct_list(n: int, x: int) -> LinkedList {
 fn print_list(p: LinkedList) -> ~str {
     match p {
         None => { ~"" }
-        Some(node) => { node.val.to_str() + ", " + print_list(node.tail) }
+        Some(node) => { node.val.to_str() + ", " 
+                        + print_list(node.tail) }
     }
 }
 
@@ -278,9 +276,9 @@ impl Map for LinkedList {
             None => { }
             Some(ref mut current) => { 
                let (port, chan) : (Port<int>, Chan<int>) = Chan::new();
-               let val = current.val; // Can't use current inside task!
+               let val = current.val; // Can't capture current
                spawn(proc() { chan.send(f(val)); });
-               current.tail.mapr(f); // Make sure to do this first, so we're not waiting for recv!
+               current.tail.mapr(f); // why here?
                current.val = port.recv();
             }
         } 
