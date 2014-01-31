@@ -12,7 +12,7 @@
     <body>
 <title>Multi-Purpose Maps</title>
 <h1 id="Multi-Purpose_Maps:<br>Structures,_Traits,_and_Higher-Order_Functions" >Multi-Purpose Maps:<br>Structures, Traits, and Higher-Order Functions</h1>
-<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="04.html" style="float: right"> Next </a></td></tr></table><br/><p>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="02.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><p>
 This section covers creating and using structs in Rust, making use of higher order functions and traits to create generic functions.  We also introduce tasks, Rust's way of handling multiprocessing, and a simple mechanism for communicating between tasks.  In the following section, we'll cover some of the richer cross-task communication abstractions provided by Rust. 
 </p>
 <p>
