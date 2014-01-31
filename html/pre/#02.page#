@@ -1,0 +1,898 @@
+ptitle Starting to Corrode
+phead 1 Starting to Corrode:<br>Pointers, Memory, Strings, and I/O
+pnav 01.html 03.html
+This section of the tutorial introduces one of the "rustiest" aspects of Rust: memory management.  
+
+Rust provides memory references in a way that is quite different from other languages you may be familiar with, and it requires some effort to understand, but provide the big advantage of providing both explicit control and safety. We'll also cover strings and vectors, file and user I/O, and basic error handling in Rust. At the end of this section, you'll write a simple encryption program that employs many of the new concepts.
+
+phead 2 Memory Management
+phead 3 Boxes
+The <em>box</em> in Rust is the fundamental abstraction of memory. References in Rust can point to boxes.  Because Rust is designed to emphasize safety, any allocated memory in Rust is <em>boxed</em>, and thus any box can be thought of as simply a chunk of memory. 
+phead 3 Pointer Types
+Rust provides two main pointer types: the <em>owned</em> pointer (indicated by the tilde:
+scode
+~
+edoc
+) and the <em>borrowed</em> reference (denoted with ampersand: 
+scode
+&
+edoc
+). Both kinds of pointers point to a box, and the pointer types are orthogonal to the type of data the box contains. For example,
+scode
+~[&str]
+edoc
+is a owned reference to a vector of borrowed strings.
+
+Similarly, dereferencing a Rust pointer is done with the star operator ( 
+scode
+*
+edoc
+ ). The next section on ownership will go into more detail on the usage and interaction of both of these.
+<div class="note">
+Note: Legacy Rust code (before 0.9) also has a "managed pointer" represented by the 
+scode
+@
+edoc
+ which was automatically managed (garbage collected). As of Rust 0.9, this syntax is deprecated, however it is planned to be reintroduced in future releases. These added a deal of simplicity to pointer management, however other pointer types could be used with more efficency.  Automatically managed pointers may be implemented as library types.
+</div>
+
+phead 3 Ownership
+
+In Rust, there is a notion of <em>ownership</em> of an object.  The owner of an
+object, which could be a variable that refers to that object, manages
+the object's lifetime (that is, when its memory is allocated and
+reclaimed).  Programmers do not have to explicitly allocated and
+deallocate storage.  Rather, it is done by the Rust compiler and runtime
+based on how the object references are used.
+
+phead 4 Owned Boxes
+A declaration of an owned (
+scode
+~
+edoc
+) pointer can be thought of as giving the declared variable ownership of the box.  What does this mean in code? The following block works as anticipated, printing out "10".
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    println!("{:d}", *x);
+bedoc
+However the following block gives a compilation error:
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    let y = x;
+    println!("{:d}", *x);
+bedoc
+<pre><code>tut2.rs:3:23: 3:24 <span style="color:red;">error:</span> use of moved value: `x`
+tut2.rs:3     println!("{:d}", *x);
+</code></pre>
+The error message is a bit unclear, but what it is reporting is a violation of ownership rules.  When we create the owned box of 
+scode
+~10
+edoc
+, that box is owned by the variable
+scode
+x
+edoc
+. The initialization,
+scode
+let y = x;
+edoc
+assigns the <em>pointer</em> to y. Because of Rust's emphasis on safety this is not allowed: it creates two references to an owned box.  
+
+In other languages, such as C and Java, there are no restrictions on pointer sharing.  We could do, <!-- markup do distinguish C/Rust code? -->
+scode
+    y = x;
+    *y = 3;
+edoc
+thus changing the value of
+scode
+*x
+edoc
+through the alias.  With Rust, the assignment, 
+scode
+y = x
+edoc
+<em>transfers</em> ownership of the box 
+scode
+x 
+edoc
+refers to from the 
+scode
+x 
+edoc
+reference to the 
+scode
+y 
+edoc
+reference.  From this point on, any attempts to use 
+scode
+x
+edoc
+to manipulate that box will result in a compiler error.
+
+We can make a copy of a box using the 
+scode
+clone
+edoc
+ method which copies over the content of a box and creates a new owned pointer to the copy. So the following code will assign 
+scode
+y
+edoc
+ to a new owned pointer pointing to a new copy of the value "10". The dereferencing of 
+scode
+x
+edoc
+ no longer causes a compiler error, as 
+scode
+x
+edoc
+ still has proper ownership of its box.
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    let y = x.clone();
+    println!("{:d}", *x);
+bedoc
+But, 
+scode
+x
+edoc
+and 
+scode
+y
+edoc
+refer to different boxes now &mdash; a modification of 
+scode
+*x
+edoc
+will not be visible through 
+scode
+y
+edoc
+.
+
+phead 4 Borrowed References
+
+All that copying would be expensive, and eliminate the benefits of data
+sharing for uses like pass-by-reference and data structures.  Rust's
+solution is to provide a way for owners to loan out their objects.  
+
+Using the 
+scode
+&
+edoc
+ operator creates a temporary reference to some memory that has already been allocated. These references are refered to as "borrowed" because they can access the contents of the box during the borrowing period, but do not own the box. This most commonly used to pass in a pointer reference to a method.
+
+Because of Rust's emphasis on safety there are many resctriction on what can be done with a reference. Most notably, if a pointer has a borrowed reference in scope (more on scope in the next section), any function which would free the memory or change the type being pointed to would cause a compile-time error. Think of it this way: creating a reference to a box "lends" that box's contents to the reference until the loaned box is "returned".  Thus, a reference owner gives up full control over a loaned box while it is being borrowed.
+
+Borrowed references are frequently used as function parameters.  For example,
+scode False {'lang': 'rust'}
+codeb
+fn borrow(r : &int) -> int {
+    *r
+}
+bedoc
+declares the function 
+scode
+borrow
+edoc
+to take a borrowed pointer to an int.  We can call it by passing in an owned pointer:
+scode False {'lang': 'rust'}
+codeb
+    let x = ~10;
+    println!("borrow(x): {:d}", borrow(x));
+bedoc
+Borrowed pointers can also be loaned by the borrowee, within the lifetime of the original loan.  We can pass in an owned pointer to borrow2, which borrows that pointer and passes it as a borrowed pointer to borrow:
+scode False {'lang': 'rust'}
+codeb
+fn borrow2(r : &int) -> int {
+   borrow(r)
+}
+bedoc
+
+phead 4 Pointer Mutability
+As with scalar variables, boxes are immutable by default.  The 
+scode
+mut
+edoc
+qualifier is used to indicate that a box is mutable.  Mutability applies to the <em>contents</em> of a box, and not the pointer itself.
+
+For example,
+scode False {'lang': 'rust'}
+codeb
+fn increment(r: &int) {
+    *r = *r + 1;
+}
+bedoc
+is not permitted:
+<pre><code>
+borrowed.rs:2:4: 2:6 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:2     *r = *r + 1;
+                   ^~
+</code></pre>
+To allow the modification, we need to declare the parameter as a borrowed, mutable reference:
+scode
+r: &mut int
+edoc
+Now, the compiler produces an error for the callsite since the passed object is not mutable:
+<pre><code>
+borrowed.rs:16:14: 16:15 <span style="color:red;">error:</span> cannot borrow immutable dereference of ~ pointer as mutable
+borrowed.rs:16     increment(x);
+</code></pre>
+
+To change this, we need to add 
+scode
+mut
+edoc
+to the declaration:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+    let mut x = ~10;
+    increment(x);
+bedoc
+
+The 
+scode
+mut
+edoc
+here applies to the reference 
+scode
+x
+edoc
+and is also inherited by the box (so no separate 
+scode
+mut
+edoc
+annotation is needed for the 
+scode
+~
+edoc
+.  It allows both the variable 
+scode
+x
+edoc
+to be reassigned, as well as the contents of the owned box to be modified:
+scode False {'lang': 'rust'}
+codeb
+    let mut x = ~10;
+    x = ~20;
+    *x = 30;
+bedoc
+
+The first assignment statement creates a new box owned by 
+scode
+x
+edoc
+holding the value
+scode
+20
+edoc
+. The second assignment statement modifies the value in that box to be
+scode
+30
+edoc
+.  Without the 
+scode
+mut
+edoc
+neither assignment would be permitted by the Rust compiler.
+
+Borrowed references do not inherit mutability.  For example, this code is invalid:
+scode False {'lang': 'rust'}
+codeb
+    let mut val1 = 10;
+    let mut val2 = 20;
+    let mut borrowed = &val1;
+    borrowed = &val2;
+    *borrowed = 11;
+bedoc
+<pre><code>
+borrowed.rs:23:4: 23:13 <span style="color:red;">error:</span> cannot assign to immutable dereference of & pointer
+borrowed.rs:23     *borrowed = 11;
+                   <span style="color:red;">^~~~~~~~~</span>
+</code></pre>
+To allow both modifications, we need:
+scode False {'lang': 'rust'}
+codeb
+    let mut borrowed = &mut val1;
+bedoc
+ which allows both modifying the referenced box and changing what 
+scode
+borrowed
+edoc
+ references. 
+
+Keep in mind that references are type checked (yet another safety measure of Rust!) so the following code produces an error at compile time due to trying to reassign an int reference to a float reference.
+scode False {'lang': 'rust'}
+codeb
+    let mut val1 = 10;
+    let mut val3 = 10.0;
+    let borrowed = &val1;
+    borrowed = &val3;
+bedoc
+<pre><code>tut2.rs:4:16: 6:21 <span style="color:red;">error:</span> mismatched types: expected `&&lt;VI0&gt;` but found `&&lt;VF0&gt;` (expected integral variable but found floating-point variable)
+tut2.rs:4     borrowed = &val3;
+</code></pre>
+
+phead 4 Freezing Objects
+
+When an object is loaned through a borrowed reference, the lender loses
+the ability to modify that object.  This is especially important for
+multi-tasking (which we'll get to soon), but still relevant with a
+single thread.
+
+For example, the following program produces a compiler error: 
+scode False {'lang': 'rust'}
+codeb
+    let mut x = 10;
+    {
+        let y = &x;
+        x = 11; // Error
+    }
+    x = 12; //This is fine
+bedoc
+
+<pre><code>example.rs:4:9: 4:10 <span style="color:red;">error:</span> cannot assign to `x` because it is borrowed
+example.rs:4         x = 11;
+</code></pre>
+
+When the reference 
+scode
+y
+edoc
+ borrows the value 
+scode
+x
+edoc
+refers to, the value of 
+scode
+x
+edoc
+ is frozen until the reference to it goes out of scope. Thus, the first reassignment here is invalid, but the second (after 
+scode
+y
+edoc
+is out of scope) is fine.
+
+phead 3 Lifetimes
+Memory allocated in Rust is automatically freed when its owner either goes out of scope or is reassigned. This eliminates the need to explicitly free storage (as in C or C++), but guarantees safety without giving up control to a garbage collector.  
+
+Owned pointers follow similar rules of deallocation, so borrowing a reference to some box and trying to access it once it has gone out of scope throws a compiler error.
+scode False {'lang': 'rust'}
+codeb
+    let mut reference: &~int;
+    {
+        let val: ~int = ~10;
+        reference = &val;
+    } //val deallocated here
+    println!("{:d}", **reference); //Referencing something that's gone!
+bedoc
+<pre><code>example.rs:4:21: 4:25 <span style="color:red;">error:</span> borrowed value does not live long enough
+example.rs:4         reference = &val;
+</code></pre>
+
+phead 2 Vectors and Strings
+
+Rust provides built-in vector and string types, consistent with Rust's focus on safety.
+
+phead 4 Vectors
+
+<a name="vectors"></a>
+A vector is defined by using comma seperated values within brackets. 
+
+A specific element can be accessed via 
+scode
+foo[index]
+edoc
+. Any vector definition where the elements may change after the initial definition should be an owned box, so the methods of
+plink http://static.rust-lang.org/doc/0.9/std/vec/trait.OwnedVector.html std::vec::OwnedVector
+ may be used to mutate the vector. 
+
+These examples show simple vector functions:
+
+scode False {'lang': 'rust'}
+codeb
+    let mut vec = ~[0, 1, 2];
+    vec.push(3); // Appends to end: [0, 1, 2, 3]
+
+    vec.insert(2, 10); 
+    // Inserts 10 at position 2: [0, 1, 10, 2, 3]
+
+    let last = vec.pop(); 
+    // Returns last element, removing it from the vector: [0, 1, 10, 2]
+
+    let element1 = vec.remove(1); 
+    // Returns and removes element at specified index: [0, 10, 2]
+
+    // An iterator for going through all elements in order: 
+    for &x in vec.iter() { // note the use of & for borrowing
+        println!("{}", x);
+    }
+    
+    // len() returns the number of elements in the vector
+    for i in range(0, vec.len()) { 
+        println!("{}", vec[i]);
+    }
+bedoc
+phead 4 Strings
+
+Rust supposrts a 
+scdoe
+string
+edoc
+type which is a vector of characters.  Each character is a UTF-8 sequence, represented by the
+scode
+u8
+edoc
+type in Rust.
+
+A notable construct that is very important for strings is the 
+scode
+slice
+edoc
+. This represents a view into a string, but not a string itself. Its type is
+scode
+&string
+edoc
+.  
+ 
+Methods that produce a slice include 
+scode
+slice(&self, begin: int, end: int)
+edoc
+, which returns a slice of characters between begin and end - 1, 
+scode
+slice_from(&self, begin: int)
+edoc
+, which returns a slice with first element from the index provided that continues to the end, and 
+scode
+slice_to(&self, end: int)
+edoc
+, which returns a slice starting at the beginning with final element from index end - 1. 
+
+These slice methods produce an immutable values, so they cannot be modified. 
+
+To do something such as taking a substring, a slice may be converted to an owned string via the
+scode
+to_owned(&self)
+edoc
+ method.  These slice methods work on any vector, but string manipulation is the most common use of slices.
+
+Other notable string methods include 
+scode
+str::eq(&~str, &~str)
+edoc
+which checks two strings for bytewise equality, and 
+scode
+split(&self, char)
+edoc
+ which returns an iterator that splits the string the method is called on into slices delimited by the parameter character. 
+
+For string concatenation, the 
+scode
++
+edoc
+ operator is used. 
+
+These methods are used in the example below:
+scode False {'lang': 'rust'}
+codeb
+    let string = ~"This is a string";
+    let subst1 = string.slice(10, 16).to_owned();
+    let subst2 = string.slice_from(10).to_owned();
+    println!("{}", std::str::eq(&subst1, &subst2));
+    let doublesub = subst1 + subst2;
+    println!("{}", doublesub);
+    // Using split iterator to print word by word
+    for tempstr in string.split(' ') {
+        println!("{}", tempstr);
+    }
+    // Another useful function of the split iterator
+    // collect() Creates a vector ~["This", "is", "a", "string"]
+    let wordvec: ~[&str] = string.split(' ').collect(); 
+    for &s in wordvec.iter() {
+        println!("{}", s);
+    }
+bedoc
+
+phead 4 Exercises
+
+<div class="exercise">
+<b>Exercise 2.1.</b> Implement a function, 
+scode
+increment
+edoc
+that takes as input a vector of integers and returns a new vector of integers that has the values of the original list each incremented by one.  For example:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+   let p = ~[1, 2, 3];
+   let q = increment(p);
+   for &x in q.iter() {
+      print!("{:d} ", x);
+   }
+}
+bedoc
+should print out 2 3 4.
+</div>
+
+<div class="exercise">
+<b>Exercise 2.2.</b>  Implement a function, 
+scode
+incrementMut
+edoc
+that takes as input a vector of integers and modifies the values of the original list by incrementing each value by one.  For example:
+scode False {'lang': 'rust'}
+codeb
+fn main() {
+   let mut p = ~[1, 2, 3];
+   incrementMut(p);
+   for &x in p.iter() {
+      print!("{:d} ", x);
+   }
+}
+bedoc
+should print out 2 3 4.  
+</div>
+
+
+phead 2 Basic I/O
+Rust handles file and user input/output using the 
+plink http://static.rust-lang.org/doc/0.9/std/io/index.html std::io
+ module. 
+
+The most intuitive way to work with these is through the use of a 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader, 
+which will be explained more in depth in the following sections. Take note that many methods in 
+scode
+BufferedReader 
+edoc
+return vectors of bytes, not strings, so appropriate conversions may be necessary.
+
+phead 3 Working with Standard Input (stdin)
+
+Standard input is provided through 
+scode
+std::io::stdin
+edoc
+, and implemented by creating a buffered reader.  The following example (taken from the Rust documentation) prints out a series of lines from standard input, automatically stopping at the end of input. The 
+scode
+lines
+edoc
+ method returns an iterator that goes through each line until the end of imput.
+scode False {'lang': 'rust'}
+codeb
+use std::io::buffered::BufferedReader;
+use std::io::stdin;
+
+fn main(){
+    let mut stdin = BufferedReader::new(stdin());
+    for line in stdin.lines() {
+        print(line);
+    }
+}
+bedoc
+Reading line by line is a bit more difficult, as the 
+scode
+read_line
+edoc
+ method is of an 
+scode
+Option<~str>
+edoc
+ type. These option types are explained more in depth in the "Error Handling" section later on this page of the tutorial. The gist of it is the following though: a call to 
+scode
+read_line
+edoc
+ can either succeed or fail. Thus, when it is called, we need a match statement to determine if it succeeded (where it will return 
+scode
+line
+edoc
+ in the following example) or fail (which returns
+scode
+None
+edoc
+). The example code below reads in the next 5 lines from stdin, and prints them. If there are less than 5 lines, the loop ends without crashing the program.
+scode False {'lang': 'rust'}
+codeb
+use std::io::buffered::BufferedReader;
+use std::io::stdin;
+fn main(){
+    let mut stdin = BufferedReader::new(stdin());
+    for i in range(0, 5) {
+        match stdin.read_line() {
+            Some(line) => {
+                print(line);
+            }
+            None => {
+                println("End of input!");
+                break;
+            }
+        }
+    }
+}
+bedoc
+phead 3 Files
+The standard library functions for working with files in Rust are handled via the 
+plink http://static.rust-lang.org/doc/0.9/std/io/fs/struct.File.html std::io::File
+ module. This module contains methods for opening and writing to a file. 
+
+A file is opened using
+scode
+Path
+edoc
+ objects, which are included in any Rust program by default. Creating a 
+scode
+Path
+edoc
+ object is done through 
+scode
+Path::new("path/to/file.foo")
+edoc
+. 
+
+To simply open a new file for writing,
+scode
+File::create(&Path)
+edoc
+ is the simplest call. This returns an 
+edoc
+Option<File>
+scode
+ type
+edoc
+, so it must be matched to ensure that a file was successfully opened. 
+
+The two most common ways to write to the file once opened are: <br>
+scode
+   File::write(&mut self, &[u8])
+edoc
+which writes a buffer of bytes to a file, and: <br>
+scode
+   File::write_str(&mut self, &str)
+edoc
+which writes a string to the file.
+
+This example demonstrated opening a file for writing using both of these methods:
+scode False {'lang': 'rust'}
+codeb
+use std::io::File;
+
+fn main()
+{
+    match File::create(&Path::new("message.txt")) {
+        Some(mut file) => {
+            file.write(bytes!("line one\n"));
+            file.write_str("line two\n");
+        }
+        None =>{
+            println("Opening message.txt failed!");
+        }
+    }
+}
+bedoc
+Reading a file can be accomplished easily through using the 
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
+ module, much like reading from standard in. 
+
+Opening a file to a 
+scode
+BufferedReader
+edoc
+ is done using the 
+scode
+File::open(&Path)
+edoc
+ function, which opens the file at a given path in read-only mode, followed by 
+scode
+BufferedReader::new(File)
+edoc
+. 
+
+Note that the file needs to be matched before converting to a 
+scode
+BufferedReader
+edoc
+, as 
+scode
+File::open
+edoc
+returns an 
+scode
+Option<File>
+edoc
+ type. Once converted to a 
+scode
+BufferedReader
+edoc
+, a file is read in an identical manner to reading from stdin in the previous example, and all relevant methods are outlined on the
+plink http://static.rust-lang.org/doc/0.9/std/io/buffered/struct.BufferedReader.html BufferedReader
+ documentation.
+
+Here's a simple example of reading a file:
+
+scode False {'lang': 'rust'}
+codeb
+use std::io::buffered::BufferedReader;
+use std::io::File;
+
+fn main()
+{
+    match File::open(&Path::new("message.txt")) {
+        Some(file) => {
+            let reader = BufferedReader::new(file);
+            //reading from file
+        }
+        None =>{
+            println("Opening message.txt failed!");
+        }
+    }
+}
+bedoc
+
+The 
+scode
+File::open_mode(&Path, FileMode, FileAccess)
+edoc
+ method allows specifying the mode in which a file is accessed. 
+scode
+FileMode
+edoc
+ and 
+scode
+FileAccess
+edoc
+ are enumerable types imported from 
+plink http://static.rust-lang.org/doc/0.9/std/io/enum.FileMode.html std::io::FileMode
+ and 
+plink http://static.rust-lang.org/doc/0.9/std/io/enum.FileAccess.html std::io::FileAccess
+ respectively. For example, to open a file with read and write access, positioned to append to the end of the file, the following must be included, and then called as so.
+scode False {'lang': 'rust'}
+codeb
+use std::io::{File, Append, ReadWrite};
+/*
+...
+*/
+let file = File::open_mode(&Path::new("message.txt"), Append, ReadWrite);
+bedoc
+Like the other file methods, this returns an
+scode
+Option
+edoc
+objects that must be matched to check for opening failures.
+
+phead 2 Error Handling
+
+Error handling in Rust is done with the intention of catching what can be caught at compile-time, and reducing runtime errors. We've seen the 
+scode
+Option<T>
+edoc
+ type used for functions which either create an object or fail (represented by 
+scode
+None()
+edoc
+). There is another, similar construct to this called a 
+scode
+Result<T,E>
+edoc
+ which is like a 
+scode
+Option
+edoc
+, but determined on whether a function succeds as intended on a pre-existing object (as opposed to the creation of a new object with 
+scode
+Option
+edoc
+). 
+
+A 
+scode
+Result
+edoc
+ requires a match statement to use the values obtained. The 
+scode
+Ok(T)
+edoc
+ branch represents a successful call, whereas 
+scode
+Err(E)
+edoc
+ is a failed called. The error result may provide specific information about the failure, depending on the function.
+
+If a 
+scode
+None()
+edoc
+ or 
+scode
+Err(E)
+edoc
+ branch is reached and the program can no longer continue, a 
+scode
+fail!()
+edoc
+ macro can be used to terminate a program with an optional message. 
+
+The following code terminates with a message if "foo.txt" is failed to open:
+scode False {'lang': 'rust'}
+codeb
+match File::create(&Path::new("foo.txt")) {
+    Some(mut file) => { /* ... */ }
+    None => {
+      fail!("Creating foo.txt failed!");
+    }
+}
+bedoc
+phead 2 Example: Secret Sharing
+
+The XOR operation is a simple, but effective method for hiding meaning.
+It's derived from the identity <code>A = (A ^ B) ^ B</code>.  XOR-ing a
+message with a random key provides <em>perfect</em> encryption, known as
+a <em>one-time pad</em>. It is essentially the only form of encryption
+that is information-theoretically secure, but is impractical for most
+purposes since it requires a perfectly-random key as long as the
+message and that key can never be reused.
+
+It works by taking in a message and a random bit sequence (key) of equal
+length. Each bit in the message is XORed with the corresponding bit in
+the key to produce the encrypted message. The original message can then
+be recovered by applying the XOR process to the key and the encrypted
+message.
+
+For this exercise, we will use this strategy to convert a plaintext file
+into two secret shares, each of which discloses no information about the
+original file (other than its length), but if someone has both shares
+they can put them together to produce the original file.  A paranoid
+individual might use such an approach to store a file in the cloud by
+storing one share using Dropbox and the other share using Google Docs.
+The user could acquire both shares to obtain the file, and if the NSA
+can hypothetically (of course) obtain all of the data from one of the
+services but not both of them, it would not be enough to learn the
+contents of the file.
+
+Note that our implementation uses 
+scode
+std::rand::random
+edoc
+to generate the random key.  This is not cryptographically strong randomness, so should be used for entertainment purposes only!  (If you are interested in better random numbers, see <a href="https://github.com/wbkostan/cs4414-ps4">tRustees: True Random Number Generation</a>.)
+
+We'll provide the code to do the splitting, and leave it as
+an exercise for you to write the joining code.
+
+phead 3 Splitter
+
+The following Rust code implements the splitter.  It takes as input the
+name of a file, and writes out two share files.
+
+scode False {'loc': 'code/splitter.rs', 'lang': 'rust', 'range': False}
+
+phead 4 Joiner
+
+The joiner reverses the splitting process, taking the two shares and combining them to produce the original message.
+
+<div class="exercise"> 
+
+<b>Exercise 2.3.</b> Implement the joiner.  It
+should take two file names as its inputs, and output to standard output
+the result of XOR-ing the bytes in those files.  The inputs files must be the same length.
+
+</div>
+
+Your joiner should be able to produce the plaintext from the example
+files: <a href="http://aml3.github.io/RustTutorial/code/msg.share1">msg.share1</a> and <a href="http://aml3.github.io/RustTutorial/code/msg.share2">msg.share2</a>.  You should download these files (look
+at them to confirm they appear to be random bytes).  
+
+Then, try executing:
+<pre><code>
+joiner msg.share1 msg.share2
+</code>
+</pre>
+
+If you implemented the joiner correctly, you should see a (somewhat)
+<a href="http://www.gutenberg.org/cache/epub/1518/pg1518.html">meaningful message</a>.
+pnav 01.html incomplete.html
+<div class="credits">
+This tutorial was created by Alex&nbsp;Lamana, Rob&nbsp;Michaels, Wil&nbsp;Thomason, and David&nbsp;Evans for <a href="http://rust-class.org">University of Virginia cs4414 Spring 2014</a>.
+</div>
