@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+        <link href="css/tabs.css" rel="stylesheet" type="text/css">
+        <link href="css/code.css" rel="stylesheet" type="text/css">
+        <link rel="icon" type="image/png" href="http://www.rust-class.org/static/images/logo.png" />  
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="js/tabs.js"></script>
+    </head>
+    <body>
+<title>The Arc Module</title>
+<h1 id="Arcs_and_Sharing_Memory" >Arcs and Sharing Memory</h1>
+<br/><table style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; width:100%"><tr><td style="width:20%"><a href="04.html" style="float:left"> Previous </a></td><td style="text-align: center;"><a href="toc.html"> Table of Contents </a></td><td style="width:20%"><a href="incomplete.html" style="float: right"> Next </a></td></tr></table><br/><h2 id="The_Arc_Module" >The Arc Module</h2>
+<p>
+The previous section of this tutorial explored Rust's tasks. Tasks as we have seen them don't really do well with sharing data. There are often instances where we may want multiple tasks spawned which reference, or even modify, some data. Enter the Arc module.
+</p>
+<h3 id="Basic_Arc_Use" >Basic Arc Use</h3>
+<p>
+The
+<a href="http://static.rust-lang.org/doc/0.9/extra/arc/index.html">extra::arc module</a>
+ is a wrapper for any data type to be shared between tasks. An 
+<span class="src"><code><span class="n">Arc</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+ is a shared immutable state. When spawning tasks that want to reference the same data, using the 
+<span class="src"><code><span class="n">clone</span><span class="p">()</span></code></span>
+ function creates a new copy of the Arc that can be sent to a task via a 
+<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">edoc</span> 
+ <span class="n">pair</span><span class="p">.</span> <span class="n">The</span> <span class="n">underlying</span> <span class="n">data</span> <span class="n">is</span> <span class="n">not</span> <span class="n">changed</span><span class="p">,</span> <span class="n">however</span><span class="p">.</span> <span class="n">This</span> <span class="n">allows</span> <span class="n">sending</span> <span class="n">a</span> <span class="n">new</span> <span class="n">arc</span> <span class="n">to</span> <span class="n">a</span> <span class="n">task</span><span class="p">,</span> <span class="n">and</span> <span class="n">having</span> <span class="n">it</span> <span class="n">access</span> <span class="n">the</span> <span class="n">same</span> <span class="n">data</span><span class="p">.</span> <span class="n">Once</span> <span class="n">within</span> <span class="n">the</span> <span class="n">spawned</span> <span class="n">task</span><span class="p">,</span> <span class="n">the</span> 
+<span class="n">scode</span>
+<span class="n">get</span><span class="p">()</span></code></span>
+ function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of 10 integers, wraps them in an Arc, and then prints out each value within a separate task.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">78</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="o">-</span><span class="m">2</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="o">-</span><span class="m">11</span><span class="p">];</span>
+
+    <span class="k">let</span> <span class="n">numArc</span> <span class="o">=</span> <span class="n">Arc</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">nums</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
+            <span class="k">let</span> <span class="n">taskNums</span> <span class="o">=</span> <span class="n">taskArc</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+            <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="n">taskNums</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><p>
+phead3 Reading and Writing with RWArcs
+Often if we are sharing data across many tasks, we will want to manipulate the data within the task in some manner. The Arc structure, however, has no actual method of accomplishing this. There is an alternative Arc, however called the 
+<span class="src"><code><span class="n">RWArc</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code></span>
+. A RWArc has a 
+<span class="src"><code><span class="n">read</span><span class="p">(</span><span class="o">|&amp;</span><span class="n">T</span><span class="o">|</span> <span class="p">{</span><span class="n">block</span><span class="p">})</span></code></span>
+ and 
+<span class="src"><code><span class="n">write</span><span class="p">(</span><span class="o">|&amp;</span><span class="n">T</span><span class="o">|</span> <span class="p">{</span><span class="n">block</span><span class="p">})</span></code></span>
+ function. The variable provided for the
+<span class="src"><code><span class="o">&amp;</span><span class="n">T</span></code></span>
+ portion of this call is a borrowed reference to the underlying data of the RWArc. The read function serves similar to using a standard Arc (not RWArc), and provides for simultaneous cocurrent access to the data within the RWArc. Below is an identical implementation of the Arc example, except using a RWArc.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="src"><pre>    <span class="k">let</span> <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">78</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="o">-</span><span class="m">2</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="o">-</span><span class="m">11</span><span class="p">];</span>
+
+    <span class="k">let</span> <span class="n">numArc</span> <span class="o">=</span> <span class="n">RWArc</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">nums</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
+            <span class="n">taskArc</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="o">|</span><span class="n">taskNums</span><span class="o">|</span> <span class="p">{</span>
+                    <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="n">taskNums</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+                <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="Writing_with_an_RWArc" >Writing with an RWArc</h4>
+<p>
+When write is called, an RWArc flags the underlying data as being accessed and prevents any other write functions from continuing until the one currently accessing the data is complete. The below is a simple example of incrementing a number throughout multiple tasks using RWArc write functions, and then calling the collatz function (modified from the one in Part 1 of this tutorial to not overflow a task's stack through recursive calls) on the retrieved value.
+</p>
+<div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre></div></td><td class="code"><div class="src"><pre><span class="k">extern</span> <span class="k">mod</span> <span class="n">extra</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">extra</span><span class="o">::</span><span class="n">arc</span><span class="o">::</span><span class="n">RWArc</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">num</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">numArc</span> <span class="o">=</span> <span class="n">RWArc</span><span class="o">::</span><span class="n">new</span><span class="p">(</span><span class="n">num</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
+            <span class="k">let</span> <span class="k">mut</span> <span class="n">newNum</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+            <span class="n">taskArc</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">|</span><span class="n">taskNum</span><span class="o">|</span> <span class="p">{</span>
+                <span class="o">*</span><span class="n">taskNum</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
+                <span class="n">newNum</span> <span class="o">=</span> <span class="o">*</span><span class="n">taskNum</span><span class="p">;</span>
+            <span class="p">});</span>
+            <span class="k">let</span> <span class="n">collatzN</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">newNum</span><span class="p">);</span>
+            <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Collatz of {:d} = {:d}&quot;</span><span class="p">,</span> <span class="n">newNum</span><span class="p">,</span> <span class="n">collatzN</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">fn</span> <span class="n">collatz</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">nLoc</span> <span class="o">=</span> <span class="n">N</span><span class="p">;</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">out</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">nLoc</span> <span class="o">!=</span> <span class="m">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
+        <span class="k">match</span> <span class="n">nLoc</span> <span class="o">%</span> <span class="m">2</span> <span class="p">{</span>
+	    <span class="m">0</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="n">nLoc</span> <span class="o">=</span> <span class="n">nLoc</span><span class="o">/</span><span class="m">2</span><span class="p">;}</span>
+	    <span class="n">_</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="n">nLoc</span> <span class="o">=</span> <span class="n">nLoc</span><span class="o">*</span><span class="m">3</span><span class="o">+</span><span class="m">1</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+</div><h4 id="A_Note_on_RWArc_Failure" >A Note on RWArc Failure</h4>
+<p>
+If for whatever reason a failure occurs during the read or write block of a RWArc, the RWArc will be exited and flagged as "poisoned." This causes any other read or write functions on the RWArc to immediately fail, thus preserving Rust's goal of cocurrent safety.    </body>
+                </html>

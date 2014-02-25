@@ -1,0 +1,123 @@
+ptitle The Arc Module
+phead 1 Arcs and Sharing Memory
+pnav 04.html incomplete.html
+phead 2 The Arc Module
+
+The previous section of this tutorial explored Rust's tasks. Tasks as we have seen them don't really do well with sharing data. There are often instances where we may want multiple tasks spawned which reference, or even modify, some data. Enter the Arc module.
+
+phead 3 Basic Arc Use
+The
+plink http://static.rust-lang.org/doc/0.9/extra/arc/index.html extra::arc module
+ is a wrapper for any data type to be shared between tasks. An 
+scode
+Arc<T>
+edoc
+ is a shared immutable state. When spawning tasks that want to reference the same data, using the 
+scode
+clone()
+edoc
+ function creates a new copy of the Arc that can be sent to a task via a 
+scode
+(Port<Arc>, Chan<Arc>)
+edoc 
+ pair. The underlying data is not changed, however. This allows sending a new arc to a task, and having it access the same data. Once within the spawned task, the 
+scode
+get()
+edoc
+ function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of 10 integers, wraps them in an Arc, and then prints out each value within a separate task.
+
+scode False {'lang': 'rust'}
+codeb
+    let nums = [1,78,3,5,-2,5,7,-11];
+
+    let numArc = Arc::new(nums);
+
+    for i in range(0, nums.len()) {
+        let (port, chan)  = Chan::new();
+        chan.send(numArc.clone());
+        do spawn {
+            let taskArc = port.recv();
+            let taskNums = taskArc.get();
+            println!("{:d}", taskNums[i]);
+        }
+    }
+bedoc
+
+phead3 Reading and Writing with RWArcs
+Often if we are sharing data across many tasks, we will want to manipulate the data within the task in some manner. The Arc structure, however, has no actual method of accomplishing this. There is an alternative Arc, however called the 
+scode
+RWArc<T>
+edoc
+. A RWArc has a 
+scode
+read(|&T| {block})
+edoc
+ and 
+scode
+write(|&T| {block})
+edoc
+ function. The variable provided for the
+scode
+&T
+edoc
+ portion of this call is a borrowed reference to the underlying data of the RWArc. The read function serves similar to using a standard Arc (not RWArc), and provides for simultaneous cocurrent access to the data within the RWArc. Below is an identical implementation of the Arc example, except using a RWArc.
+scode False {'lang': 'rust'}
+codeb
+    let nums = [1,78,3,5,-2,5,7,-11];
+
+    let numArc = RWArc::new(nums);
+
+    for i in range(0, nums.len()) {
+        let (port, chan)  = Chan::new();
+        chan.send(numArc.clone());
+        do spawn {
+            let taskArc = port.recv();
+            taskArc.read(|taskNums| {
+                    println!("{:d}", taskNums[i]);
+                });
+        }
+    }
+bedoc
+
+phead 4 Writing with an RWArc
+When write is called, an RWArc flags the underlying data as being accessed and prevents any other write functions from continuing until the one currently accessing the data is complete. The below is a simple example of incrementing a number throughout multiple tasks using RWArc write functions, and then calling the collatz function (modified from the one in Part 1 of this tutorial to not overflow a task's stack through recursive calls) on the retrieved value.
+scode False {'lang': 'rust'}
+codeb
+extern mod extra;
+use extra::arc::RWArc;
+
+fn main() {
+    let num = 0;
+    let numArc = RWArc::new(num);
+
+    for i in range(0, 50000) {
+        let (port, chan)  = Chan::new();
+        chan.send(numArc.clone());
+        do spawn {
+            let taskArc = port.recv();
+            let mut newNum = 0;
+            taskArc.write(|taskNum| {
+                *taskNum += 1;
+                newNum = *taskNum;
+            });
+            let collatzN = collatz(newNum);
+            println!("Collatz of {:d} = {:d}", newNum, collatzN);
+        }
+    }
+}
+fn collatz(N: int) -> int {
+    let mut nLoc = N;
+    let mut out = 0;
+    while (nLoc != 1) {
+        out += 1;
+        match nLoc % 2 {
+	    0 => {nLoc = nLoc/2;}
+	    _ => {nLoc = nLoc*3+1; }
+	}
+    }
+    return out;
+}
+bedoc
+
+phead 4 A Note on RWArc Failure
+If for whatever reason a failure occurs during the read or write block of a RWArc, the RWArc will be exited and flagged as "poisoned." This causes any other read or write functions on the RWArc to immediately fail, thus preserving Rust's goal of cocurrent safety.

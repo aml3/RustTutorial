@@ -1,0 +1,31 @@
+extern mod extra;
+use extra::arc::RWArc;
+
+fn main() {
+    let mut num = 0;
+    let numArc = RWArc::new(num);
+
+    for i in range(0, 1000) {
+        let (port, chan)  = Chan::new();
+        chan.send(numArc.clone());
+        do spawn {
+            let taskArc = port.recv();
+            let newNum: int;
+            local_arc.read(|taskNum| {
+                newNum = taskNum;
+            })
+            taskArc.write(|taskNum| {
+                taskNum += 1
+            });
+            let collatzN = collatz(newNum);
+            println!("Collatz of {:d} n = {:d}", newNum, collatzN);
+        }
+    }
+}
+fn collatz(N: int) -> int {
+	if N == 1 { return 0; }
+	match N % 2 {
+		0 => { 1 + collatz(N/2) }
+		_ => { 1 + collatz(N*3+1) }
+	}
+}
