@@ -9,10 +9,10 @@ fn main() {
     for i in range(0, nums.len()) {
         let (port, chan)  = Chan::new();
         chan.send(numArc.clone());
-        do spawn {
+        spawn(proc() {
             let taskArc = port.recv();
             let taskNums = taskArc.get();
             println!("{:d}", taskNums[i]);
-        }
+        });
     }
 }

@@ -8,7 +8,7 @@ fn main() {
     for i in range(0, 50000) {
         let (port, chan)  = Chan::new();
         chan.send(numArc.clone());
-        do spawn {
+        spawn(proc() {
             let taskArc = port.recv();
             let mut newNum = 0;
             taskArc.write(|taskNum| {
@@ -17,7 +17,7 @@ fn main() {
             });
             let collatzN = collatz(newNum);
             println!("Collatz of {:d} = {:d}", newNum, collatzN);
-        }
+        });
     }
 }
 fn collatz(N: int) -> int {

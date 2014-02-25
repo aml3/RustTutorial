@@ -49,11 +49,11 @@ The
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">nums</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
         <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
-        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="n">spawn</span><span class="p">(</span><span class="n">proc</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
             <span class="k">let</span> <span class="n">taskNums</span> <span class="o">=</span> <span class="n">taskArc</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
             <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="n">taskNums</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="p">}</span>
+        <span class="p">});</span>
     <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -89,12 +89,12 @@ Often if we are sharing data across many tasks, we will want to manipulate the d
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">nums</span><span class="p">.</span><span class="n">len</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
         <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
-        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="n">spawn</span><span class="p">(</span><span class="n">proc</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
             <span class="n">taskArc</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="o">|</span><span class="n">taskNums</span><span class="o">|</span> <span class="p">{</span>
                     <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="n">taskNums</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
                 <span class="p">});</span>
-        <span class="p">}</span>
+        <span class="p">});</span>
     <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -145,7 +145,7 @@ When write is called, an RWArc flags the underlying data as being accessed and p
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50000</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">let</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">chan</span><span class="p">)</span>  <span class="o">=</span> <span class="n">Chan</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
         <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">numArc</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
-        <span class="k">do</span> <span class="n">spawn</span> <span class="p">{</span>
+        <span class="n">spawn</span><span class="p">(</span><span class="n">proc</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">let</span> <span class="n">taskArc</span> <span class="o">=</span> <span class="n">port</span><span class="p">.</span><span class="n">recv</span><span class="p">();</span>
             <span class="k">let</span> <span class="k">mut</span> <span class="n">newNum</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
             <span class="n">taskArc</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">|</span><span class="n">taskNum</span><span class="o">|</span> <span class="p">{</span>
@@ -154,7 +154,7 @@ When write is called, an RWArc flags the underlying data as being accessed and p
             <span class="p">});</span>
             <span class="k">let</span> <span class="n">collatzN</span> <span class="o">=</span> <span class="n">collatz</span><span class="p">(</span><span class="n">newNum</span><span class="p">);</span>
             <span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Collatz of {:d} = {:d}&quot;</span><span class="p">,</span> <span class="n">newNum</span><span class="p">,</span> <span class="n">collatzN</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="p">});</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="k">fn</span> <span class="n">collatz</span><span class="p">(</span><span class="n">N</span><span class="o">:</span> <span class="k">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">int</span> <span class="p">{</span>
