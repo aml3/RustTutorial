@@ -25,11 +25,9 @@ The
  is a shared immutable state. When spawning tasks that want to reference the same data, using the 
 <span class="src"><code><span class="n">clone</span><span class="p">()</span></code></span>
  function creates a new copy of the Arc that can be sent to a task via a 
-<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">)</span>
-<span class="n">edoc</span> 
- <span class="n">pair</span><span class="p">.</span> <span class="n">The</span> <span class="n">underlying</span> <span class="n">data</span> <span class="n">is</span> <span class="n">not</span> <span class="n">changed</span><span class="p">,</span> <span class="n">however</span><span class="p">.</span> <span class="n">This</span> <span class="n">allows</span> <span class="n">sending</span> <span class="n">a</span> <span class="n">new</span> <span class="n">arc</span> <span class="n">to</span> <span class="n">a</span> <span class="n">task</span><span class="p">,</span> <span class="n">and</span> <span class="n">having</span> <span class="n">it</span> <span class="n">access</span> <span class="n">the</span> <span class="n">same</span> <span class="n">data</span><span class="p">.</span> <span class="n">Once</span> <span class="n">within</span> <span class="n">the</span> <span class="n">spawned</span> <span class="n">task</span><span class="p">,</span> <span class="n">the</span> 
-<span class="n">scode</span>
-<span class="n">get</span><span class="p">()</span></code></span>
+<span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">)</span></code></span>
+ pair. The underlying data is not changed, however. This allows sending a new arc to a task, and having it access the same data. Once within the spawned task, the 
+<span class="src"><code><span class="n">get</span><span class="p">()</span></code></span>
  function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of 10 integers, wraps them in an Arc, and then prints out each value within a separate task.
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
