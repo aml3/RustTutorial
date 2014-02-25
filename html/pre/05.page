@@ -24,7 +24,7 @@ edoc
 scode
 get()
 edoc
- function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of 10 integers, wraps them in an Arc, and then prints out each value within a separate task.
+ function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of integers, wraps them in an Arc, and then prints out each value within a separate task.
 
 scode False {'lang': 'rust'}
 codeb
