@@ -28,7 +28,7 @@ The
 <span class="src"><code><span class="p">(</span><span class="n">Port</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Chan</span><span class="o">&lt;</span><span class="n">Arc</span><span class="o">&gt;</span><span class="p">)</span></code></span>
  pair. The underlying data is not changed, however. This allows sending a new arc to a task, and having it access the same data. Once within the spawned task, the 
 <span class="src"><code><span class="n">get</span><span class="p">()</span></code></span>
- function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of 10 integers, wraps them in an Arc, and then prints out each value within a separate task.
+ function retreives the value wrapped by the Arc. These Arcs can only hold immutable data. We will be looking at a variation of the Arc that allows mutability in a bit. The following bit of code creates a vector of integers, wraps them in an Arc, and then prints out each value within a separate task.
 </p>
 <div class="notab"><table class="srctable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
