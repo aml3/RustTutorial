@@ -6,7 +6,7 @@ fn main() {
 		return;
 	}
 
-	let i = from_str::<int>(os::args()[1]).unwrap();
+	let i = from_str::<int>(os::args()[1].as_slice()).unwrap();
 	println!("{:d} has {:d} Collatz steps", i, collatz(i));
 }
 
