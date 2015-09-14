@@ -1,5 +1,5 @@
-fn increment(v: &[int]) -> ~[int] {
-    let mut res = ~[];
+fn increment(v: Vec<i32>) -> Vec<i32> {
+    let mut res = vec![];
 
     for x in v.iter() {
         res.push(*x + 1);
@@ -9,9 +9,9 @@ fn increment(v: &[int]) -> ~[int] {
 }
 
 fn main() {
-   let p = ~[1, 2, 3];
+   let p : Vec<i32> = vec![1, 2, 3];
    let q = increment(p);
    for &x in q.iter() {
-      print!("{:d} ", x);
+      print!("{} ", x);
    }
 }
