@@ -1,8 +1,10 @@
 fn main() {
-    let mut x = ~10;
-    println(fmt!("*x = %?", *x));
-//    x = ~20;
-    println(fmt!("*x = %?", *x));
+    let mut x = Box::new(10);
+    println!("*x = {}", *x);
+    
+    //    x = Box::new(20);
+    println!("*x = {}", *x);
+
     *x = 30;
-    println(fmt!("*x = %?", *x));
+    println!("*x = {}", *x);
 }
