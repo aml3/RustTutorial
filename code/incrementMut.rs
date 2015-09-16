@@ -1,13 +1,13 @@
-fn incrementMut(v: &mut [int]) {
-    for i in range(0, v.len()) {
+fn increment_mut(v: &mut Vec<i32>) {
+    for i in 0..v.len() {
         v[i] = v[i] + 1;
     }
 }
 
 fn main() {
-   let mut p = ~[1, 2, 3];
-   incrementMut(p);
+   let mut p : Vec<i32> = vec![1, 2, 3];
+   increment_mut(&mut p);
    for &x in p.iter() {
-      print!("{:d} ", x);
+      print!("{} ", x);
    }
 }
